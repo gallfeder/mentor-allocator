@@ -22,7 +22,7 @@ export interface Project {
     mentorLessons: MentorLesson[];
 }
 
-interface Student {
+export interface Student {
     id: StudentID;
     name: string;
     surname: string;
@@ -30,21 +30,21 @@ interface Student {
     mentorLesson: MentorLessonID;
 }
 
-interface Course {
+export interface Course {
     grade: string;
     name: string;
     teacher: TeacherID;
     students: StudentID[];
 }
 
-interface Teacher {
+export interface Teacher {
     id: TeacherID;
     shorthand: string;
     name: string;
     surname: string;
 }
 
-interface MentorLesson {
+export interface MentorLesson {
     id: MentorLessonID;
     day: Days;
     lesson: number;

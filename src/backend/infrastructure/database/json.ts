@@ -1,4 +1,15 @@
-import { ProjectID, StudentID, TeacherID, Days, MentorLessonID, ProjectOverview } from "../../../shared/types";
+import {
+    ProjectID,
+    StudentID,
+    TeacherID,
+    Days,
+    MentorLessonID,
+    ProjectOverview,
+    Teacher,
+    Course,
+    Student,
+    MentorLesson, Project
+} from "../../../shared/types";
 import Database from "./interface";
 import {readdir, existsSync, readFile, writeFile} from "node:fs";
 
@@ -9,7 +20,7 @@ export default class JSONDatabase implements Database {
         this.path = "./data";
     }
 
-    private async readCurrentSavedProject(id: ProjectID): Promise<StoredProject | undefined> {
+    private async readProject(id: ProjectID): Promise<StoredProject | undefined> {
         return new Promise<StoredProject | undefined>(resolve => {
             readFile(`${this.path}/${makeFileName(id)}`, (err, data) => {
                 if (err) {
@@ -75,7 +86,7 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
-        const proj = await this.readCurrentSavedProject(project);
+        const proj = await this.readProject(project);
         if (!proj) {
             return -1;
         }
@@ -97,7 +108,7 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
-        const proj = await this.readCurrentSavedProject(project);
+        const proj = await this.readProject(project);
         if (!proj) {
             return -1;
         }
@@ -118,7 +129,7 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
-        const proj = await this.readCurrentSavedProject(project);
+        const proj = await this.readProject(project);
         if (!proj) {
             return -1;
         }
@@ -140,7 +151,7 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return;
         }
-        const proj = await this.readCurrentSavedProject(project);
+        const proj = await this.readProject(project);
         if (!proj) {
             return;
         }
@@ -156,7 +167,7 @@ export default class JSONDatabase implements Database {
     async getProjects(): Promise<ProjectOverview[]> {
         const files = await listFilesInDirectory(this.path, "json");
         const projects: ProjectOverview[] = [];
-        for (let file of files) {
+        for (const file of files) {
             const id = makeID(file);
             projects.push({
                 id: id,
@@ -166,6 +177,80 @@ export default class JSONDatabase implements Database {
 
         return projects;
     }
+
+    async getProject(id: ProjectID): Promise<Project> {
+        const invalidProject: Project = {
+            id: id,
+            name: "Invalid Project",
+            dataVersion: -1,
+            courses: [],
+            mentorLessons: [],
+            students: [],
+            teachers: []
+        }
+
+        if (!await this.hasSavedProject(id)) {
+            return invalidProject;
+        }
+        const proj = await this.readProject(id);
+        if (!proj) {
+            return invalidProject;
+        }
+
+        return {
+            id: id,
+            ...proj
+        }
+    }
+
+    async getStudents(id: ProjectID): Promise<Student[]> {
+        if (!await this.hasSavedProject(id)) {
+            return [];
+        }
+        const proj = await this.readProject(id);
+        if (!proj) {
+            return [];
+        }
+
+        return proj.students;
+    }
+
+    async getTeachers(id: ProjectID): Promise<Teacher[]> {
+        if (!await this.hasSavedProject(id)) {
+            return [];
+        }
+        const proj = await this.readProject(id);
+        if (!proj) {
+            return [];
+        }
+
+        return proj.teachers;
+    }
+
+    async getCourses(id: ProjectID): Promise<Course[]> {
+        if (!await this.hasSavedProject(id)) {
+            return [];
+        }
+        const proj = await this.readProject(id);
+        if (!proj) {
+            return [];
+        }
+
+        return proj.courses;
+    }
+
+    async getMentorLessons(id: ProjectID): Promise<MentorLesson[]> {
+        if (!await this.hasSavedProject(id)) {
+            return [];
+        }
+        const proj = await this.readProject(id);
+        if (!proj) {
+            return [];
+        }
+
+        return proj.mentorLessons;
+    }
+
 }
 
 const listFilesInDirectory = async (directory: string, fileExtension: string): Promise<string[]> => {
@@ -202,10 +287,10 @@ const parseJSON = <T>(str: string): T | undefined => {
 const makeFileName = (id: ProjectID) => `${id}.json`;
 const makeID = (path: string): ProjectID => (path.slice(0, path.length - 5) as ProjectID);
 
-const getHighestID = <T>(elems: T[], fn: (e: T) => number) => {
+const getHighestID = <T>(elems: T[], getElementID: (e: T) => number) => {
     let highest = -Infinity;
     for (const elem of elems) {
-        const id = fn(elem);
+        const id = getElementID(elem);
         if (id > highest) {
             highest = id;
         }
@@ -216,38 +301,8 @@ const getHighestID = <T>(elems: T[], fn: (e: T) => number) => {
 interface StoredProject {
     name: string;
     dataVersion: number;
-    students: StoredStudent[];
-    courses: StoredCourse[];
-    teachers: StoredTeacher[];
-    mentorLessons: StoredMentorLesson[];
-}
-
-interface StoredStudent {
-    id: StudentID;
-    name: string;
-    surname: string;
-    grade: string;
-    mentorLesson: MentorLessonID;
-}
-
-interface StoredCourse {
-    grade: string;
-    name: string;
-    teacher: TeacherID;
-    students: StudentID[];
-}
-
-interface StoredTeacher {
-    id: TeacherID;
-    shorthand: string;
-    name: string;
-    surname: string;
-}
-
-interface StoredMentorLesson {
-    id: MentorLessonID;
-    day: Days;
-    lesson: number;
-    teacher: TeacherID;
-    grade: string;
+    students: Student[];
+    courses: Course[];
+    teachers: Teacher[];
+    mentorLessons: MentorLesson[];
 }

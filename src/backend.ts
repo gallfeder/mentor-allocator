@@ -1,6 +1,13 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import ipcMain = Electron.ipcMain;
+import {getProjectHandler, getProjectsHandler} from "./backend/handlers/projects";
+import {getProjectStudentsHandler} from "./backend/handlers/students";
+import {getTeachersOfProject} from "./backend/application/projects";
+import {getProjectTeachersHandler} from "./backend/handlers/teachers";
+import {getProjectCoursesHandler} from "./backend/handlers/courses";
+import {getProjectMentorLessonsHandler} from "./backend/handlers/mentor_lessons";
 
 if (started) {
   app.quit();
@@ -29,6 +36,14 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   createWindow();
+
+  ipcMain.handle("dialog:getProjects", getProjectsHandler)
+
+  ipcMain.handle("dialog:getProject", getProjectHandler)
+  ipcMain.handle("dialog:getStudents", getProjectStudentsHandler)
+  ipcMain.handle("dialog:getTeachers", getProjectTeachersHandler)
+  ipcMain.handle("dialog:getCourses", getProjectCoursesHandler)
+  ipcMain.handle("dialog:getMentorLessons", getProjectMentorLessonsHandler)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
