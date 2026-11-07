@@ -10,7 +10,7 @@
     "name": "gallfeder",
     "email": "finnick4gallfeder@gmail.com"
   },
-  "main": ".vite/build/main.cjs",
+  "main": ".vite/build/backend.cjs",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
