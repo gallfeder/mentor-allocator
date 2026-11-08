@@ -1,5 +1,5 @@
 import {Project, ProjectID, ProjectOverview} from "../../shared/types";
-import {createProject, editProjectID, editProjectName, getAllProjects, getProject} from "../application/projects";
+import {createProject, editProjectName, getAllProjects, getProject} from "../application/projects";
 import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
 
 export const getProjectsHandler = (): Promise<ProjectOverview[]> => {
@@ -21,12 +21,8 @@ export const getProjectHandler = async (_event: IpcMainInvokeEvent, project: Pro
     return getProject(project);
 }
 
-export const createProjectHandler = async (_event: IpcMainInvokeEvent, projectID: ProjectID, name: string): Promise<ProjectID> => {
-    return createProject(projectID, name)
-}
-
-export const editProjectIDHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, changed: ProjectID): Promise<ProjectID | undefined> => {
-    return editProjectID(project, changed);
+export const createProjectHandler = async (_event: IpcMainInvokeEvent, name: string): Promise<ProjectID> => {
+    return createProject(name)
 }
 
 export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, name: string): Promise<void | undefined> => {

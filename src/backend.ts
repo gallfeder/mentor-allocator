@@ -3,12 +3,16 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import {
   createProjectHandler,
-  editProjectIDHandler,
   editProjectNameHandler,
   getProjectHandler,
   getProjectsHandler
 } from "./backend/handlers/projects";
-import {createStudentHandler, editStudentHandler, getProjectStudentsHandler} from "./backend/handlers/students";
+import {
+  allocateStudentsHandler,
+  createStudentHandler,
+  editStudentHandler,
+  getProjectStudentsHandler
+} from "./backend/handlers/students";
 import {createTeacherHandler, editTeacherHandler, getProjectTeachersHandler} from "./backend/handlers/teachers";
 import {createCourseHandler, editCourseHandler, getCoursesHandler} from "./backend/handlers/courses";
 import {
@@ -60,12 +64,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:createStudent", createStudentHandler);
   ipcMain.handle("dialog:createTeacher", createTeacherHandler);
 
-  ipcMain.handle("dialog:editProjectID", editProjectIDHandler);
   ipcMain.handle("dialog:editProjectName", editProjectNameHandler);
   ipcMain.handle("dialog:editCourse", editCourseHandler);
   ipcMain.handle("dialog:editMentorLesson", editMentorLessonHandler);
   ipcMain.handle("dialog:editStudent", editStudentHandler);
   ipcMain.handle("dialog:editTeacher", editTeacherHandler);
+
+  ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

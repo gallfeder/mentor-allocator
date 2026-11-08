@@ -1,7 +1,7 @@
 import {
     Course,
     CourseID,
-    Days,
+    Day,
     MentorLesson,
     MentorLessonID,
     Project,
@@ -13,7 +13,7 @@ import {
     TeacherID
 } from "../../../shared/types";
 import Database from "./interface";
-import {existsSync, readdir, readFile, rename, writeFile} from "node:fs";
+import {existsSync, readdir, readFile, writeFile} from "node:fs";
 
 export default class JSONDatabase implements Database {
     private path: string;
@@ -52,6 +52,7 @@ export default class JSONDatabase implements Database {
         })
     }
     private async writeCurrentSavedProject(id: ProjectID, proj: StoredProject): Promise<void> {
+        proj.latestEdit = Date.now();
         return new Promise<void>((resolve, reject) => {
             writeFile(`${this.path}/${makeFileName(id)}`, JSON.stringify(proj), err => {
                 if (err) {
@@ -76,7 +77,8 @@ export default class JSONDatabase implements Database {
                 courses: [],
                 mentorLessons: [],
                 students: [],
-                teachers: []
+                teachers: [],
+                latestEdit: Date.now(),
             });
         } catch (e) {
             console.error(`Failed to create project ${identifier}: ${e}`);
@@ -127,7 +129,7 @@ export default class JSONDatabase implements Database {
         return highestID + 1;
     };
 
-    async createMentorLesson(project: ProjectID, day: Days, lesson: number, teacher: TeacherID): Promise<MentorLessonID> {
+    async createMentorLesson(project: ProjectID, day: Day, lesson: number, teacher: TeacherID): Promise<MentorLessonID> {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
@@ -189,18 +191,71 @@ export default class JSONDatabase implements Database {
         return;
     };
 
-    async getProjects(): Promise<ProjectOverview[]> {
-        const files = await listFilesInDirectory(this.path, "json");
-        const projects: ProjectOverview[] = [];
-        for (const file of files) {
-            const id = makeID(file);
-            projects.push({
-                id: id,
-                name: id, // TODO: Read file to determine actual name!
-            })
+    async allocateStudents(project: ProjectID, lesson: MentorLessonID, students: StudentID[]): Promise<void> {
+        if (!await this.hasSavedProject(project)) {
+            return;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            return;
+        }
+        const shouldBeChanged = (sID: StudentID): boolean => {
+            for (const s of students) {
+                if (sID == s) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        return projects;
+        for (const s of proj.students) {
+            if (shouldBeChanged(s.id)) {
+                s.mentorLesson = lesson;
+            }
+        }
+
+        await this.writeCurrentSavedProject(project, proj);
+
+        return;
+    };
+
+    async getProjects(): Promise<ProjectOverview[]> {
+        const files = await listFilesInDirectory(this.path, "json");
+
+        const getProjectOverview = async (prID: ProjectID): Promise<ProjectOverview | undefined> => {
+            const p = await this.readProject(prID);
+            if (!p) {
+                return undefined;
+            }
+
+            return {
+                id: prID,
+                name: p.name,
+                courses: p.courses.length,
+                mentorLessons: p.mentorLessons.length,
+                students: p.students.length,
+                teachers: p.teachers.length,
+                lastEdit: new Date(p.latestEdit),
+                unallocatedStudents: ((): number => {
+                    let unalloc = 0;
+                    for (const s of p.students) {
+                        if (s.mentorLesson < 1) {
+                            unalloc++;
+                        }
+                    }
+                    return unalloc;
+                })()
+            }
+        }
+
+        const projectsWG: Promise<ProjectOverview | undefined>[] = [];
+
+
+        for (const file of files) {
+            projectsWG.push(getProjectOverview(makeID(file)));
+        }
+
+        return (await Promise.all(projectsWG)).filter(p => p != undefined);
     }
 
     async getProject(id: ProjectID): Promise<Project> {
@@ -211,7 +266,8 @@ export default class JSONDatabase implements Database {
             courses: [],
             mentorLessons: [],
             students: [],
-            teachers: []
+            teachers: [],
+            lastEdit: new Date(),
         }
 
         if (!await this.hasSavedProject(id)) {
@@ -224,6 +280,7 @@ export default class JSONDatabase implements Database {
 
         return {
             id: id,
+            lastEdit: new Date(proj.latestEdit),
             ...proj
         }
     }
@@ -274,32 +331,6 @@ export default class JSONDatabase implements Database {
         }
 
         return proj.mentorLessons;
-    }
-
-    async editProjectID(project: ProjectID, changedID: ProjectID): Promise<ProjectID | undefined> {
-        const [oldExists, newExits] = await Promise.all([
-            this.hasSavedProject(project),
-            this.hasSavedProject(changedID)
-        ]);
-
-        if (!oldExists) {
-            console.log("The provided project does not exist!");
-            return undefined;
-        }
-        if (!newExits) {
-            console.log("The new project ID is already in use!");
-            return undefined;
-        }
-
-        return new Promise<ProjectID | undefined>((resolve) => {
-           rename(`${this.path}/${makeFileName(project)}`, `${this.path}/${makeFileName(changedID)}`, (err) => {
-               if (err) {
-                   console.error(`Failed to rename project(ID) ${project} to ${changedID}: ${err}`);
-                   resolve(undefined);
-               }
-               resolve(changedID);
-           })
-        });
     }
 
     async editProjectName(project: ProjectID, name: string): Promise<void | undefined> {
@@ -380,7 +411,7 @@ export default class JSONDatabase implements Database {
         return t;
     }
 
-    async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Days, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> {
+    async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> {
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
             return undefined;
@@ -496,4 +527,5 @@ interface StoredProject {
     courses: Course[];
     teachers: Teacher[];
     mentorLessons: MentorLesson[];
+    latestEdit: number;
 }
