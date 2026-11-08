@@ -1,12 +1,15 @@
 import {
     Course,
-    Days, MentorLesson,
+    CourseID,
+    Days,
+    MentorLesson,
     MentorLessonID,
     Project,
     ProjectID,
     ProjectOverview,
     Student,
-    StudentID, Teacher,
+    StudentID,
+    Teacher,
     TeacherID
 } from "../../../shared/types";
 
@@ -15,6 +18,7 @@ export default interface Database {
     createStudent: (project: ProjectID, name: string, surname: string, grade: string) => Promise<StudentID>;
     createTeacher: (project: ProjectID, surname: string, name?: string, shorthand?: string) => Promise<TeacherID>;
     createMentorLesson: (project: ProjectID, day: Days, lesson: number, teacher: TeacherID) => Promise<MentorLessonID>;
+    createCourse: (project: ProjectID, teacher: TeacherID, grade: string, name: string) => Promise<CourseID>;
 
     allocateStudent: (project: ProjectID, lesson: MentorLessonID, student: StudentID) => Promise<void>;
 

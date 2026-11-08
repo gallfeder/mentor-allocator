@@ -4,6 +4,8 @@ export type ProjectID = string;
 export type StudentID = number;
 export type TeacherID = number;
 export type MentorLessonID = number;
+export type CourseID = number;
+
 
 export type Days = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
 
@@ -31,6 +33,7 @@ export interface Student {
 }
 
 export interface Course {
+    id: CourseID;
     grade: string;
     name: string;
     teacher: TeacherID;

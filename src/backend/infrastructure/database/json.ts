@@ -1,17 +1,19 @@
 import {
-    ProjectID,
-    StudentID,
-    TeacherID,
-    Days,
-    MentorLessonID,
-    ProjectOverview,
-    Teacher,
     Course,
+    CourseID,
+    Days,
+    MentorLesson,
+    MentorLessonID,
+    Project,
+    ProjectID,
+    ProjectOverview,
     Student,
-    MentorLesson, Project
+    StudentID,
+    Teacher,
+    TeacherID
 } from "../../../shared/types";
 import Database from "./interface";
-import {readdir, existsSync, readFile, writeFile} from "node:fs";
+import {existsSync, readdir, readFile, writeFile} from "node:fs";
 
 export default class JSONDatabase implements Database {
     private path: string;
@@ -141,6 +143,29 @@ export default class JSONDatabase implements Database {
             grade: "",
             lesson: lesson,
             teacher: teacher,
+        });
+        await this.writeCurrentSavedProject(project, proj);
+
+        return highestID + 1;
+    }
+
+    async createCourse(project: ProjectID, teacher: TeacherID, grade: string, name: string): Promise<CourseID> {
+        if (!await this.hasSavedProject(project)) {
+            return -1;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            return -1;
+        }
+        const highestID = getHighestID(proj.courses, (e) => e.id);
+
+        proj.courses.push({
+            id: highestID + 1,
+            teacher: teacher,
+            grade: grade,
+            name: name,
+            students: [],
+
         });
         await this.writeCurrentSavedProject(project, proj);
 
@@ -295,7 +320,7 @@ const getHighestID = <T>(elems: T[], getElementID: (e: T) => number) => {
             highest = id;
         }
     }
-    return highest;
+    return highest == -Infinity ? 1 : highest;
 }
 
 interface StoredProject {
