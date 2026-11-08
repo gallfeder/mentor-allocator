@@ -2,7 +2,7 @@ import {
     ProjectID,
     StudentID,
     TeacherID,
-    Days,
+    Day,
     MentorLessonID,
     ProjectOverview,
     Teacher,
@@ -125,7 +125,7 @@ export default class JSONDatabase implements Database {
         return highestID + 1;
     };
 
-    async createMentorLesson(project: ProjectID, day: Days, lesson: number, teacher: TeacherID): Promise<MentorLessonID> {
+    async createMentorLesson(project: ProjectID, day: Day, lesson: number, teacher: TeacherID): Promise<MentorLessonID> {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }

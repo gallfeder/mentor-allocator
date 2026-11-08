@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProjectHomepage from "./Pages/Projects/ProjectHomepage";
+import MallocStateProvider from "./Models/States/MallocStateProvider";
 
 const AppContent = () => {
 
@@ -15,7 +16,9 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <AppContent/>
+            <MallocStateProvider>
+                <AppContent/>
+            </MallocStateProvider>
         </BrowserRouter>
     )
 

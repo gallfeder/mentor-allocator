@@ -1,4 +1,4 @@
-import {Project, ProjectID, ProjectOverview} from "../shared/types";
+import {Project, ProjectId, ProjectOverview} from "../shared/types";
 
 
 declare global {
@@ -6,11 +6,11 @@ declare global {
         electronAPI: {
             getProjects: () => Promise<ProjectOverview[]>,
 
-            getProject: (project: ProjectID) => Promise<Project>,
-            getStudents: (project: ProjectID) => Promise<Project>,
-            getTeachers: (project: ProjectID) => Promise<Project>,
-            getCourses: (project: ProjectID) => Promise<Project>,
-            getMentorLessons: (project: ProjectID) => Promise<Project>,
+            getProject: (projectId: ProjectId) => Promise<Project>,
+            getStudents: (projectId: ProjectId) => Promise<Project>,
+            getTeachers: (projectId: ProjectId) => Promise<Project>,
+            getCourses: (projectId: ProjectId) => Promise<Project>,
+            getMentorLessons: (projectId: ProjectId) => Promise<Project>,
         }
     }
 }

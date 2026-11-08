@@ -1,11 +1,17 @@
 
 export type ProjectID = string;
+export type ProjectId = ProjectID;
 
 export type StudentID = number;
-export type TeacherID = number;
-export type MentorLessonID = number;
+export type StudentId = StudentID;
 
-export type Days = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
+export type TeacherID = number;
+export type TeacherId = TeacherID;
+
+export type MentorLessonID = number;
+export type MentorLessonId = MentorLessonID;
+
+export type Day = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
 
 export type ProjectOverview = {
     id: ProjectID;
@@ -46,7 +52,7 @@ export interface Teacher {
 
 export interface MentorLesson {
     id: MentorLessonID;
-    day: Days;
+    day: Day;
     lesson: number;
     teacher: TeacherID;
     grade: string;

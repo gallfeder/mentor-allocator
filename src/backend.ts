@@ -1,10 +1,8 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-import ipcMain = Electron.ipcMain;
 import {getProjectHandler, getProjectsHandler} from "./backend/handlers/projects";
 import {getProjectStudentsHandler} from "./backend/handlers/students";
-import {getTeachersOfProject} from "./backend/application/projects";
 import {getProjectTeachersHandler} from "./backend/handlers/teachers";
 import {getProjectCoursesHandler} from "./backend/handlers/courses";
 import {getProjectMentorLessonsHandler} from "./backend/handlers/mentor_lessons";
@@ -18,7 +16,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   });
 
