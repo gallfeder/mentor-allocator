@@ -1,5 +1,5 @@
 import {ProjectID, Teacher, TeacherID} from "../../shared/types";
-import {createTeacherInProject, getTeachersOfProject} from "../application/projects";
+import {createTeacherInProject, editTeacherInProject, getTeachersOfProject} from "../application/projects";
 import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
 
 export const getProjectTeachersHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Teacher[]> => {
@@ -13,3 +13,6 @@ export const createTeacherHandler = async (_event: IpcMainInvokeEvent, prID: Pro
     return createTeacherInProject(prID, surname, name, shorthand);
 }
 
+export const editTeacherHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => {
+    return editTeacherInProject(project, teacher, surname, name, shorthand);
+}

@@ -86,3 +86,47 @@ export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherI
     return db.createCourse(prID, teacherID, grade, name)
 }
 
+export const editProjectID = async (project: ProjectID, changed: ProjectID): Promise<ProjectID | undefined> => {
+    return db.editProjectID(project, changed);
+}
+
+export const editProjectName = async (project: ProjectID, name: string): Promise<void | undefined> => {
+    return db.editProjectName(project, name);
+}
+
+export const editStudentInProject = async (project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> => {
+    if (!name && !surname && !grade) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editStudent(project, student, name, surname, grade);
+}
+
+export const editTeacherInProject = async (project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => {
+    if (!name && !surname && !shorthand) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editTeacher(project, teacher, surname, name, shorthand);
+}
+
+export const editMentorLessonInProject = async (project: ProjectID, mentorLesson: MentorLessonID, day?: Days, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> => {
+    if (!day && !lesson && !teacher) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editMentorLesson(project, mentorLesson, day, lesson, teacher);
+}
+
+export const editCourseInProject = async (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => {
+    if (!teacher && !grade && !name) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editCourse(project, course, teacher, grade, name);
+}
+

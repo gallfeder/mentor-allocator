@@ -13,7 +13,7 @@ import {
     TeacherID
 } from "../../../shared/types";
 import Database from "./interface";
-import {existsSync, readdir, readFile, writeFile} from "node:fs";
+import {existsSync, readdir, readFile, rename, writeFile} from "node:fs";
 
 export default class JSONDatabase implements Database {
     private path: string;
@@ -274,6 +274,172 @@ export default class JSONDatabase implements Database {
         }
 
         return proj.mentorLessons;
+    }
+
+    async editProjectID(project: ProjectID, changedID: ProjectID): Promise<ProjectID | undefined> {
+        const [oldExists, newExits] = await Promise.all([
+            this.hasSavedProject(project),
+            this.hasSavedProject(changedID)
+        ]);
+
+        if (!oldExists) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        if (!newExits) {
+            console.log("The new project ID is already in use!");
+            return undefined;
+        }
+
+        return new Promise<ProjectID | undefined>((resolve) => {
+           rename(`${this.path}/${makeFileName(project)}`, `${this.path}/${makeFileName(changedID)}`, (err) => {
+               if (err) {
+                   console.error(`Failed to rename project(ID) ${project} to ${changedID}: ${err}`);
+                   resolve(undefined);
+               }
+               resolve(changedID);
+           })
+        });
+    }
+
+    async editProjectName(project: ProjectID, name: string): Promise<void | undefined> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        proj.name = name;
+
+        await this.writeCurrentSavedProject(project, proj);
+    }
+
+    async editStudent(project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        const i = proj.students.findIndex(i => i.id = student);
+        if (i < 0) {
+            console.log(`Did not find student with ID ${student} to edit!`);
+            return undefined;
+        }
+        const s = proj.students[i];
+        if (name) {
+            s.name = name;
+        }
+        if (surname) {
+            s.surname = surname;
+        }
+        if (grade) {
+            s.grade = grade;
+        }
+
+        await this.writeCurrentSavedProject(project, proj);
+        return s;
+    }
+
+    async editTeacher(project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        const i = proj.teachers.findIndex(i => i.id = teacher);
+        if (i < 0) {
+            console.log(`Did not find teacher with ID ${teacher} to edit!`);
+            return undefined;
+        }
+        const t = proj.teachers[i];
+        if (name) {
+            t.name = name;
+        }
+        if (surname) {
+            t.surname = surname;
+        }
+        if (shorthand) {
+            t.shorthand = shorthand;
+        }
+
+        await this.writeCurrentSavedProject(project, proj);
+        return t;
+    }
+
+    async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Days, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        const i = proj.mentorLessons.findIndex(i => i.id = mentorLesson);
+        if (i < 0) {
+            console.log(`Did not find mentor lesson with ID ${mentorLesson} to edit!`);
+            return undefined;
+        }
+        const m = proj.mentorLessons[i];
+        if (day) {
+            m.day = day;
+        }
+        if (lesson) {
+            m.lesson = lesson;
+        }
+        if (teacher) {
+            m.teacher = teacher;
+        }
+
+        await this.writeCurrentSavedProject(project, proj);
+        return m;
+    }
+
+    async editCourse(project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        const i = proj.courses.findIndex(i => i.id = course);
+        if (i < 0) {
+            console.log(`Did not find course with ID ${course} to edit!`);
+            return undefined;
+        }
+        const c = proj.courses[i];
+        if (name) {
+            c.name = name;
+        }
+        if (teacher) {
+            c.teacher = teacher;
+        }
+        if (grade) {
+            c.grade = grade;
+        }
+
+        await this.writeCurrentSavedProject(project, proj);
+        return c;
     }
 
 }

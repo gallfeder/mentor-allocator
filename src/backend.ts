@@ -1,11 +1,21 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-import {createProjectHandler, getProjectHandler, getProjectsHandler} from "./backend/handlers/projects";
-import {createStudentHandler, getProjectStudentsHandler} from "./backend/handlers/students";
-import {createTeacherHandler, getProjectTeachersHandler} from "./backend/handlers/teachers";
-import {createCourseHandler, getCoursesHandler} from "./backend/handlers/courses";
-import {createMentorLessonHandler, getProjectMentorLessonsHandler} from "./backend/handlers/mentor_lessons";
+import {
+  createProjectHandler,
+  editProjectIDHandler,
+  editProjectNameHandler,
+  getProjectHandler,
+  getProjectsHandler
+} from "./backend/handlers/projects";
+import {createStudentHandler, editStudentHandler, getProjectStudentsHandler} from "./backend/handlers/students";
+import {createTeacherHandler, editTeacherHandler, getProjectTeachersHandler} from "./backend/handlers/teachers";
+import {createCourseHandler, editCourseHandler, getCoursesHandler} from "./backend/handlers/courses";
+import {
+  createMentorLessonHandler,
+  editMentorLessonHandler,
+  getProjectMentorLessonsHandler
+} from "./backend/handlers/mentor_lessons";
 
 if (started) {
   app.quit();
@@ -49,6 +59,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:createMentorLesson", createMentorLessonHandler);
   ipcMain.handle("dialog:createStudent", createStudentHandler);
   ipcMain.handle("dialog:createTeacher", createTeacherHandler);
+
+  ipcMain.handle("dialog:editProjectID", editProjectIDHandler);
+  ipcMain.handle("dialog:editProjectName", editProjectNameHandler);
+  ipcMain.handle("dialog:editCourse", editCourseHandler);
+  ipcMain.handle("dialog:editMentorLesson", editMentorLessonHandler);
+  ipcMain.handle("dialog:editStudent", editStudentHandler);
+  ipcMain.handle("dialog:editTeacher", editTeacherHandler);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -28,4 +28,12 @@ export default interface Database {
     getTeachers: (project: ProjectID) => Promise<Teacher[]>;
     getCourses: (project: ProjectID) => Promise<Course[]>;
     getMentorLessons: (project: ProjectID) => Promise<MentorLesson[]>;
+
+    editProjectID: (project: ProjectID, changedID: ProjectID) => Promise<ProjectID | undefined>;
+    editProjectName: (project: ProjectID, name: string) => Promise<void | undefined>;
+
+    editStudent: (project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string) => Promise<Student | undefined>;
+    editTeacher: (project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string) => Promise<Teacher | undefined>;
+    editMentorLesson: (project: ProjectID, mentorLesson: MentorLessonID, day?: Days, lesson?: number, teacher?: TeacherID) => Promise<MentorLesson | undefined>;
+    editCourse: (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>;
 }
