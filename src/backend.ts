@@ -28,7 +28,7 @@ const createWindow = () => {
     );
   }
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 

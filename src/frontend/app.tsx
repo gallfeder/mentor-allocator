@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProjectHomepage from "./Pages/Projects/ProjectHomepage";
 import MallocStateProvider from "./Models/States/MallocStateProvider";
+import "./app.css"
 
 const AppContent = () => {
 

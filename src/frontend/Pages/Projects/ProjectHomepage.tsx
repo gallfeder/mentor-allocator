@@ -1,9 +1,14 @@
 import ProjectViewComp from "../../Components/Projects/ProjectViewComp";
+import HeaderComp from "../../Components/Header/HeaderComp";
+import "../Pages.css"
 
 const ProjectHomepage = () => {
 
     return (
-        <ProjectViewComp/>
+        <div className="app">
+            <HeaderComp/>
+            <ProjectViewComp/>
+        </div>
     )
 
 }
