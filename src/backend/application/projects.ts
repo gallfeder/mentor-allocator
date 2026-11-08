@@ -1,6 +1,20 @@
-import {Course, MentorLesson, Project, ProjectID, ProjectOverview, Student, Teacher} from "../../shared/types";
+import {
+    Course,
+    CourseID,
+    Day,
+    MentorLesson,
+    MentorLessonID,
+    Project,
+    ProjectID,
+    ProjectOverview,
+    Student,
+    StudentID,
+    Teacher,
+    TeacherID
+} from "../../shared/types";
 import JSONDatabase from "../infrastructure/database/json";
 import Database from "../infrastructure/database/interface";
+import {v4 as getUUID} from 'uuid';
 
 const db: Database = new JSONDatabase();
 
@@ -28,4 +42,94 @@ export const getMentorLessonsOfProject = (project: ProjectID): Promise<MentorLes
     return db.getMentorLessons(project);
 }
 
+export const createProject = async (name: string): Promise<ProjectID> => {
+    if (name == "") {
+        return "";
+    }
+    const prID = getUUID();
+    try {
+        await db.createProject(prID, name);
+    } catch {
+        return "";
+    }
+    return prID
+}
 
+export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID> => {
+    if (prID == "" || name == "" || surname == "" || grade == "") {
+        return -1;
+    }
+
+    return db.createStudent(prID, name, surname, grade);
+}
+
+export const createTeacherInProject = async (prID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID> => {
+    if (prID == "" || name == "") {
+        return -1;
+    }
+
+    return db.createTeacher(prID, surname, name, shorthand);
+}
+
+export const createMentorLessonInProject = async (prID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID> => {
+    if (prID == "" || lesson < 0 || teacherID < 1) {
+        return -1;
+    }
+
+    return db.createMentorLesson(prID, day, lesson, teacherID);
+}
+
+export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID> => {
+    if (prID == "" || teacherID < 1 || grade == "" || name == "") {
+        return -1;
+    }
+
+    return db.createCourse(prID, teacherID, grade, name)
+}
+
+export const editProjectName = async (project: ProjectID, name: string): Promise<void | undefined> => {
+    return db.editProjectName(project, name);
+}
+
+export const editStudentInProject = async (project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> => {
+    if (!name && !surname && !grade) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editStudent(project, student, name, surname, grade);
+}
+
+export const editTeacherInProject = async (project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => {
+    if (!name && !surname && !shorthand) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editTeacher(project, teacher, surname, name, shorthand);
+}
+
+export const editMentorLessonInProject = async (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> => {
+    if (!day && !lesson && !teacher) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editMentorLesson(project, mentorLesson, day, lesson, teacher);
+}
+
+export const editCourseInProject = async (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => {
+    if (!teacher && !grade && !name) {
+        console.log("Nothing to edit was provided!");
+        return undefined;
+    }
+
+    return db.editCourse(project, course, teacher, grade, name);
+}
+
+export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void> => {
+    if (Array.isArray(students)) {
+        return db.allocateStudents(project, lesson, students);
+    }
+    return db.allocateStudent(project, lesson, students);
+}

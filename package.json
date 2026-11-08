@@ -23,7 +23,8 @@
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.5"
+    "react-router-dom": "^7.18.5",
+    "uuid": "^14.0.3"
   },
   "devDependencies": {
     "@electron-forge/cli": "^8.0.1",
