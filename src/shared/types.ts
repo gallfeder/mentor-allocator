@@ -11,6 +11,9 @@ export type TeacherId = TeacherID;
 export type MentorLessonID = number;
 export type MentorLessonId = MentorLessonID;
 
+export type CourseID = number;
+export type CourseId = CourseID;
+
 export type Day = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
 
 export type ProjectOverview = {
