@@ -1,10 +1,17 @@
 import "./Header.css"
+import {useNavigate} from "react-router-dom";
 
 const HeaderComp = () => {
 
+    const navigate = useNavigate();
+
+    function backToHomepage() {
+        navigate("/");
+    }
+
     return (
-        <nav className="header">
-            <h2>Mentor Allocator</h2>
+        <nav className="header panel">
+            <h2 onClick={backToHomepage}>Mentor Allocator</h2>
         </nav>
     )
 

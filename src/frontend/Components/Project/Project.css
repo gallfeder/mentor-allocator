@@ -1,0 +1,17 @@
+.project-view-comp {
+    display: grid;
+    grid-template-columns: 1fr 15fr 4fr;
+    gap: 15px;
+    height: calc(100vh - 145px);
+}
+
+.project-view-sidebar {
+
+}
+
+.project {
+}
+
+.project-unallocated-sidebar {
+
+}

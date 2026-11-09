@@ -3,10 +3,10 @@ import {useMallocDispatch, useMallocState} from "../../Models/States/Hooks";
 import {MallocState, StateProject} from "../../Models/States/MallocState";
 import {ProjectOverview} from "../../../shared/types";
 import ProjectCardComp from "./ProjectCardComp";
-import "./Projects.css";
+import "./Home.css";
 import CreateProjectComp from "./CreateProjectComp";
 
-const ProjectViewComp = () => {
+const ProjectsViewComp = () => {
 
     const mallocState: MallocState = useMallocState();
     const mallocDispatch = useMallocDispatch();
@@ -26,7 +26,7 @@ const ProjectViewComp = () => {
     }, [mallocDispatch])
 
     return (
-        <div className="project-view">
+        <div className="project-view panel">
             <h2>Projects</h2>
             <div className="projects">
                 { Array.from(mallocState.projects.values()).map((project: StateProject) => {
@@ -39,4 +39,4 @@ const ProjectViewComp = () => {
 
 }
 
-export default ProjectViewComp;
+export default ProjectsViewComp;

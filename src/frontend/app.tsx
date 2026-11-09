@@ -1,14 +1,19 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProjectHomepage from "./Pages/Projects/ProjectHomepage";
+import ProjectHomepage from "./Pages/Home/ProjectHomepage";
 import MallocStateProvider from "./Models/States/MallocStateProvider";
 import "./app.css"
+import ProjectPage from "./Pages/Project/ProjectPage";
 
 const AppContent = () => {
 
     return (
-        <Routes>
-            <Route path="/" element={<ProjectHomepage/>}/>
-        </Routes>
+        <div className="app">
+            <Routes>
+                <Route path="/" element={<ProjectHomepage/>}/>
+                <Route path="projects/:projectId" element={<ProjectPage/>}/>
+                <Route path="projects/:projectId/grade/:grade?" element={<ProjectPage/>}/>
+            </Routes>
+        </div>
     )
 
 }

@@ -1,5 +1,7 @@
 .header {
-    background-color: var(--bg-x-light);
     padding: 1rem;
-    border-radius: 16px;
+
+    h2:hover {
+        cursor: pointer;
+    }
 }
