@@ -19,12 +19,6 @@ export type Day = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
 export type ProjectOverview = {
     id: ProjectID;
     name: string;
-    students: number;
-    unallocatedStudents: number;
-    teachers: number;
-    courses: number;
-    mentorLessons: number;
-    lastEdit: Date;
 }
 
 export interface Project {
@@ -35,7 +29,6 @@ export interface Project {
     courses: Course[];
     teachers: Teacher[];
     mentorLessons: MentorLesson[];
-    lastEdit: Date;
 }
 
 export interface Student {
@@ -47,7 +40,6 @@ export interface Student {
 }
 
 export interface Course {
-    id: CourseID;
     grade: string;
     name: string;
     teacher: TeacherID;
