@@ -1,0 +1,5 @@
+.header {
+    background-color: var(--bg-x-light);
+    padding: 1rem;
+    border-radius: 16px;
+}

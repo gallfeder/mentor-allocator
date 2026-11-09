@@ -1,5 +1,28 @@
-import {createRoot} from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ProjectHomepage from "./Pages/Projects/ProjectHomepage";
+import MallocStateProvider from "./Models/States/MallocStateProvider";
+import "./app.css"
 
+const AppContent = () => {
 
-const root = createRoot(document.body);
-root.render(<h1>Hello world!</h1>);
+    return (
+        <Routes>
+            <Route path="/" element={<ProjectHomepage/>}/>
+        </Routes>
+    )
+
+}
+
+const App = () => {
+
+    return (
+        <BrowserRouter>
+            <MallocStateProvider>
+                <AppContent/>
+            </MallocStateProvider>
+        </BrowserRouter>
+    )
+
+}
+
+export default App;
