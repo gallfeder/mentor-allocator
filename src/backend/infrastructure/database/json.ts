@@ -52,7 +52,7 @@ export default class JSONDatabase implements Database {
         })
     }
     private async writeCurrentSavedProject(id: ProjectID, proj: StoredProject): Promise<void> {
-        proj.latestEdit = Date.now();
+        proj.lastEdit = Date.now();
         return new Promise<void>((resolve, reject) => {
             writeFile(`${this.path}/${makeFileName(id)}`, JSON.stringify(proj), err => {
                 if (err) {
@@ -78,7 +78,7 @@ export default class JSONDatabase implements Database {
                 mentorLessons: [],
                 students: [],
                 teachers: [],
-                latestEdit: Date.now(),
+                lastEdit: Date.now(),
             });
         } catch (e) {
             console.error(`Failed to create project ${identifier}: ${e}`);
@@ -235,7 +235,7 @@ export default class JSONDatabase implements Database {
                 mentorLessons: p.mentorLessons.length,
                 students: p.students.length,
                 teachers: p.teachers.length,
-                lastEdit: new Date(p.latestEdit),
+                lastEdit: new Date(p.lastEdit),
                 unallocatedStudents: ((): number => {
                     let unalloc = 0;
                     for (const s of p.students) {
@@ -279,9 +279,9 @@ export default class JSONDatabase implements Database {
         }
 
         return {
+            ...proj,
             id: id,
-            lastEdit: new Date(proj.latestEdit),
-            ...proj
+            lastEdit: new Date(proj.lastEdit),
         }
     }
 
@@ -527,5 +527,5 @@ interface StoredProject {
     courses: Course[];
     teachers: Teacher[];
     mentorLessons: MentorLesson[];
-    latestEdit: number;
+    lastEdit: number;
 }
