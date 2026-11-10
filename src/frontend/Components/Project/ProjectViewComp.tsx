@@ -40,7 +40,6 @@ const ProjectViewComp = () => {
             .then((project: Project) => {
                 if (mallocDispatch) {
                     mallocDispatch({type: "INIT_PROJECT", payload: { project: project }});
-                    console.log(grade);
 
                     if (!grade) {
                         navigateToFirstGrade();

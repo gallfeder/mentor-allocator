@@ -31,6 +31,23 @@
 }
 
 .project {
+    overflow-x: auto;
+}
+
+.mentor-lessons {
+    display: flex;
+    gap: 1rem;
+    padding: 8px;
+    height: 100%;
+
+    .mentor-lesson {
+        background-color: var(--bg-xx-light);
+        border: 1px solid var(--bg-light);
+        border-radius: 12px;
+        padding: 8px;
+        min-width: 280px;
+        height: 100%;
+    }
 }
 
 .project-unallocated-sidebar {
