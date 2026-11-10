@@ -1,5 +1,5 @@
 import {
-    Course,
+    Course, CourseId,
     MentorLesson,
     MentorLessonId,
     ProjectId,
@@ -20,9 +20,10 @@ export const MallocDefaultState: MallocState = {
 export interface StateProject {
     id: ProjectId;
     name: string;
+    lastEdit: Date;
     dataVersion: number;
     students: Map<StudentId, Student>;
-    courses: Course[];
+    courses: Map<CourseId, Course>;
     teachers: Map<TeacherId, Teacher>;
     mentorLessons: Map<MentorLessonId, MentorLesson>;
 }

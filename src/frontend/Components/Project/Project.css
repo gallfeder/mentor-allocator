@@ -1,17 +1,55 @@
 .project-view-comp {
     display: grid;
     grid-template-columns: 1fr 15fr 4fr;
-    gap: 15px;
+    gap: 1rem;
     height: calc(100vh - 145px);
 }
 
 .project-view-sidebar {
+    .project-view-grades {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
 
+        .grade {
+            background-color: var(--bg-xx-light);
+            padding: 8px;
+            text-align: center;
+            border-radius: 12px;
+            border: 1px solid var(--bg-light);
+        }
+
+        .grade.active {
+            background-color: var(--bg-xxxx-light);
+        }
+
+        .grade:hover {
+            background-color: var(--bg-xxx-light);
+        }
+    }
 }
 
 .project {
 }
 
 .project-unallocated-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
 
+    .unallocated-students {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.user-card {
+    background-color: var(--bg-xx-light);
+    color: var(--text-color);
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--bg-light);
 }

@@ -1,9 +1,13 @@
-import { ProjectId } from "../../../../shared/types";
+import {Project, ProjectOverview} from "../../../../shared/types";
+
+export interface InitProjectsPayload {
+    projectOverview: ProjectOverview
+}
 
 export interface InitProjectPayload {
-    projectId: ProjectId;
-    projectName: string;
+    project: Project;
 }
 
 export type MallocAction =
-    { type: "INIT_PROJECTS", payload: InitProjectPayload[] }
+    { type: "INIT_PROJECTS", payload: InitProjectsPayload[] } |
+    { type: "INIT_PROJECT", payload: InitProjectPayload }

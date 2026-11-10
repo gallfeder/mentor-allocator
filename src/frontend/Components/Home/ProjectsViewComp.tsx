@@ -16,8 +16,8 @@ const ProjectsViewComp = () => {
             .then((projects: ProjectOverview[]) => {
                 if (mallocDispatch) {
                     mallocDispatch({
-                        type: "INIT_PROJECTS", payload: projects.map((overview: ProjectOverview) => {
-                            return { projectId: overview.id, projectName: overview.name };
+                        type: "INIT_PROJECTS", payload: projects.map((project: ProjectOverview) => {
+                            return { projectOverview: project }
                         })
                     })
                 }

@@ -99,7 +99,7 @@ export default class JSONDatabase implements Database {
         proj.students.push({
             grade: grade,
             id: highestID + 1,
-            mentorLesson: -1,
+            mentorLessonId: -1,
             name: name,
             surname: surname
         });
@@ -144,7 +144,7 @@ export default class JSONDatabase implements Database {
             day: day,
             grade: "",
             lesson: lesson,
-            teacher: teacher,
+            teacherId: teacher,
         });
         await this.writeCurrentSavedProject(project, proj);
 
@@ -184,7 +184,7 @@ export default class JSONDatabase implements Database {
         }
 
         const studentIndex = proj.students.findIndex(i => i.id = student);
-        proj.students[studentIndex].mentorLesson = lesson;
+        proj.students[studentIndex].mentorLessonId = lesson;
 
         await this.writeCurrentSavedProject(project, proj);
 
@@ -210,7 +210,7 @@ export default class JSONDatabase implements Database {
 
         for (const s of proj.students) {
             if (shouldBeChanged(s.id)) {
-                s.mentorLesson = lesson;
+                s.mentorLessonId = lesson;
             }
         }
 
@@ -231,15 +231,15 @@ export default class JSONDatabase implements Database {
             return {
                 id: prID,
                 name: p.name,
-                courses: p.courses.length,
-                mentorLessons: p.mentorLessons.length,
-                students: p.students.length,
-                teachers: p.teachers.length,
-                lastEdit: new Date(p.lastEdit),
-                unallocatedStudents: ((): number => {
+                coursesCount: p.courses.length,
+                mentorLessonsCount: p.mentorLessons.length,
+                studentsCount: p.students.length,
+                teachersCount: p.teachers.length,
+                lastEditDate: new Date(p.lastEdit),
+                unallocatedStudentsCount: ((): number => {
                     let unalloc = 0;
                     for (const s of p.students) {
-                        if (s.mentorLesson < 1) {
+                        if (s.mentorLessonId < 1) {
                             unalloc++;
                         }
                     }
@@ -435,7 +435,7 @@ export default class JSONDatabase implements Database {
             m.lesson = lesson;
         }
         if (teacher) {
-            m.teacher = teacher;
+            m.teacherId = teacher;
         }
 
         await this.writeCurrentSavedProject(project, proj);

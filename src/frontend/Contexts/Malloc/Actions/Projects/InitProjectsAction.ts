@@ -1,17 +1,18 @@
 import { MallocState, StateProject } from "../../../../Models/States/MallocState";
-import { InitProjectPayload } from "../MallocAction";
+import { InitProjectsPayload } from "../MallocAction";
 import { ProjectId } from "../../../../../shared/types";
 
-const initProjectsAction = (state: MallocState, payload: InitProjectPayload[]): MallocState => {
+const initProjectsAction = (state: MallocState, payload: InitProjectsPayload[]): MallocState => {
 
     const projects: Map<ProjectId, StateProject> = new Map();
     for (const initProjectPayload of payload) {
-        projects.set(initProjectPayload.projectId, {
-            id: initProjectPayload.projectId,
-            name: initProjectPayload.projectName,
-            dataVersion: 1,
+        projects.set(initProjectPayload.projectOverview.id, {
+            id: initProjectPayload.projectOverview.id,
+            name: initProjectPayload.projectOverview.name,
+            lastEdit: initProjectPayload.projectOverview.lastEditDate,
+            dataVersion: -1,
             students: new Map(),
-            courses: [],
+            courses: new Map(),
             teachers: new Map(),
             mentorLessons: new Map()
         })
