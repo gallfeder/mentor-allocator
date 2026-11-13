@@ -43,6 +43,7 @@
     .mentor-lesson {
         background-color: var(--bg-x-light);
         border: 1px solid var(--bg-light);
+        position: relative;
         border-radius: 12px;
         padding: 8px;
         min-width: 280px;
@@ -51,10 +52,44 @@
         flex-direction: column;
         gap: 0.75rem;
 
+        .mentor-lesson-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .header-tags {
+                display: flex;
+                gap: 0.5rem;
+
+                .mentor-header-tag {
+                    background-color: var(--primary-muted);
+                    border: 1px solid var(--primary);
+                    border-radius: 8px;
+                    padding: 6px;
+                    color: var(--text-color);
+                }
+            }
+        }
+
         .mentor-lesson-students {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+        }
+
+        .mentor-lesson-drop-target {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            background-color: var(--bg-hover-over);
+            color: var(--text-color);
+            font-size: larger;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
         }
     }
 }
@@ -78,4 +113,8 @@
     padding: 8px;
     border-radius: 12px;
     border: 1px solid var(--bg-light);
+}
+
+.user-card:hover {
+    cursor: grab;
 }
