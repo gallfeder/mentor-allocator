@@ -1,4 +1,4 @@
-import {extractValuesFromLine} from "./line_extractor";
+import {extractValuesFromCSVLine} from "../../../shared/csv_line_extractor";
 
 export interface GPU001Entry {
     grade: string;
@@ -10,7 +10,7 @@ export interface GPU001Entry {
 
 
 export const interpretAsGPU001 = (file: string): GPU001Entry[] => file.split("\n").map((line): GPU001Entry => {
-    const v = extractValuesFromLine(line);
+    const v = extractValuesFromCSVLine(line);
     return {
         grade:              (v[1] ?? "").toString(),
         teacherShorthand:   (v[2] ?? "").toString(),
@@ -30,7 +30,7 @@ export interface GPU015Entry {
 
 
 export const interpretAsGPU015 = (file: string): GPU015Entry[] => file.split("\n").map((line): GPU015Entry => {
-    const v = extractValuesFromLine(line);
+    const v = extractValuesFromCSVLine(line);
     return {
         studentName:    (v[0] ?? "").toString(),
         courseName:     (v[2] ?? "").toString(),

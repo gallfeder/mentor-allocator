@@ -1,6 +1,6 @@
 
-export const extractValuesFromLine = (line: string): (string | number | undefined)[] => {
-    if (line.length == 0) {
+export const extractValuesFromCSVLine = (line: string, separator = ",", stringDeliminator = '"'): (string | number | undefined)[] => {
+    if (line.length == 0 || separator == stringDeliminator) {
         return [];
     }
     const vals: (string | number | undefined)[] = [];
@@ -9,8 +9,12 @@ export const extractValuesFromLine = (line: string): (string | number | undefine
             vals.push(undefined);
             return;
         }
-        if (substr.charAt(0) == '"') {
+        if (substr.charAt(0) == stringDeliminator) {
             vals.push(substr.slice(1, substr.length - 1));
+            return;
+        }
+        if (isNaN(Number(substr))) {
+            vals.push(substr);
             return;
         }
         vals.push(Number(substr));
@@ -21,11 +25,11 @@ export const extractValuesFromLine = (line: string): (string | number | undefine
 
 
     for (let i = 0; i < line.length; i++) {
-        if (line.charAt(i) == '"') {
+        if (line.charAt(i) == stringDeliminator) {
             inQuotations = !inQuotations;
             continue;
         }
-        if (!(line.charAt(i) == "," || line.charAt(i) == "\n") || inQuotations) {
+        if (!(line.charAt(i) == separator || line.charAt(i) == "\n") || inQuotations) {
             continue;
         }
         if (line.charAt(i) == "\n") {
