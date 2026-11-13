@@ -66,20 +66,14 @@ const isMentorLesson = (courseName: string): boolean => {
     return courseName == "MQ2" || courseName == "MQ1" || courseName == "MEF";
 }
 
-export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string): Promise<ImportedData> => {
-    const data: ImportedData = {
-        students: [],
-        teacher: [],
-        courses: [],
-        mentorLessons: []
-    };
+export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string): Promise<ImportedData  | undefined> => {
     if (pathGPU1 == "" || pathGPU15 == "") {
-        return data;
+        return undefined;
     }
 
     const [rawGPU1, rawGPU15] = await Promise.all([getFile(pathGPU1), getFile(pathGPU15)]);
     if (!rawGPU1 || !rawGPU15) {
-        return data;
+        return undefined;
     }
     const gpu1 = interpretAsGPU001(rawGPU1);
     const gpu15 = interpretAsGPU015(rawGPU15);
@@ -144,10 +138,10 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
         courses.get(courseChoice.grade+courseChoice.courseName)?.students.push(sID);
     }
 
-    data.students = Array.from(students, (e) => e[1]);
-    data.teacher = Array.from(teachers, (e) => e[1]);
-    data.courses = Array.from(courses, (e) => e[1]);
-    data.mentorLessons = Array.from(mentorLessons, (e) => e[1]);
-
-    return data;
+    return {
+        students: Array.from(students, (e) => e[1]),
+        teacher: Array.from(teachers, (e) => e[1]),
+        courses: Array.from(courses, (e) => e[1]),
+        mentorLessons: Array.from(mentorLessons, (e) => e[1]),
+    };
 }

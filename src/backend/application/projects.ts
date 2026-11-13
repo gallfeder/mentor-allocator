@@ -15,6 +15,7 @@ import {
 import JSONDatabase from "../infrastructure/database/json";
 import Database from "../infrastructure/database/interface";
 import {v4 as getUUID} from 'uuid';
+import {importFromUntisFiles} from "../infrastructure/import/untis";
 
 const db: Database = new JSONDatabase();
 
@@ -132,4 +133,24 @@ export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLesso
         return db.allocateStudents(project, lesson, students);
     }
     return db.allocateStudent(project, lesson, students);
+}
+
+
+export const createProjectWithUntisImport = async (name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID> => {
+    if (name == "" || pathGPU001 == "" || pathGPU015 == "") {
+        return "";
+    }
+
+    const data = await importFromUntisFiles(pathGPU001, pathGPU015);
+    if (!data) {
+        return "";
+    }
+    const prID = await createProject(name);
+
+    await db.setStudents(prID, data.students);
+    await db.setTeachers(prID, data.teacher);
+    await db.setCourses(prID, data.courses);
+    await db.setMentorLessons(prID, data.mentorLessons);
+
+    return prID;
 }

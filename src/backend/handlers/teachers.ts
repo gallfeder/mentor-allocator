@@ -1,6 +1,6 @@
 import {ProjectID, Teacher, TeacherID} from "../../shared/types";
 import {createTeacherInProject, editTeacherInProject, getTeachersOfProject} from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectTeachersHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Teacher[]> => {
     if (project == "") {

@@ -1,6 +1,12 @@
 import {Project, ProjectID, ProjectOverview} from "../../shared/types";
-import {createProject, editProjectName, getAllProjects, getProject} from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {
+    createProject,
+    createProjectWithUntisImport,
+    editProjectName,
+    getAllProjects,
+    getProject
+} from "../application/projects";
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectsHandler = (): Promise<ProjectOverview[]> => {
     return getAllProjects();
@@ -15,7 +21,8 @@ export const getProjectHandler = async (_event: IpcMainInvokeEvent, project: Pro
             courses: [],
             mentorLessons: [],
             students: [],
-            teachers: []
+            teachers: [],
+            lastEdit: new Date(Date.now()),
         }
     }
     return getProject(project);
@@ -27,4 +34,8 @@ export const createProjectHandler = async (_event: IpcMainInvokeEvent, name: str
 
 export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, name: string): Promise<void | undefined> => {
     return editProjectName(project, name);
+}
+
+export const createProjectFromUntisHandler = async (_event: IpcMainInvokeEvent, name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID> => {
+    return createProjectWithUntisImport(name, pathGPU001, pathGPU015);
 }

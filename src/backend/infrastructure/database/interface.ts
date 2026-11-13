@@ -36,4 +36,9 @@ export default interface Database {
     editTeacher: (project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string) => Promise<Teacher | undefined>;
     editMentorLesson: (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID) => Promise<MentorLesson | undefined>;
     editCourse: (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>;
+
+    setStudents: (project: ProjectID, students: Student[]) => Promise<void>;
+    setTeachers: (project: ProjectID, teachers: Teacher[]) => Promise<void>;
+    setCourses: (project: ProjectID, courses: Course[]) => Promise<void>;
+    setMentorLessons: (project: ProjectID, mentorLessons: MentorLesson[]) => Promise<void>;
 }
