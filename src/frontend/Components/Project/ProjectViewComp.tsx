@@ -1,8 +1,6 @@
-/*
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { Project, ProjectId } from "../../../shared/types";
-*/
 
 import ProjectGradesSidebarComp from "./Sidebar/ProjectGradesSidebarComp";
 import ProjectComp from "./ProjectComp";
@@ -11,7 +9,6 @@ import ProjectUnallocatedSidebarComp from "./Sidebar/ProjectUnallocatedSidebarCo
 import "./Project.css";
 
 const ProjectViewComp = () => {
-    /*
     const { projectId, grade } = useParams();
 
     useEffect(() => {
@@ -22,7 +19,6 @@ const ProjectViewComp = () => {
             })
 
     }, [projectId])
-*/
 
     return (
         <div className="project-view-comp">
