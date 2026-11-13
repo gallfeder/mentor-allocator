@@ -473,6 +473,74 @@ export default class JSONDatabase implements Database {
         return c;
     }
 
+
+    async setStudents(project: ProjectID, students: Student[]): Promise<void> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        proj.students = students;
+
+        await this.writeCurrentSavedProject(project, proj);
+        return;
+    }
+
+    async setTeachers(project: ProjectID, teachers: Teacher[]): Promise<void> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        proj.teachers = teachers;
+
+        await this.writeCurrentSavedProject(project, proj);
+        return;
+    }
+
+    async setCourses(project: ProjectID, courses: Course[]): Promise<void> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        proj.courses = courses;
+
+        await this.writeCurrentSavedProject(project, proj);
+        return;
+    }
+
+    async setMentorLessons(project: ProjectID, mentorLessons: MentorLesson[]): Promise<void> {
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            return undefined;
+        }
+
+        proj.mentorLessons = mentorLessons;
+
+        await this.writeCurrentSavedProject(project, proj);
+        return;
+    }
 }
 
 const listFilesInDirectory = async (directory: string, fileExtension: string): Promise<string[]> => {

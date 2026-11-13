@@ -2,6 +2,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import {
+  createProjectFromUntisHandler,
   createProjectHandler,
   editProjectNameHandler,
   getProjectHandler,
@@ -20,6 +21,7 @@ import {
   editMentorLessonHandler,
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
+import {getFilePathFromUser} from "./backend/handlers/files";
 
 if (started) {
   app.quit();
@@ -59,6 +61,7 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:getMentorLessons", getProjectMentorLessonsHandler);
 
   ipcMain.handle("dialog:createProject", createProjectHandler);
+  ipcMain.handle("dialog:createProjectFromUntis", createProjectFromUntisHandler);
   ipcMain.handle("dialog:createCourse", createCourseHandler);
   ipcMain.handle("dialog:createMentorLesson", createMentorLessonHandler);
   ipcMain.handle("dialog:createStudent", createStudentHandler);
@@ -71,6 +74,7 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:editTeacher", editTeacherHandler);
 
   ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
+  ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

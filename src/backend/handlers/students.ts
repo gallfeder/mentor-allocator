@@ -5,7 +5,7 @@ import {
     editStudentInProject,
     getStudentsOfProject
 } from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectStudentsHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Student[]> => {
     if (project == "") {

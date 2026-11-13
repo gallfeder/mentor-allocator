@@ -26,6 +26,7 @@ declare global {
             getMentorLessons: (projectID: ProjectID) => Promise<MentorLesson>,
 
             createProject: (name: string) => Promise<ProjectID>,
+            createProjectFromUntis: (name: string, pathToGPU001: string, pathToGPU015: string) => Promise<ProjectID>,
             createCourse: (projectID: ProjectID, teacherID: TeacherID, grade: string, name: string) => Promise<CourseID>,
             createMentorLesson: (projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID) => Promise<MentorLessonID>,
             createStudent: (projectID: ProjectID, name: string, surname: string, grade: string) => Promise<StudentID>,
@@ -38,6 +39,7 @@ declare global {
             editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>,
 
             allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]) => Promise<void>,
+            getFilePathFromUser: (title?: string) => Promise<string>,
         }
     }
 }

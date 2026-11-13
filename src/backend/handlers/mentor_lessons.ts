@@ -4,7 +4,7 @@ import {
     editMentorLessonInProject,
     getMentorLessonsOfProject
 } from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectMentorLessonsHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<MentorLesson[]> => {
     if (project == "") {
