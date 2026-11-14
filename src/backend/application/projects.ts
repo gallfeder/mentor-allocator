@@ -147,10 +147,12 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
     }
     const prID = await createProject(name);
 
-    await db.setStudents(prID, data.students);
-    await db.setTeachers(prID, data.teacher);
-    await db.setCourses(prID, data.courses);
-    await db.setMentorLessons(prID, data.mentorLessons);
+    await Promise.all([
+        db.setStudents(prID, data.students),
+        db.setTeachers(prID, data.teacher),
+        db.setCourses(prID, data.courses),
+        db.setMentorLessons(prID, data.mentorLessons),
+    ]);
 
     return prID;
 }

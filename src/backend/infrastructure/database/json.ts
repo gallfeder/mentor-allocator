@@ -14,17 +14,24 @@ import {
 } from "../../../shared/types";
 import Database from "./interface";
 import {existsSync, readdir, readFile, writeFile} from "node:fs";
+import Mutex from "../files/Mutex";
 
 export default class JSONDatabase implements Database {
     private path: string;
+    private mutex: Mutex;
 
     constructor() {
         this.path = "./data";
+        this.mutex = new Mutex();
+    }
+
+    private getPath(id: ProjectID): string {
+        return `${this.path}/${makeFileName(id)}`;
     }
 
     private async readProject(id: ProjectID): Promise<StoredProject | undefined> {
         return new Promise<StoredProject | undefined>(resolve => {
-            readFile(`${this.path}/${makeFileName(id)}`, (err, data) => {
+            readFile(this.getPath(id), (err, data) => {
                 if (err) {
                     if (err.code == "ENOENT") {
                         console.log("Did not find the requested project!");
@@ -43,7 +50,7 @@ export default class JSONDatabase implements Database {
     private async hasSavedProject(id: ProjectID): Promise<boolean> {
         return new Promise<boolean>(resolve => {
             try {
-                const exists = existsSync(`${this.path}/${makeFileName(id)}`);
+                const exists = existsSync(this.getPath(id));
                 resolve(exists);
             } catch (e) {
                 console.error(`Encountered error while checking if has saved project: ${e}`);
@@ -51,10 +58,10 @@ export default class JSONDatabase implements Database {
             }
         })
     }
-    private async writeCurrentSavedProject(id: ProjectID, proj: StoredProject): Promise<void> {
+    private async writeProject(id: ProjectID, proj: StoredProject): Promise<void> {
         proj.lastEdit = Date.now();
         return new Promise<void>((resolve, reject) => {
-            writeFile(`${this.path}/${makeFileName(id)}`, JSON.stringify(proj), err => {
+            writeFile(this.getPath(id), JSON.stringify(proj), err => {
                 if (err) {
                     console.error(`Error while writing project: ${err}`);
                     reject(err);
@@ -69,9 +76,9 @@ export default class JSONDatabase implements Database {
         if (await this.hasSavedProject(identifier)) {
             throw new Error("Project already exists!");
         }
-
+        const close = await this.mutex.blockFile(this.getPath(identifier));
         try {
-            await this.writeCurrentSavedProject(identifier, {
+            await this.writeProject(identifier, {
                 name: name,
                 dataVersion: 1,
                 courses: [],
@@ -80,7 +87,9 @@ export default class JSONDatabase implements Database {
                 teachers: [],
                 lastEdit: Date.now(),
             });
+            close();
         } catch (e) {
+            close();
             console.error(`Failed to create project ${identifier}: ${e}`);
             throw new Error("Failed to create project!");
         }
@@ -90,8 +99,11 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
+
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return -1;
         }
         const highestID = getHighestID(proj.students, (s) => s.id);
@@ -103,8 +115,9 @@ export default class JSONDatabase implements Database {
             name: name,
             surname: surname
         });
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close();
         return highestID + 1;
     };
 
@@ -112,8 +125,10 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return -1;
         }
         const highestID = getHighestID(proj.teachers, (e) => e.id);
@@ -124,8 +139,9 @@ export default class JSONDatabase implements Database {
             shorthand: shorthand ?? "",
             surname: surname,
         });
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close();
         return highestID + 1;
     };
 
@@ -133,8 +149,10 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return -1;
         }
         const highestID = getHighestID(proj.mentorLessons, (e) => e.id);
@@ -146,8 +164,9 @@ export default class JSONDatabase implements Database {
             lesson: lesson,
             teacherId: teacher,
         });
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close();
         return highestID + 1;
     }
 
@@ -155,8 +174,10 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return -1;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return -1;
         }
         const highestID = getHighestID(proj.courses, (e) => e.id);
@@ -169,8 +190,9 @@ export default class JSONDatabase implements Database {
             students: [],
 
         });
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close()
         return highestID + 1;
     }
 
@@ -178,16 +200,19 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return;
         }
 
         const studentIndex = proj.students.findIndex(i => i.id = student);
         proj.students[studentIndex].mentorLessonId = lesson;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close();
         return;
     };
 
@@ -195,8 +220,10 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(project)) {
             return;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
+            close();
             return;
         }
         const shouldBeChanged = (sID: StudentID): boolean => {
@@ -214,8 +241,9 @@ export default class JSONDatabase implements Database {
             }
         }
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
 
+        close();
         return;
     };
 
@@ -223,7 +251,9 @@ export default class JSONDatabase implements Database {
         const files = await listFilesInDirectory(this.path, "json");
 
         const getProjectOverview = async (prID: ProjectID): Promise<ProjectOverview | undefined> => {
+            const close = await this.mutex.blockFile(this.getPath(prID));
             const p = await this.readProject(prID);
+            close();
             if (!p) {
                 return undefined;
             }
@@ -273,7 +303,9 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(id)) {
             return invalidProject;
         }
+        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
+        close();
         if (!proj) {
             return invalidProject;
         }
@@ -289,7 +321,9 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(id)) {
             return [];
         }
+        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
+        close();
         if (!proj) {
             return [];
         }
@@ -301,7 +335,9 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(id)) {
             return [];
         }
+        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
+        close();
         if (!proj) {
             return [];
         }
@@ -313,7 +349,9 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(id)) {
             return [];
         }
+        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
+        close();
         if (!proj) {
             return [];
         }
@@ -325,7 +363,9 @@ export default class JSONDatabase implements Database {
         if (!await this.hasSavedProject(id)) {
             return [];
         }
+        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
+        close();
         if (!proj) {
             return [];
         }
@@ -338,15 +378,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         proj.name = name;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
     }
 
     async editStudent(project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> {
@@ -354,15 +397,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         const i = proj.students.findIndex(i => i.id = student);
         if (i < 0) {
             console.log(`Did not find student with ID ${student} to edit!`);
+            close();
             return undefined;
         }
         const s = proj.students[i];
@@ -376,7 +422,8 @@ export default class JSONDatabase implements Database {
             s.grade = grade;
         }
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return s;
     }
 
@@ -385,15 +432,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         const i = proj.teachers.findIndex(i => i.id = teacher);
         if (i < 0) {
             console.log(`Did not find teacher with ID ${teacher} to edit!`);
+            close();
             return undefined;
         }
         const t = proj.teachers[i];
@@ -407,7 +457,8 @@ export default class JSONDatabase implements Database {
             t.shorthand = shorthand;
         }
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return t;
     }
 
@@ -416,9 +467,11 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
@@ -438,7 +491,8 @@ export default class JSONDatabase implements Database {
             m.teacherId = teacher;
         }
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return m;
     }
 
@@ -447,15 +501,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         const i = proj.courses.findIndex(i => i.id = course);
         if (i < 0) {
             console.log(`Did not find course with ID ${course} to edit!`);
+            close();
             return undefined;
         }
         const c = proj.courses[i];
@@ -469,7 +526,8 @@ export default class JSONDatabase implements Database {
             c.grade = grade;
         }
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return c;
     }
 
@@ -479,15 +537,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         proj.students = students;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return;
     }
 
@@ -496,15 +557,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         proj.teachers = teachers;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return;
     }
 
@@ -513,15 +577,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         proj.courses = courses;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return;
     }
 
@@ -530,15 +597,18 @@ export default class JSONDatabase implements Database {
             console.log("The provided project does not exist!");
             return undefined;
         }
+        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
+            close();
             return undefined;
         }
 
         proj.mentorLessons = mentorLessons;
 
-        await this.writeCurrentSavedProject(project, proj);
+        await this.writeProject(project, proj);
+        close();
         return;
     }
 }
