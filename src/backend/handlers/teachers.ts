@@ -22,7 +22,7 @@ export const editTeacherHandler = async (_event: IpcMainInvokeEvent, project: Pr
     return editTeacherInProject(project, teacher, surname, name, shorthand);
 }
 
-export const deleteTeacherHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: TeacherID): Promise<null | undefined> => {
+export const deleteTeacherHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: TeacherID): Promise<boolean> => {
     return deleteTeacher(project, id);
 }
 

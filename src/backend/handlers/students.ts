@@ -23,10 +23,10 @@ export const editStudentHandler = async (_event: IpcMainInvokeEvent, project: Pr
     return editStudentInProject(project, student, name, surname, grade);
 }
 
-export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<null | undefined> => {
+export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<boolean> => {
     return allocateStudentsToLesson(project, lesson, students);
 }
 
-export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<null | undefined> => {
+export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<boolean> => {
     return deleteStudent(project, id);
 }

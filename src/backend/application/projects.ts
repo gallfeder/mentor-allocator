@@ -84,7 +84,7 @@ export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherI
     return db.createCourse(prID, teacherID, grade, name)
 }
 
-export const editProjectName = async (project: ProjectID, name: string): Promise<null | undefined> => {
+export const editProjectName = async (project: ProjectID, name: string): Promise<boolean> => {
     return db.editProjectName(project, name);
 }
 
@@ -124,7 +124,7 @@ export const editCourseInProject = async (project: ProjectID, course: CourseID, 
     return db.editCourse(project, course, teacher, grade, name);
 }
 
-export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<null | undefined> => {
+export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<boolean> => {
     if (Array.isArray(students)) {
         return db.allocateStudents(project, lesson, students);
     }
@@ -162,37 +162,37 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
     return prID;
 }
 
-export const deleteProject = async (prID: ProjectID): Promise<null | undefined> => {
+export const deleteProject = async (prID: ProjectID): Promise<boolean> => {
     if (prID.length == 0) {
-        return;
+        return false;
     }
     return db.deleteProject(prID);
 }
 
-export const deleteStudent = async (prID: ProjectID, id: StudentID): Promise<null | undefined> => {
+export const deleteStudent = async (prID: ProjectID, id: StudentID): Promise<boolean> => {
     if (prID.length == 0) {
-        return;
+        return false;
     }
     return db.deleteStudent(prID, id);
 }
 
-export const deleteTeacher = async (prID: ProjectID, id: TeacherID): Promise<null | undefined> => {
+export const deleteTeacher = async (prID: ProjectID, id: TeacherID): Promise<boolean> => {
     if (prID.length == 0) {
-        return;
+        return false;
     }
     return db.deleteTeacher(prID, id);
 }
 
-export const deleteCourse = async (prID: ProjectID, id: CourseID): Promise<null | undefined> => {
+export const deleteCourse = async (prID: ProjectID, id: CourseID): Promise<boolean> => {
     if (prID.length == 0) {
-        return;
+        return false;
     }
     return db.deleteCourse(prID, id);
 }
 
-export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): Promise<null | undefined> => {
+export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): Promise<boolean> => {
     if (prID.length == 0) {
-        return;
+        return false;
     }
     return db.deleteMentorLesson(prID, id);
 }
