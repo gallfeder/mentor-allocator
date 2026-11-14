@@ -1,4 +1,7 @@
 import {DragDropProvider} from "@dnd-kit/react";
+import {matchPath} from "react-router-dom";
+import {useMallocDispatch} from "../../Models/States/Hooks";
+import {MentorLessonId, ProjectId, StudentId} from "../../../shared/types";
 
 interface Props {
     children: React.ReactNode;
@@ -6,13 +9,31 @@ interface Props {
 
 const DragDropProviderComp = (props: Props) => {
 
+    const match = matchPath({ path: "projects/:projectId/*" }, location.pathname);
+    const projectId: ProjectId = match?.params.projectId as ProjectId;
+
+    const mallocDispatch = useMallocDispatch();
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     function updateDragEndState(event: { operation; nativeEvent?: Event | undefined; canceled?: boolean; suspend?: () => { resume(): void; abort(): void; }; }) {
         const { source, target } = event.operation;
 
         if (source?.type === "student-card" && target?.type === "mentor-lesson") {
-            // @todo
+            const mentorLessonId: MentorLessonId = target.id;
+            const studentIds: StudentId[] = [source.id];
+
+            if (mallocDispatch) {
+                mallocDispatch({
+                    type: "ALLOC_STUDENTS", payload: {
+                        projectId: projectId,
+                        mentorLessonId: mentorLessonId,
+                        students: studentIds
+                    }
+                });
+            }
+
+            window.electronAPI.allocateStudents(projectId, mentorLessonId, studentIds).then();
         }
     }
 

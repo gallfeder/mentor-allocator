@@ -23,11 +23,11 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <DragDropProviderComp>
-                <MallocStateProvider>
+            <MallocStateProvider>
+                <DragDropProviderComp>
                     <AppContent/>
-                </MallocStateProvider>
-            </DragDropProviderComp>
+                </DragDropProviderComp>
+            </MallocStateProvider>
         </BrowserRouter>
     )
 

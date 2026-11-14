@@ -16,11 +16,7 @@ const MentorLessonHeaderComp = (props: Props) => {
     if (!stateProject) {
         return null;
     }
-
-    console.log(mallocState);
     const teacher: Teacher | undefined = stateProject.teachers.get(props.mentorLesson.teacherId);
-    console.log(props.mentorLesson);
-    console.log(teacher);
 
     function getTeacherName(): string {
         if (!teacher) {

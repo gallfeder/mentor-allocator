@@ -2,6 +2,7 @@ import {MallocState} from "./MallocState";
 import {MallocAction} from "../../Contexts/Malloc/Actions/MallocAction";
 import initProjectsAction from "../../Contexts/Malloc/Actions/Projects/InitProjectsAction";
 import initProjectAction from "../../Contexts/Malloc/Actions/Projects/InitProjectAction";
+import allocStudentsAction from "../../Contexts/Malloc/Actions/MentorLesson/AllocStudentsAction";
 
 function mallocReducer(state: MallocState, action: MallocAction): MallocState {
 
@@ -10,6 +11,8 @@ function mallocReducer(state: MallocState, action: MallocAction): MallocState {
             return initProjectsAction(state, action.payload);
         case "INIT_PROJECT":
             return initProjectAction(state, action.payload);
+        case "ALLOC_STUDENTS":
+            return allocStudentsAction(state, action.payload);
     }
 
 }
