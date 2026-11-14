@@ -10,14 +10,24 @@ import {
 } from "./backend/handlers/projects";
 import {
   allocateStudentsHandler,
-  createStudentHandler,
+  createStudentHandler, deleteStudentHandler,
   editStudentHandler,
   getProjectStudentsHandler
 } from "./backend/handlers/students";
-import {createTeacherHandler, editTeacherHandler, getProjectTeachersHandler} from "./backend/handlers/teachers";
-import {createCourseHandler, editCourseHandler, getCoursesHandler} from "./backend/handlers/courses";
 import {
-  createMentorLessonHandler,
+  createTeacherHandler,
+  deleteTeacherHandler,
+  editTeacherHandler,
+  getProjectTeachersHandler
+} from "./backend/handlers/teachers";
+import {
+  createCourseHandler,
+  deleteCourseHandler,
+  editCourseHandler,
+  getCoursesHandler
+} from "./backend/handlers/courses";
+import {
+  createMentorLessonHandler, deleteMentorLessonHandler,
   editMentorLessonHandler,
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
@@ -75,6 +85,12 @@ app.whenReady().then(() => {
 
   ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
   ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
+
+  ipcMain.handle("dialog:deleteProject", getProjectHandler);
+  ipcMain.handle("dialog:deleteStudent", deleteStudentHandler);
+  ipcMain.handle("dialog:deleteTeacher", deleteTeacherHandler);
+  ipcMain.handle("dialog:deleteCourse", deleteCourseHandler);
+  ipcMain.handle("dialog:deleteMentorLesson", deleteMentorLessonHandler);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

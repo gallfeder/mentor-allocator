@@ -103,7 +103,7 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
                 grade: entry.courseName.slice(1,3),
                 id: mentorLessonIDs++,
                 lesson: entry.lesson,
-                teacher: teachers.get(entry.teacherShorthand)?.id ?? 0
+                teacherId: teachers.get(entry.teacherShorthand)?.id ?? 0
             });
             continue;
         }
@@ -129,7 +129,7 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
             students.set(sID, {
                 grade: courseChoice.grade,
                 id: sID,
-                mentorLesson: -1,
+                mentorLessonId: -1,
                 name: firstName,
                 surname: surName
 
