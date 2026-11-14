@@ -156,3 +156,40 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
 
     return prID;
 }
+
+export const deleteProject = async (prID: ProjectID): Promise<void | undefined> => {
+    if (prID.length == 0) {
+        return;
+    }
+    return db.deleteProject(prID);
+}
+
+export const deleteStudent = async (prID: ProjectID, id: StudentID): Promise<void | undefined> => {
+    if (prID.length == 0) {
+        return;
+    }
+    return db.deleteStudent(prID, id);
+}
+
+export const deleteTeacher = async (prID: ProjectID, id: TeacherID): Promise<void | undefined> => {
+    if (prID.length == 0) {
+        return;
+    }
+    return db.deleteTeacher(prID, id);
+}
+
+export const deleteCourse = async (prID: ProjectID, id: CourseID): Promise<void | undefined> => {
+    if (prID.length == 0) {
+        return;
+    }
+    return db.deleteCourse(prID, id);
+}
+
+export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): Promise<void | undefined> => {
+    if (prID.length == 0) {
+        return;
+    }
+    return db.deleteMentorLesson(prID, id);
+}
+
+

@@ -41,4 +41,10 @@ export default interface Database {
     setTeachers: (project: ProjectID, teachers: Teacher[]) => Promise<void>;
     setCourses: (project: ProjectID, courses: Course[]) => Promise<void>;
     setMentorLessons: (project: ProjectID, mentorLessons: MentorLesson[]) => Promise<void>;
+
+    deleteProject: (project: ProjectID) => Promise<void | undefined>;
+    deleteStudent: (project: ProjectID, student: StudentID) => Promise<void | undefined>;
+    deleteTeacher: (project: ProjectID, teacher: TeacherID) => Promise<void | undefined>;
+    deleteCourse: (project: ProjectID, course: CourseID) => Promise<void | undefined>;
+    deleteMentorLesson: (project: ProjectID, mentorLesson: MentorLessonID) => Promise<void | undefined>;
 }

@@ -1,7 +1,7 @@
 import {MentorLessonID, ProjectID, Student, StudentID} from "../../shared/types";
 import {
     allocateStudentsToLesson,
-    createStudentInProject,
+    createStudentInProject, deleteProject, deleteStudent,
     editStudentInProject,
     getStudentsOfProject
 } from "../application/projects";
@@ -26,3 +26,6 @@ export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: Pro
     return allocateStudentsToLesson(project, lesson, students);
 }
 
+export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<void | undefined> => {
+    return deleteStudent(project, id);
+}

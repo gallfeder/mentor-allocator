@@ -1,5 +1,5 @@
 import {Course, CourseID, ProjectID, TeacherID} from "../../shared/types";
-import {createCourseInProject, editCourseInProject, getCoursesOfProject} from "../application/projects";
+import {createCourseInProject, deleteCourse, editCourseInProject, getCoursesOfProject} from "../application/projects";
 import {IpcMainInvokeEvent} from "electron";
 
 export const getCoursesHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Course[]> => {
@@ -16,3 +16,8 @@ export const createCourseHandler = async (_event: IpcMainInvokeEvent, projectID:
 export const editCourseHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => {
     return editCourseInProject(project, course, teacher, grade, name);
 }
+
+export const deleteCourseHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: CourseID): Promise<void | undefined> => {
+    return deleteCourse(project, id);
+}
+

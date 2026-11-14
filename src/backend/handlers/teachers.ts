@@ -1,5 +1,9 @@
 import {ProjectID, Teacher, TeacherID} from "../../shared/types";
-import {createTeacherInProject, editTeacherInProject, getTeachersOfProject} from "../application/projects";
+import {
+    createTeacherInProject, deleteTeacher,
+    editTeacherInProject,
+    getTeachersOfProject
+} from "../application/projects";
 import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectTeachersHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Teacher[]> => {
@@ -16,3 +20,8 @@ export const createTeacherHandler = async (_event: IpcMainInvokeEvent, prID: Pro
 export const editTeacherHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => {
     return editTeacherInProject(project, teacher, surname, name, shorthand);
 }
+
+export const deleteTeacherHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: TeacherID): Promise<void | undefined> => {
+    return deleteTeacher(project, id);
+}
+

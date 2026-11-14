@@ -1,7 +1,7 @@
 import {Project, ProjectID, ProjectOverview} from "../../shared/types";
 import {
     createProject,
-    createProjectWithUntisImport,
+    createProjectWithUntisImport, deleteProject,
     editProjectName,
     getAllProjects,
     getProject
@@ -38,4 +38,8 @@ export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project
 
 export const createProjectFromUntisHandler = async (_event: IpcMainInvokeEvent, name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID> => {
     return createProjectWithUntisImport(name, pathGPU001, pathGPU015);
+}
+
+export const deleteProjectHandler = (_event: IpcMainInvokeEvent, project: ProjectID): Promise<void | undefined> => {
+    return deleteProject(project);
 }

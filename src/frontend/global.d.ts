@@ -12,6 +12,7 @@ import {
     Teacher,
     TeacherID
 } from "../shared/types";
+import {ipcRenderer} from "electron";
 
 
 declare global {
@@ -40,6 +41,11 @@ declare global {
 
             allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]) => Promise<void>,
             getFilePathFromUser: (title?: string) => Promise<string>,
+
+            deleteStudent: (projectID: ProjectID, studentID: StudentID) => Promise<void | undefined>,
+            deleteTeacher: (projectID: ProjectID, teacherID: TeacherID) => Promise<void | undefined>,
+            deleteCourse: (projectID: ProjectID, courseID: CourseID) => Promise<void | undefined>,
+            deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<void | undefined>,
         }
     }
 }

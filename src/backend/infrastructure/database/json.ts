@@ -13,15 +13,16 @@ import {
     TeacherID
 } from "../../../shared/types";
 import Database from "./interface";
-import {existsSync, readdir, readFile, writeFile} from "node:fs";
+import {existsSync, readdir, readFile, unlink, writeFile} from "node:fs";
 import Mutex from "../files/Mutex";
+import {app} from "electron";
 
 export default class JSONDatabase implements Database {
     private path: string;
     private mutex: Mutex;
 
     constructor() {
-        this.path = "./data";
+        this.path = `${app.getPath("appData")}/db_json_data`;
         this.mutex = new Mutex();
     }
 
@@ -73,10 +74,11 @@ export default class JSONDatabase implements Database {
     }
 
     async createProject(identifier: ProjectID, name: string): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(identifier));
         if (await this.hasSavedProject(identifier)) {
+            close();
             throw new Error("Project already exists!");
         }
-        const close = await this.mutex.blockFile(this.getPath(identifier));
         try {
             await this.writeProject(identifier, {
                 name: name,
@@ -96,10 +98,11 @@ export default class JSONDatabase implements Database {
     };
 
     async createStudent(project: ProjectID, name: string, surname: string, grade: string): Promise<StudentID> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return -1;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
 
         const proj = await this.readProject(project);
         if (!proj) {
@@ -122,10 +125,11 @@ export default class JSONDatabase implements Database {
     };
 
     async createTeacher(project: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return -1;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             close();
@@ -146,10 +150,11 @@ export default class JSONDatabase implements Database {
     };
 
     async createMentorLesson(project: ProjectID, day: Day, lesson: number, teacher: TeacherID): Promise<MentorLessonID> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return -1;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             close();
@@ -171,10 +176,11 @@ export default class JSONDatabase implements Database {
     }
 
     async createCourse(project: ProjectID, teacher: TeacherID, grade: string, name: string): Promise<CourseID> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return -1;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             close();
@@ -197,10 +203,11 @@ export default class JSONDatabase implements Database {
     }
 
     async allocateStudent(project: ProjectID, lesson: MentorLessonID, student: StudentID): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             close();
@@ -217,10 +224,11 @@ export default class JSONDatabase implements Database {
     };
 
     async allocateStudents(project: ProjectID, lesson: MentorLessonID, students: StudentID[]): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
+            close();
             return;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             close();
@@ -300,10 +308,11 @@ export default class JSONDatabase implements Database {
             lastEdit: new Date(),
         }
 
+        const close = await this.mutex.blockFile(this.getPath(id));
         if (!await this.hasSavedProject(id)) {
+            close();
             return invalidProject;
         }
-        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
         close();
         if (!proj) {
@@ -318,10 +327,11 @@ export default class JSONDatabase implements Database {
     }
 
     async getStudents(id: ProjectID): Promise<Student[]> {
+        const close = await this.mutex.blockFile(this.getPath(id));
         if (!await this.hasSavedProject(id)) {
+            close()
             return [];
         }
-        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
         close();
         if (!proj) {
@@ -332,10 +342,11 @@ export default class JSONDatabase implements Database {
     }
 
     async getTeachers(id: ProjectID): Promise<Teacher[]> {
+        const close = await this.mutex.blockFile(this.getPath(id));
         if (!await this.hasSavedProject(id)) {
+            close();
             return [];
         }
-        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
         close();
         if (!proj) {
@@ -346,10 +357,11 @@ export default class JSONDatabase implements Database {
     }
 
     async getCourses(id: ProjectID): Promise<Course[]> {
+        const close = await this.mutex.blockFile(this.getPath(id));
         if (!await this.hasSavedProject(id)) {
+            close();
             return [];
         }
-        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
         close();
         if (!proj) {
@@ -360,10 +372,11 @@ export default class JSONDatabase implements Database {
     }
 
     async getMentorLessons(id: ProjectID): Promise<MentorLesson[]> {
+        const close = await this.mutex.blockFile(this.getPath(id));
         if (!await this.hasSavedProject(id)) {
+            close();
             return [];
         }
-        const close = await this.mutex.blockFile(this.getPath(id));
         const proj = await this.readProject(id);
         close();
         if (!proj) {
@@ -374,11 +387,12 @@ export default class JSONDatabase implements Database {
     }
 
     async editProjectName(project: ProjectID, name: string): Promise<void | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -393,11 +407,12 @@ export default class JSONDatabase implements Database {
     }
 
     async editStudent(project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -405,7 +420,7 @@ export default class JSONDatabase implements Database {
             return undefined;
         }
 
-        const i = proj.students.findIndex(i => i.id = student);
+        const i = proj.students.findIndex(i => i.id == student);
         if (i < 0) {
             console.log(`Did not find student with ID ${student} to edit!`);
             close();
@@ -428,11 +443,12 @@ export default class JSONDatabase implements Database {
     }
 
     async editTeacher(project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -440,7 +456,7 @@ export default class JSONDatabase implements Database {
             return undefined;
         }
 
-        const i = proj.teachers.findIndex(i => i.id = teacher);
+        const i = proj.teachers.findIndex(i => i.id == teacher);
         if (i < 0) {
             console.log(`Did not find teacher with ID ${teacher} to edit!`);
             close();
@@ -463,11 +479,12 @@ export default class JSONDatabase implements Database {
     }
 
     async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -475,7 +492,7 @@ export default class JSONDatabase implements Database {
             return undefined;
         }
 
-        const i = proj.mentorLessons.findIndex(i => i.id = mentorLesson);
+        const i = proj.mentorLessons.findIndex(i => i.id == mentorLesson);
         if (i < 0) {
             console.log(`Did not find mentor lesson with ID ${mentorLesson} to edit!`);
             return undefined;
@@ -497,11 +514,12 @@ export default class JSONDatabase implements Database {
     }
 
     async editCourse(project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -509,7 +527,7 @@ export default class JSONDatabase implements Database {
             return undefined;
         }
 
-        const i = proj.courses.findIndex(i => i.id = course);
+        const i = proj.courses.findIndex(i => i.id == course);
         if (i < 0) {
             console.log(`Did not find course with ID ${course} to edit!`);
             close();
@@ -531,13 +549,116 @@ export default class JSONDatabase implements Database {
         return c;
     }
 
-
-    async setStudents(project: ProjectID, students: Student[]): Promise<void> {
+    async deleteProject(project: ProjectID): Promise<void | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
+            return;
+        }
+        return new Promise<void | undefined>(resolve => {
+            unlink(this.getPath(project), err => {
+               if (err) {
+                   console.error(`Encountered error while deleting project ${project}: ${err}`);
+                   close();
+                   resolve(undefined);
+                   return;
+               }
+               close();
+               resolve(undefined);
+            });
+        });
+    }
+
+
+    async deleteStudent(project: ProjectID, student: StudentID): Promise<void | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            close();
+            return undefined;
+        }
+
+        proj.students = proj.students.filter(i => i.id != student);
+        await this.writeProject(project, proj);
+        close();
+        return;
+    }
+
+    async deleteTeacher(project: ProjectID, teacher: TeacherID): Promise<void | undefined> {
         const close = await this.mutex.blockFile(this.getPath(project));
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            close();
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            close();
+            return undefined;
+        }
+
+        proj.teachers = proj.teachers.filter(i => i.id != teacher);
+        await this.writeProject(project, proj);
+        close();
+        return;
+    }
+
+    async deleteCourse(project: ProjectID, course: CourseID): Promise<void | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            close();
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            close();
+            return undefined;
+        }
+
+        proj.courses = proj.courses.filter(i => i.id != course);
+        await this.writeProject(project, proj);
+        close();
+        return;
+    }
+
+    async deleteMentorLesson(project: ProjectID, mentorLesson: MentorLessonID): Promise<void | undefined> {
+        const close = await this.mutex.blockFile(this.getPath(project));
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            close();
+            return undefined;
+        }
+        const proj = await this.readProject(project);
+        if (!proj) {
+            console.warn(`There was an issue with reading project ${project}!`);
+            close();
+            return undefined;
+        }
+
+        proj.mentorLessons = proj.mentorLessons.filter(i => i.id != mentorLesson);
+        await this.writeProject(project, proj);
+        close();
+        return;
+    }
+
+
+    async setStudents(project: ProjectID, students: Student[]): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
+        if (!await this.hasSavedProject(project)) {
+            console.log("The provided project does not exist!");
+            close();
+            return undefined;
+        }
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -553,11 +674,12 @@ export default class JSONDatabase implements Database {
     }
 
     async setTeachers(project: ProjectID, teachers: Teacher[]): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -573,11 +695,12 @@ export default class JSONDatabase implements Database {
     }
 
     async setCourses(project: ProjectID, courses: Course[]): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
@@ -593,11 +716,12 @@ export default class JSONDatabase implements Database {
     }
 
     async setMentorLessons(project: ProjectID, mentorLessons: MentorLesson[]): Promise<void> {
+        const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
+            close();
             return undefined;
         }
-        const close = await this.mutex.blockFile(this.getPath(project));
         const proj = await this.readProject(project);
         if (!proj) {
             console.warn(`There was an issue with reading project ${project}!`);
