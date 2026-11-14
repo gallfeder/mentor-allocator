@@ -13,7 +13,7 @@ export const getProjectTeachersHandler = async (_event: IpcMainInvokeEvent, proj
     return getTeachersOfProject(project);
 }
 
-export const createTeacherHandler = async (_event: IpcMainInvokeEvent, prID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID> => {
+export const createTeacherHandler = async (_event: IpcMainInvokeEvent, prID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID | undefined> => {
     return createTeacherInProject(prID, surname, name, shorthand);
 }
 

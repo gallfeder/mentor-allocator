@@ -28,7 +28,7 @@ export const getProjectHandler = async (_event: IpcMainInvokeEvent, project: Pro
     return getProject(project);
 }
 
-export const createProjectHandler = async (_event: IpcMainInvokeEvent, name: string): Promise<ProjectID> => {
+export const createProjectHandler = async (_event: IpcMainInvokeEvent, name: string): Promise<ProjectID | undefined> => {
     return createProject(name)
 }
 
@@ -36,7 +36,7 @@ export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project
     return editProjectName(project, name);
 }
 
-export const createProjectFromUntisHandler = async (_event: IpcMainInvokeEvent, name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID> => {
+export const createProjectFromUntisHandler = async (_event: IpcMainInvokeEvent, name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID | undefined> => {
     return createProjectWithUntisImport(name, pathGPU001, pathGPU015);
 }
 

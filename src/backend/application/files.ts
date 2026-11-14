@@ -3,17 +3,17 @@ import { dialog } from "electron"
 import { accessSync } from "node:fs";
 import constants from "node:constants";
 
-export const queryUserForFilePath = async (title = "Please select a file!"): Promise<string> => {
+export const queryUserForFilePath = async (title = "Please select a file!"): Promise<string | undefined> => {
     const result = await dialog.showOpenDialog({
         title: title,
     });
     if (result.canceled) {
         console.info("User canceled selecting a file.");
-        return "";
+        return undefined;
     }
 
     const path = result.filePaths[0];
-    return checkFilePermissions(path) ? path : "";
+    return checkFilePermissions(path) ? path : undefined;
 }
 
 const checkFilePermissions = (path: string): boolean => {

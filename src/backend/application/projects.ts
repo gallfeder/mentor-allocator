@@ -23,7 +23,7 @@ export const getAllProjects = (): Promise<ProjectOverview[]> => {
     return db.getProjects();
 }
 
-export const getProject = (id: ProjectID): Promise<Project> => {
+export const getProject = (id: ProjectID): Promise<Project | undefined> => {
     return db.getProject(id);
 }
 
@@ -43,46 +43,41 @@ export const getMentorLessonsOfProject = (project: ProjectID): Promise<MentorLes
     return db.getMentorLessons(project);
 }
 
-export const createProject = async (name: string): Promise<ProjectID> => {
+export const createProject = async (name: string): Promise<ProjectID | undefined> => {
     if (name == "") {
-        return "";
+        return undefined;
     }
     const prID = getUUID();
-    try {
-        await db.createProject(prID, name);
-    } catch {
-        return "";
-    }
-    return prID
+    return await db.createProject(prID, name) == undefined ? prID : undefined;
 }
 
-export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID> => {
+export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => {
     if (prID == "" || name == "" || surname == "" || grade == "") {
-        return -1;
+        return undefined;
     }
 
     return db.createStudent(prID, name, surname, grade);
 }
 
-export const createTeacherInProject = async (prID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID> => {
+export const createTeacherInProject = async (prID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID | undefined> => {
     if (prID == "" || name == "") {
-        return -1;
+        return undefined;
     }
 
     return db.createTeacher(prID, surname, name, shorthand);
 }
 
-export const createMentorLessonInProject = async (prID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID> => {
+export const createMentorLessonInProject = async (prID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID | undefined> => {
     if (prID == "" || lesson < 0 || teacherID < 1) {
-        return -1;
+        return undefined;
     }
 
     return db.createMentorLesson(prID, day, lesson, teacherID);
 }
 
-export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID> => {
+export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID | undefined> => {
     if (prID == "" || teacherID < 1 || grade == "" || name == "") {
-        return -1;
+        return undefined;
     }
 
     return db.createCourse(prID, teacherID, grade, name)
@@ -128,7 +123,7 @@ export const editCourseInProject = async (project: ProjectID, course: CourseID, 
     return db.editCourse(project, course, teacher, grade, name);
 }
 
-export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void> => {
+export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void | undefined> => {
     if (Array.isArray(students)) {
         return db.allocateStudents(project, lesson, students);
     }
@@ -136,23 +131,30 @@ export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLesso
 }
 
 
-export const createProjectWithUntisImport = async (name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID> => {
+export const createProjectWithUntisImport = async (name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID | undefined> => {
     if (name == "" || pathGPU001 == "" || pathGPU015 == "") {
-        return "";
+        return undefined;
     }
 
     const data = await importFromUntisFiles(pathGPU001, pathGPU015);
     if (!data) {
-        return "";
+        return undefined;
     }
     const prID = await createProject(name);
+    if (!prID) {
+        return prID;
+    }
 
-    await Promise.all([
+    const results = await Promise.all([
         db.setStudents(prID, data.students),
         db.setTeachers(prID, data.teacher),
         db.setCourses(prID, data.courses),
         db.setMentorLessons(prID, data.mentorLessons),
     ]);
+    if (results.findIndex(e => e == undefined) != -1) {
+        await db.deleteProject(prID);
+        return undefined;
+    }
 
     return prID;
 }
