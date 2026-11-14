@@ -17,7 +17,7 @@ export const editCourseHandler = async (_event: IpcMainInvokeEvent, project: Pro
     return editCourseInProject(project, course, teacher, grade, name);
 }
 
-export const deleteCourseHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: CourseID): Promise<void | undefined> => {
+export const deleteCourseHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: CourseID): Promise<null | undefined> => {
     return deleteCourse(project, id);
 }
 

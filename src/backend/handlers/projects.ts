@@ -1,7 +1,8 @@
 import {Project, ProjectID, ProjectOverview} from "../../shared/types";
 import {
     createProject,
-    createProjectWithUntisImport, deleteProject,
+    createProjectWithUntisImport,
+    deleteProject,
     editProjectName,
     getAllProjects,
     getProject
@@ -12,18 +13,9 @@ export const getProjectsHandler = (): Promise<ProjectOverview[]> => {
     return getAllProjects();
 }
 
-export const getProjectHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Project> => {
-    if (project == "") {
-        return {
-            id: project,
-            dataVersion: -1,
-            name: "Invalid Project ID!",
-            courses: [],
-            mentorLessons: [],
-            students: [],
-            teachers: [],
-            lastEdit: new Date(Date.now()),
-        }
+export const getProjectHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Project | undefined> => {
+    if (project.length == 0) {
+        return undefined
     }
     return getProject(project);
 }
@@ -32,7 +24,7 @@ export const createProjectHandler = async (_event: IpcMainInvokeEvent, name: str
     return createProject(name)
 }
 
-export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, name: string): Promise<void | undefined> => {
+export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, name: string): Promise<null | undefined> => {
     return editProjectName(project, name);
 }
 
@@ -40,6 +32,6 @@ export const createProjectFromUntisHandler = async (_event: IpcMainInvokeEvent, 
     return createProjectWithUntisImport(name, pathGPU001, pathGPU015);
 }
 
-export const deleteProjectHandler = (_event: IpcMainInvokeEvent, project: ProjectID): Promise<void | undefined> => {
+export const deleteProjectHandler = (_event: IpcMainInvokeEvent, project: ProjectID): Promise<null | undefined> => {
     return deleteProject(project);
 }

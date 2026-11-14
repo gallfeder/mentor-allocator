@@ -12,7 +12,6 @@ import {
     Teacher,
     TeacherID
 } from "../shared/types";
-import {ipcRenderer} from "electron";
 
 
 declare global {
@@ -33,19 +32,19 @@ declare global {
             createStudent: (projectID: ProjectID, name: string, surname: string, grade: string) => Promise<StudentID | undefined>,
             createTeacher: (projectID: ProjectID, surname: string, name?: string, shorthand?: string) => Promise<TeacherID | undefined>,
 
-            editProjectName: (projectID: ProjectID, name: string) => Promise<void | undefined>,
+            editProjectName: (projectID: ProjectID, name: string) => Promise<null | undefined>,
             editStudent: (projectID: ProjectID, studentID: StudentID, name?: string, surname?: string, grade?: string) => Promise<Student | undefined>,
             editTeacher: (projectID: ProjectID, teacherID: TeacherID, surname?: string, name?: string, shorthand?: string) => Promise<Teacher | undefined>,
             editMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID) => Promise<MentorLesson | undefined>,
             editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>,
 
-            allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]) => Promise<void | undefined>,
+            allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]) => Promise<null | undefined>,
             getFilePathFromUser: (title?: string) => Promise<string | undefined>,
 
-            deleteStudent: (projectID: ProjectID, studentID: StudentID) => Promise<void | undefined>,
-            deleteTeacher: (projectID: ProjectID, teacherID: TeacherID) => Promise<void | undefined>,
-            deleteCourse: (projectID: ProjectID, courseID: CourseID) => Promise<void | undefined>,
-            deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<void | undefined>,
+            deleteStudent: (projectID: ProjectID, studentID: StudentID) => Promise<null | undefined>,
+            deleteTeacher: (projectID: ProjectID, teacherID: TeacherID) => Promise<null | undefined>,
+            deleteCourse: (projectID: ProjectID, courseID: CourseID) => Promise<null | undefined>,
+            deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<null | undefined>,
         }
     }
 }

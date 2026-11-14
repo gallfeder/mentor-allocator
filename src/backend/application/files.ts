@@ -1,6 +1,5 @@
-
-import { dialog } from "electron"
-import { accessSync } from "node:fs";
+import {dialog} from "electron"
+import {accessSync} from "node:fs";
 import constants from "node:constants";
 
 export const queryUserForFilePath = async (title = "Please select a file!"): Promise<string | undefined> => {

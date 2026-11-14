@@ -31,18 +31,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
     createStudent: (projectID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => ipcRenderer.invoke("dialog:createStudent", projectID, name, surname, grade),
     createTeacher: (projectID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID | undefined> => ipcRenderer.invoke("dialog:createTeacher", projectID, surname, name, shorthand),
 
-    editProjectName: (projectID: ProjectID, name: string): Promise<void | undefined> => ipcRenderer.invoke("dialog:editProjectName", projectID, name),
+    editProjectName: (projectID: ProjectID, name: string): Promise<null | undefined> => ipcRenderer.invoke("dialog:editProjectName", projectID, name),
     editStudent: (projectID: ProjectID, studentID: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> => ipcRenderer.invoke("dialog:editStudent", projectID, studentID, name, surname, grade),
     editTeacher: (projectID: ProjectID, teacherID: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => ipcRenderer.invoke("dialog:editTeacher", projectID, teacherID, surname, name, shorthand),
     editMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> => ipcRenderer.invoke("dialog:editMentorLesson", projectID, mentorLessonID, day, lesson, teacher),
     editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => ipcRenderer.invoke("dialog:editCourse", projectID, courseID, teacher, grade, name),
 
-    allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]): Promise<void | undefined> => ipcRenderer.invoke("dialog:allocateStudents", projectID, lessonID, studentIDs),
+    allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]): Promise<null | undefined> => ipcRenderer.invoke("dialog:allocateStudents", projectID, lessonID, studentIDs),
     getFilePathFromUser: (title?: string): Promise<string | undefined> => ipcRenderer.invoke("dialog:getFilePathFromUser", title),
 
-    deleteProject: (projectID: ProjectID): Promise<void | undefined> => ipcRenderer.invoke("dialog:deleteProject", projectID),
-    deleteStudent: (projectID: ProjectID, studentID: StudentID): Promise<void | undefined> => ipcRenderer.invoke("dialog:deleteStudent", projectID, studentID),
-    deleteTeacher: (projectID: ProjectID, teacherID: TeacherID): Promise<void | undefined> => ipcRenderer.invoke("dialog:deleteTeacher", projectID, teacherID),
-    deleteCourse: (projectID: ProjectID, courseID: CourseID): Promise<void | undefined> => ipcRenderer.invoke("dialog:deleteCourse", projectID, courseID),
-    deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID): Promise<void | undefined> => ipcRenderer.invoke("dialog:deleteMentorLesson", projectID, mentorLessonID),
+    deleteProject: (projectID: ProjectID): Promise<null | undefined> => ipcRenderer.invoke("dialog:deleteProject", projectID),
+    deleteStudent: (projectID: ProjectID, studentID: StudentID): Promise<null | undefined> => ipcRenderer.invoke("dialog:deleteStudent", projectID, studentID),
+    deleteTeacher: (projectID: ProjectID, teacherID: TeacherID): Promise<null | undefined> => ipcRenderer.invoke("dialog:deleteTeacher", projectID, teacherID),
+    deleteCourse: (projectID: ProjectID, courseID: CourseID): Promise<null | undefined> => ipcRenderer.invoke("dialog:deleteCourse", projectID, courseID),
+    deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID): Promise<null | undefined> => ipcRenderer.invoke("dialog:deleteMentorLesson", projectID, mentorLessonID),
 });

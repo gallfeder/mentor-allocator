@@ -1,7 +1,8 @@
 import {MentorLessonID, ProjectID, Student, StudentID} from "../../shared/types";
 import {
     allocateStudentsToLesson,
-    createStudentInProject, deleteProject, deleteStudent,
+    createStudentInProject,
+    deleteStudent,
     editStudentInProject,
     getStudentsOfProject
 } from "../application/projects";
@@ -22,10 +23,10 @@ export const editStudentHandler = async (_event: IpcMainInvokeEvent, project: Pr
     return editStudentInProject(project, student, name, surname, grade);
 }
 
-export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void | undefined> => {
+export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<null | undefined> => {
     return allocateStudentsToLesson(project, lesson, students);
 }
 
-export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<void | undefined> => {
+export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<null | undefined> => {
     return deleteStudent(project, id);
 }

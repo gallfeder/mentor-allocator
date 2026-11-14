@@ -48,7 +48,8 @@ export const createProject = async (name: string): Promise<ProjectID | undefined
         return undefined;
     }
     const prID = getUUID();
-    return await db.createProject(prID, name) == undefined ? prID : undefined;
+    const result = await db.createProject(prID, name)
+    return result == null ? prID : undefined;
 }
 
 export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => {
@@ -83,7 +84,7 @@ export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherI
     return db.createCourse(prID, teacherID, grade, name)
 }
 
-export const editProjectName = async (project: ProjectID, name: string): Promise<void | undefined> => {
+export const editProjectName = async (project: ProjectID, name: string): Promise<null | undefined> => {
     return db.editProjectName(project, name);
 }
 
@@ -123,7 +124,7 @@ export const editCourseInProject = async (project: ProjectID, course: CourseID, 
     return db.editCourse(project, course, teacher, grade, name);
 }
 
-export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void | undefined> => {
+export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<null | undefined> => {
     if (Array.isArray(students)) {
         return db.allocateStudents(project, lesson, students);
     }
@@ -142,6 +143,7 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
     }
     const prID = await createProject(name);
     if (!prID) {
+        console.log("Failed to create project for Untis import!");
         return prID;
     }
 
@@ -151,7 +153,8 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
         db.setCourses(prID, data.courses),
         db.setMentorLessons(prID, data.mentorLessons),
     ]);
-    if (results.findIndex(e => e == undefined) != -1) {
+    if (results.findIndex(e => e != null) != -1) {
+        console.log("Failed to set data for Untis import!");
         await db.deleteProject(prID);
         return undefined;
     }
@@ -159,35 +162,35 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
     return prID;
 }
 
-export const deleteProject = async (prID: ProjectID): Promise<void | undefined> => {
+export const deleteProject = async (prID: ProjectID): Promise<null | undefined> => {
     if (prID.length == 0) {
         return;
     }
     return db.deleteProject(prID);
 }
 
-export const deleteStudent = async (prID: ProjectID, id: StudentID): Promise<void | undefined> => {
+export const deleteStudent = async (prID: ProjectID, id: StudentID): Promise<null | undefined> => {
     if (prID.length == 0) {
         return;
     }
     return db.deleteStudent(prID, id);
 }
 
-export const deleteTeacher = async (prID: ProjectID, id: TeacherID): Promise<void | undefined> => {
+export const deleteTeacher = async (prID: ProjectID, id: TeacherID): Promise<null | undefined> => {
     if (prID.length == 0) {
         return;
     }
     return db.deleteTeacher(prID, id);
 }
 
-export const deleteCourse = async (prID: ProjectID, id: CourseID): Promise<void | undefined> => {
+export const deleteCourse = async (prID: ProjectID, id: CourseID): Promise<null | undefined> => {
     if (prID.length == 0) {
         return;
     }
     return db.deleteCourse(prID, id);
 }
 
-export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): Promise<void | undefined> => {
+export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): Promise<null | undefined> => {
     if (prID.length == 0) {
         return;
     }

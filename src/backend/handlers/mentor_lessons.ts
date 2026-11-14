@@ -1,6 +1,7 @@
 import {Day, MentorLesson, MentorLessonID, ProjectID, TeacherID} from "../../shared/types";
 import {
-    createMentorLessonInProject, deleteMentorLesson,
+    createMentorLessonInProject,
+    deleteMentorLesson,
     editMentorLessonInProject,
     getMentorLessonsOfProject
 } from "../application/projects";
@@ -21,7 +22,7 @@ export const editMentorLessonHandler = async (_event: IpcMainInvokeEvent, projec
     return editMentorLessonInProject(project, mentorLesson, day, lesson, teacher);
 }
 
-export const deleteMentorLessonHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: MentorLessonID): Promise<void | undefined> => {
+export const deleteMentorLessonHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: MentorLessonID): Promise<null | undefined> => {
     return deleteMentorLesson(project, id);
 }
 
