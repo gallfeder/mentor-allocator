@@ -27,13 +27,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
     createProject: (name: string): Promise<ProjectID | undefined> => ipcRenderer.invoke("dialog:createProject", name),
     createProjectFromUntis: (name: string, pathToGPU001: string, pathToGPU015: string): Promise<ProjectID | undefined> => ipcRenderer.invoke("dialog:createProjectFromUntis", name, pathToGPU001, pathToGPU015),
     createCourse: (projectID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID | undefined> => ipcRenderer.invoke("dialog:createCourse", projectID, teacherID, grade, name),
-    createMentorLesson: (projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID | undefined> => ipcRenderer.invoke("dialog:createMentorLesson", projectID, day, lesson, teacherID),
+    createMentorLesson: (projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID, grade: string): Promise<MentorLessonID | undefined> => ipcRenderer.invoke("dialog:createMentorLesson", projectID, day, lesson, teacherID, grade),
     createStudent: (projectID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => ipcRenderer.invoke("dialog:createStudent", projectID, name, surname, grade),
     createTeacher: (projectID: ProjectID, surname: string, name?: string, shorthand?: string): Promise<TeacherID | undefined> => ipcRenderer.invoke("dialog:createTeacher", projectID, surname, name, shorthand),
 
     editProjectName: (projectID: ProjectID, name: string): Promise<boolean> => ipcRenderer.invoke("dialog:editProjectName", projectID, name),
     editStudent: (projectID: ProjectID, studentID: StudentID, name?: string, surname?: string, grade?: string): Promise<Student | undefined> => ipcRenderer.invoke("dialog:editStudent", projectID, studentID, name, surname, grade),
-    editTeacher: (projectID: ProjectID, teacherID: TeacherID, surname?: string, name?: string, shorthand?: string): Promise<Teacher | undefined> => ipcRenderer.invoke("dialog:editTeacher", projectID, teacherID, surname, name, shorthand),
+    editTeacher: (projectID: ProjectID, teacherID: TeacherID, surname?: string, name?: string, shorthand?: string, grade?: string): Promise<Teacher | undefined> => ipcRenderer.invoke("dialog:editTeacher", projectID, teacherID, surname, name, shorthand, grade),
     editMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> => ipcRenderer.invoke("dialog:editMentorLesson", projectID, mentorLessonID, day, lesson, teacher),
     editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => ipcRenderer.invoke("dialog:editCourse", projectID, courseID, teacher, grade, name),
 

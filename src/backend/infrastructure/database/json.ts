@@ -154,7 +154,7 @@ export default class JSONDatabase implements Database {
         return highestID + 1;
     };
 
-    async createMentorLesson(project: ProjectID, day: Day, lesson: number, teacher: TeacherID): Promise<MentorLessonID | undefined> {
+    async createMentorLesson(project: ProjectID, day: Day, lesson: number, teacher: TeacherID, grade: string): Promise<MentorLessonID | undefined> {
         const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             close();
@@ -170,7 +170,7 @@ export default class JSONDatabase implements Database {
         proj.mentorLessons.push({
             id: highestID + 1,
             day: day,
-            grade: "",
+            grade: grade,
             lesson: lesson,
             teacherId: teacher,
         });
@@ -481,7 +481,7 @@ export default class JSONDatabase implements Database {
         return t;
     }
 
-    async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> {
+    async editMentorLesson(project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID, grade?: string): Promise<MentorLesson | undefined> {
         const close = await this.mutex.blockFile(this.getPath(project));
         if (!await this.hasSavedProject(project)) {
             console.log("The provided project does not exist!");
@@ -509,6 +509,9 @@ export default class JSONDatabase implements Database {
         }
         if (teacher) {
             m.teacherId = teacher;
+        }
+        if (grade) {
+            m.grade = grade;
         }
 
         await this.writeProject(project, proj);
