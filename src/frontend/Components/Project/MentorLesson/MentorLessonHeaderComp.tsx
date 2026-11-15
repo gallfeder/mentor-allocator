@@ -23,23 +23,36 @@ const MentorLessonHeaderComp = (props: Props) => {
             return "No teacher assigned...";
         }
 
-        let teacherName: string = `${teacher.name}, ${teacher.surname}`;
-        if (teacher.shorthand.length >= 0) {
-            teacherName += ` (${teacher.shorthand})`;
+        const hasName: boolean = Boolean(teacher.name);
+        const hasSurname: boolean = Boolean(teacher.surname);
+        const hasShorthand: boolean = Boolean(teacher.shorthand);
+
+        let namePart: string = "";
+
+        if (hasName && hasSurname) {
+            namePart = `${teacher.name}, ${teacher.surname}`;
+        } else if (hasName) {
+            namePart = teacher.name;
+        } else if (hasSurname) {
+            namePart = teacher.surname;
         }
 
-        return teacherName;
+        if (!namePart) {
+            return hasShorthand ? `(${teacher.shorthand})` : "No teacher assigned...";
+        }
+
+        return hasShorthand ? `${namePart} (${teacher.shorthand})` : namePart;
     }
 
     function toDayText(day: Day): string {
         let value: string = "";
-        if (day === 0) value = "MO";
-        else if (day === 1) value = "DI";
-        else if (day === 2) value = "MI";
-        else if (day === 3) value = "DO";
-        else if (day === 4) value = "FR";
-        else if (day === 5) value = "SA";
-        else if (day === 6) value = "SO";
+        if (day == Day.Monday) value = "MO";
+        else if (day == Day.Tuesday) value = "DI";
+        else if (day == Day.Wednesday) value = "MI";
+        else if (day == Day.Thursday) value = "DO";
+        else if (day == Day.Friday) value = "FR";
+        else if (day == Day.Saturday) value = "SA";
+        else if (day == Day.Sunday) value = "SO";
         return value;
     }
 

@@ -4,6 +4,7 @@ import MentorLessonHeaderComp from "./MentorLessonHeaderComp";
 import {useDroppable} from "@dnd-kit/react";
 import {CollisionPriority} from "@dnd-kit/abstract";
 import MentorLessonDropTargetComp from "./MentorLessonDropTargetComp";
+import "./MentorLessons.css";
 
 interface Props {
     mentorLesson: MentorLesson;

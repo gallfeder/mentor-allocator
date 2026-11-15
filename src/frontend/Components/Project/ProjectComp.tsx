@@ -3,6 +3,7 @@ import {MallocState, StateProject} from "../../Models/States/MallocState";
 import {useParams} from "react-router-dom";
 import {MentorLesson, ProjectId} from "../../../shared/types";
 import MentorLessonComp from "./MentorLesson/MentorLessonComp";
+import MentorLessonCreateComp from "./MentorLesson/Create/MentorLessonCreateComp";
 
 const ProjectComp = () => {
 
@@ -31,6 +32,7 @@ const ProjectComp = () => {
                 {mentorLessons.map((mentorLesson: MentorLesson) => {
                     return <MentorLessonComp key={mentorLesson.id} mentorLesson={mentorLesson}/>
                 })}
+                <MentorLessonCreateComp/>
             </div>
         </div>
     )

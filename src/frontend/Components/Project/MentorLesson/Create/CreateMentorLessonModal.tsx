@@ -2,7 +2,7 @@ import Modal from "../../../Generic/Modal/Modal";
 import {MallocState, StateProject} from "../../../../Models/States/MallocState";
 import {useMallocState} from "../../../../Models/States/Hooks";
 import {useParams} from "react-router-dom";
-import {Day, ProjectId, Teacher, TeacherId} from "../../../../../shared/types";
+import {Course, Day, ProjectId, Teacher, TeacherId} from "../../../../../shared/types";
 import {RefObject, useRef} from "react";
 import {CreateMentorLessonPayload} from "./MentorLessonCreateComp";
 
@@ -14,7 +14,7 @@ interface Props {
 const CreateMentorLessonModal = (props: Props) => {
 
     const mallocState: MallocState = useMallocState();
-    const { projectId } = useParams();
+    const { projectId, grade } = useParams();
     const teacherSelect: RefObject<HTMLSelectElement | null> = useRef<HTMLSelectElement>(null);
     const daySelect: RefObject<HTMLSelectElement | null> = useRef<HTMLSelectElement>(null);
 
@@ -37,6 +37,22 @@ const CreateMentorLessonModal = (props: Props) => {
             day: day
         }
         props.createMentorLesson(createMentorLessonPayload);
+    }
+
+    function getContextRelevantTeachers(): Teacher[] {
+        if (!stateProject) {
+            return [];
+        }
+
+        const contextRelevantTeacherIds: TeacherId[] = Array.from(
+            new Set(
+                Array.from(stateProject.courses.values())
+                    .filter((course: Course) => course.grade === grade)
+                    .map((course: Course) => course.teacher)
+            )
+        );
+
+        return contextRelevantTeacherIds.map((teacherId: TeacherId) => stateProject.teachers.get(teacherId)!);
     }
 
     return (
@@ -63,7 +79,7 @@ const CreateMentorLessonModal = (props: Props) => {
                     <div className="teacher-selector">
                         <p>Teacher</p>
                         <select ref={teacherSelect}>
-                            {Array.from(stateProject.teachers.values()).map((teacher: Teacher) => {
+                            {getContextRelevantTeachers().map((teacher: Teacher) => {
                                 return <option key={teacher.id} value={teacher.id}>{teacher.shorthand}</option>
                             })}
                         </select>
