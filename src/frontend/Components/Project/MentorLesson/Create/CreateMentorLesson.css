@@ -1,0 +1,65 @@
+.create-mentor-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .general-information-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .teacher-selector {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+    }
+
+    .time-information-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .day-selector {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+    }
+
+    select {
+        background-color: var(--bg-x-light);
+        border-radius: 6px;
+        border: 1px solid var(--bg-xx-light);
+        padding: 6px;
+        flex: 1;
+    }
+}
+
+.create-mentor-modal-header {
+
+}
+
+.create-mentor-modal-footer {
+    display: flex;
+    gap: 1rem;
+}
+
+.modal-section-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .section-title {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .line {
+        flex: 1;
+        border: none;
+        border-top: 3px solid #e0e0e0;
+        margin: 0;
+    }
+}
