@@ -1,4 +1,4 @@
-import {Course, CourseID, MentorLessonID, Project, StudentId, StudentID, TeacherID} from "../../shared/types";
+import {Course, MentorLessonID, Project, StudentId, StudentID, TeacherID} from "../../shared/types";
 
 interface StudentAllocation {
     student: StudentID
@@ -12,12 +12,16 @@ interface ProposedMentorLessonAllocation {
     untouchableAllocations: number;
 }
 
+const size = (lesson: ProposedMentorLessonAllocation): number => {
+    return lesson.untouchableAllocations + lesson.studentIDs.length;
+}
+
 export const getAutomaticAllocations = (project: Project): StudentAllocation[] => {
     const {studentTeachers, teacherStudents, unallocatedStudents, targetStudentsPerLesson, mentorLessons} = formatData(project);
 
     const getHighestPriorityMentorLesson = (): ProposedMentorLessonAllocation => {
         const priorities: {m: ProposedMentorLessonAllocation, priority: number}[] = [];
-        for (const [, ml] of mentorLessons) {
+        for (const [,ml] of mentorLessons) {
             const students = (teacherStudents.get(ml.teacherID) ?? []).filter(s => unallocatedStudents.has(s));
             priorities.push({
                 m: ml,
@@ -25,7 +29,7 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
                     unallocatedStudents.size,
                     students.length,
                     targetStudentsPerLesson,
-                    ml.untouchableAllocations + ml.studentIDs.length
+                    size(ml)
                 ),
             });
         }
@@ -43,8 +47,8 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
                 continue;
             }
 
-            for (const [, ml] of mentorLessons) {
-                if (ml.studentIDs.length + ml.untouchableAllocations < targetStudentsPerLesson && teachers.has(ml.teacherID)) {
+            for (const [,ml] of mentorLessons) {
+                if (size(ml) < targetStudentsPerLesson && teachers.has(ml.teacherID)) {
                     return true;
                 }
             }
@@ -59,12 +63,40 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
 
     while (canAllocateMoreStudents()) {
         const ml = getHighestPriorityMentorLesson();
-        const allocatableStudents = (teacherStudents.get(ml.teacherID) ?? []).filter(s => unallocatedStudents.has(s));
-        const studentID = allocatableStudents.shift();
+        const allocatableStudentIDs = (teacherStudents.get(ml.teacherID) ?? []).filter(s => unallocatedStudents.has(s));
+        const studentID = allocatableStudentIDs.shift();
         if (!studentID) {
             continue;
         }
         allocateStudentToLesson(studentID, ml);
+    }
+
+    optimiseAllocations(mentorLessons, studentTeachers, targetStudentsPerLesson);
+
+    const toAllocate = unallocatedStudents.size;
+    for (let i = 0; i < toAllocate; i++) {
+        const maxSize = targetStudentsPerLesson + i;
+
+        for (const [,mentorLesson] of mentorLessons) {
+            if (size(mentorLesson) > maxSize) {
+                continue;
+            }
+
+            const students = teacherStudents.get(mentorLesson.teacherID);
+            if (!students) {
+                continue;
+            }
+            for (const student of students) {
+                if (size(mentorLesson) > maxSize) {
+                    break;
+                }
+                if (!unallocatedStudents.has(student)) {
+                    continue;
+                }
+
+                allocateStudentToLesson(student, mentorLesson);
+            }
+        }
     }
 
     const allocations: StudentAllocation[] = [];
@@ -75,6 +107,39 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
         }));
     }
     return allocations;
+}
+
+const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLessonAllocation>, studentTeachers: Map<StudentID, TeacherID[]>, targetStudents: number) => {
+    const orderedLessons = Array.from(mentorLessons, ([,lesson]) => lesson).sort((a, b) => (a.untouchableAllocations + a.studentIDs.length) - (b.untouchableAllocations + b.studentIDs.length));
+
+
+    for (let lessonIndex = 0; lessonIndex < orderedLessons.length; lessonIndex++) {
+        const lesson = orderedLessons[lessonIndex];
+
+        if (size(lesson) > targetStudents) {
+            continue;
+        }
+
+        for (let i = lessonIndex; i < orderedLessons.length; i++) {
+            if (size(lesson) > targetStudents) {
+                break;
+            }
+
+            for (const student of orderedLessons[i].studentIDs) {
+                if (size(lesson) > targetStudents) {
+                    break;
+                }
+
+                const possibleTeachers = studentTeachers.get(student)
+                if (!possibleTeachers || possibleTeachers.findIndex(e => e == lesson.teacherID) == -1) {
+                    continue;
+                }
+
+                lesson.studentIDs.push(student);
+                orderedLessons[i].studentIDs = orderedLessons[i].studentIDs.filter(id => id != student);
+            }
+        }
+    }
 }
 
 export const getAllocationPriority = (unallocatedStudents: number, allocatable: number, studentsPerLesson: number, allocated: number) => {
@@ -110,6 +175,14 @@ const formatData = (project: Project) => {
     const targetStudentsPerLesson = Math.ceil(project.students.length / project.mentorLessons.length);
     const {studentTeachers, teacherStudents} = extractStudentDataFromCourses(project.courses, unallocatedStudents);
 
+
+    for (const student of unallocatedStudents) {
+        const teacherIDs = studentTeachers.get(student);
+        if (!teacherIDs || teacherIDs.length == 0) {
+            unallocatedStudents.delete(student);
+        }
+    }
+
     return {
         mentorLessons,
         unallocatedStudents,
@@ -121,18 +194,12 @@ const formatData = (project: Project) => {
 
 
 interface StudentDataReturnType {
-    studentCourses: Map<StudentID, CourseID[]>;
-    courseStudents: Map<CourseID, StudentID[]>;
-    
     studentTeachers: Map<StudentID, TeacherID[]>;
     teacherStudents: Map<TeacherID, StudentID[]>;
 }
 
 export const extractStudentDataFromCourses = (courses: Course[], students = new Set<StudentID>()): StudentDataReturnType => {
     const data: StudentDataReturnType = {
-        studentCourses: new Map<StudentID, CourseID[]>(),
-        courseStudents: new Map<CourseID, StudentID[]>(), 
-        
         studentTeachers: new Map<StudentID, TeacherID[]>(), 
         teacherStudents: new Map<TeacherID, StudentID[]>(),
     }
@@ -145,20 +212,6 @@ export const extractStudentDataFromCourses = (courses: Course[], students = new 
         for (const sID of course.students) {
             if (!students.has(sID)) {
                 continue;
-            }
-
-            const sc = data.studentCourses.get(sID);
-            if (!sc) {
-                data.studentCourses.set(sID, [course.id]);
-            } else {
-                sc.push(course.id);
-            }
-
-            const c = data.courseStudents.get(course.id);
-            if (!c) {
-                data.courseStudents.set(course.id, [sID]);
-            } else {
-                c.push(sID);
             }
 
             const st = data.studentTeachers.get(sID);
