@@ -2,10 +2,11 @@ import {MentorLessonID, ProjectID, Student, StudentID} from "../../shared/types"
 import {
     allocateStudentsToLesson,
     createStudentInProject,
+    deleteStudent,
     editStudentInProject,
     getStudentsOfProject
 } from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectStudentsHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Student[]> => {
     if (project == "") {
@@ -14,7 +15,7 @@ export const getProjectStudentsHandler = async (_event: IpcMainInvokeEvent, proj
     return getStudentsOfProject(project);
 }
 
-export const createStudentHandler = async (_event: IpcMainInvokeEvent, prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID> => {
+export const createStudentHandler = async (_event: IpcMainInvokeEvent, prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => {
     return createStudentInProject(prID, name, surname, grade);
 }
 
@@ -22,7 +23,10 @@ export const editStudentHandler = async (_event: IpcMainInvokeEvent, project: Pr
     return editStudentInProject(project, student, name, surname, grade);
 }
 
-export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<void> => {
+export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID, lesson: MentorLessonID, students: StudentID | StudentID[]): Promise<boolean> => {
     return allocateStudentsToLesson(project, lesson, students);
 }
 
+export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<boolean> => {
+    return deleteStudent(project, id);
+}

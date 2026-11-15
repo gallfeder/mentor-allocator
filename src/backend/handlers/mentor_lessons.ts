@@ -1,10 +1,11 @@
 import {Day, MentorLesson, MentorLessonID, ProjectID, TeacherID} from "../../shared/types";
 import {
     createMentorLessonInProject,
+    deleteMentorLesson,
     editMentorLessonInProject,
     getMentorLessonsOfProject
 } from "../application/projects";
-import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+import {IpcMainInvokeEvent} from "electron";
 
 export const getProjectMentorLessonsHandler = async (_event: IpcMainInvokeEvent, project: ProjectID): Promise<MentorLesson[]> => {
     if (project == "") {
@@ -13,10 +14,15 @@ export const getProjectMentorLessonsHandler = async (_event: IpcMainInvokeEvent,
     return getMentorLessonsOfProject(project);
 }
 
-export const createMentorLessonHandler = async (_event: IpcMainInvokeEvent, projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID> => {
-    return createMentorLessonInProject(projectID, day, lesson, teacherID);
+export const createMentorLessonHandler = async (_event: IpcMainInvokeEvent, projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID, grade: string): Promise<MentorLessonID | undefined> => {
+    return createMentorLessonInProject(projectID, day, lesson, teacherID, grade);
 }
 
-export const editMentorLessonHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> =>{
-    return editMentorLessonInProject(project, mentorLesson, day, lesson, teacher);
+export const editMentorLessonHandler = async (_event: IpcMainInvokeEvent, project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID, grade?: string): Promise<MentorLesson | undefined> =>{
+    return editMentorLessonInProject(project, mentorLesson, day, lesson, teacher, grade);
 }
+
+export const deleteMentorLessonHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: MentorLessonID): Promise<boolean> => {
+    return deleteMentorLesson(project, id);
+}
+

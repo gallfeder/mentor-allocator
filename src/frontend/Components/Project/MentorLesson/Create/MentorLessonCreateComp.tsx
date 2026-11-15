@@ -20,13 +20,16 @@ const MentorLessonCreateComp = () => {
     const { projectId, grade } = useParams();
 
     async function createMentorLesson(payload: CreateMentorLessonPayload): Promise<void> {
-        setIsCreating(false);
+        if (!grade) {
+            return;
+        }
 
         const stateProject: StateProject | undefined = mallocState.projects.get(projectId as ProjectId);
         if (!stateProject) {
             return;
         }
 
+        setIsCreating(false);
         const predictedMentorLessonId: MentorLessonId = Date.now() * -1;
 
         mallocDispatch!({ type: "CREATE_MENTOR_LESSON_OPTIMISTIC", payload: {
@@ -39,10 +42,10 @@ const MentorLessonCreateComp = () => {
             }
         });
 
-        const mentorLessonId: MentorLessonId = await window.electronAPI.createMentorLesson(
-            projectId as ProjectId, Number(payload.day), 0, payload.teacherId
+        const mentorLessonId: MentorLessonId | undefined = await window.electronAPI.createMentorLesson(
+            projectId as ProjectId, Number(payload.day), 0, payload.teacherId, grade
         );
-        if (mentorLessonId > 0) {
+        if (mentorLessonId) {
             mallocDispatch!({ type: "CREATE_MENTOR_LESSON_SUCCEEDED", payload: {
                     projectId: projectId as ProjectId,
                     predictedMentorLessonId: predictedMentorLessonId,
