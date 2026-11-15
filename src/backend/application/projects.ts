@@ -68,12 +68,12 @@ export const createTeacherInProject = async (prID: ProjectID, surname: string, n
     return db.createTeacher(prID, surname, name, shorthand);
 }
 
-export const createMentorLessonInProject = async (prID: ProjectID, day: Day, lesson: number, teacherID: TeacherID): Promise<MentorLessonID | undefined> => {
-    if (prID == "" || lesson < 0 || teacherID < 1) {
+export const createMentorLessonInProject = async (prID: ProjectID, day: Day, lesson: number, teacherID: TeacherID, grade: string): Promise<MentorLessonID | undefined> => {
+    if (prID == "" || teacherID < 1) {
         return undefined;
     }
 
-    return db.createMentorLesson(prID, day, lesson, teacherID);
+    return db.createMentorLesson(prID, day, lesson, teacherID, grade);
 }
 
 export const createCourseInProject = async (prID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID | undefined> => {
@@ -106,13 +106,13 @@ export const editTeacherInProject = async (project: ProjectID, teacher: TeacherI
     return db.editTeacher(project, teacher, surname, name, shorthand);
 }
 
-export const editMentorLessonInProject = async (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID): Promise<MentorLesson | undefined> => {
-    if (!day && !lesson && !teacher) {
+export const editMentorLessonInProject = async (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID, grade?: string): Promise<MentorLesson | undefined> => {
+    if (!day && !lesson && !teacher && !grade) {
         console.log("Nothing to edit was provided!");
         return undefined;
     }
 
-    return db.editMentorLesson(project, mentorLesson, day, lesson, teacher);
+    return db.editMentorLesson(project, mentorLesson, day, lesson, teacher, grade);
 }
 
 export const editCourseInProject = async (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => {

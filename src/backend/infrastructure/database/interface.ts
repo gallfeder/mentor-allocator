@@ -17,7 +17,7 @@ export default interface Database {
     createProject: (identifier: ProjectID, name: string) => Promise<boolean>;
     createStudent: (project: ProjectID, name: string, surname: string, grade: string) => Promise<StudentID | undefined>;
     createTeacher: (project: ProjectID, surname: string, name?: string, shorthand?: string) => Promise<TeacherID | undefined>;
-    createMentorLesson: (project: ProjectID, day: Day, lesson: number, teacher: TeacherID) => Promise<MentorLessonID | undefined>;
+    createMentorLesson: (project: ProjectID, day: Day, lesson: number, teacher: TeacherID, grade: string) => Promise<MentorLessonID | undefined>;
     createCourse: (project: ProjectID, teacher: TeacherID, grade: string, name: string) => Promise<CourseID | undefined>;
 
     allocateStudent: (project: ProjectID, lesson: MentorLessonID, student: StudentID) => Promise<boolean>;
@@ -34,7 +34,7 @@ export default interface Database {
 
     editStudent: (project: ProjectID, student: StudentID, name?: string, surname?: string, grade?: string) => Promise<Student | undefined>;
     editTeacher: (project: ProjectID, teacher: TeacherID, surname?: string, name?: string, shorthand?: string) => Promise<Teacher | undefined>;
-    editMentorLesson: (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID) => Promise<MentorLesson | undefined>;
+    editMentorLesson: (project: ProjectID, mentorLesson: MentorLessonID, day?: Day, lesson?: number, teacher?: TeacherID, grade?: string) => Promise<MentorLesson | undefined>;
     editCourse: (project: ProjectID, course: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>;
 
     setStudents: (project: ProjectID, students: Student[]) => Promise<boolean>;
