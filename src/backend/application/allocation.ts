@@ -1,9 +1,4 @@
-import {Course, MentorLessonID, Project, StudentId, StudentID, TeacherID} from "../../shared/types";
-
-interface StudentAllocation {
-    student: StudentID
-    allocation: MentorLessonID
-}
+import {Course, MentorLessonID, Project, StudentAllocation, StudentId, StudentID, TeacherID} from "../../shared/types";
 
 interface ProposedMentorLessonAllocation {
     mentorLessonID: MentorLessonID;
@@ -18,6 +13,17 @@ const size = (lesson: ProposedMentorLessonAllocation): number => {
 
 export const getAutomaticAllocations = (project: Project): StudentAllocation[] => {
     const {studentTeachers, teacherStudents, unallocatedStudents, targetStudentsPerLesson, mentorLessons} = formatData(project);
+
+    const getAllocations = (): StudentAllocation[] => {
+        const allocations: StudentAllocation[] = [];
+        for (const [mlID,ml] of mentorLessons) {
+            ml.studentIDs.forEach(sID => allocations.push({
+                student: sID,
+                allocation: mlID
+            }));
+        }
+        return allocations;
+    }
 
     const getHighestPriorityMentorLesson = (): ProposedMentorLessonAllocation => {
         const priorities: {m: ProposedMentorLessonAllocation, priority: number}[] = [];
@@ -70,8 +76,15 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
         }
         allocateStudentToLesson(studentID, ml);
     }
+    if (unallocatedStudents.size == 0) {
+        return getAllocations();
+    }
 
     optimiseAllocations(mentorLessons, studentTeachers, targetStudentsPerLesson);
+
+    if (unallocatedStudents.size == 0) {
+        return getAllocations();
+    }
 
     const toAllocate = unallocatedStudents.size;
     for (let i = 0; i < toAllocate; i++) {
@@ -99,14 +112,7 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
         }
     }
 
-    const allocations: StudentAllocation[] = [];
-    for (const [mlID,ml] of mentorLessons) {
-        ml.studentIDs.forEach(sID => allocations.push({
-            student: sID,
-            allocation: mlID
-        }));
-    }
-    return allocations;
+    return getAllocations();
 }
 
 const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLessonAllocation>, studentTeachers: Map<StudentID, TeacherID[]>, targetStudents: number) => {
