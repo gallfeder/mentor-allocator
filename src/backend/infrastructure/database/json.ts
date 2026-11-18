@@ -592,6 +592,11 @@ export default class JSONDatabase implements Database {
         }
 
         proj.students = proj.students.filter(i => i.id != student);
+
+        for (const course of proj.courses) {
+            course.students = course.students.filter(sID => sID != student);
+        }
+
         await this.writeProject(project, proj);
         close();
         return true;
@@ -612,6 +617,18 @@ export default class JSONDatabase implements Database {
         }
 
         proj.teachers = proj.teachers.filter(i => i.id != teacher);
+        for (const ml of proj.mentorLessons) {
+            if (ml.teacherId == teacher) {
+                ml.teacherId = -1;
+            }
+        }
+
+        for (const course of proj.courses) {
+            if (course.teacher == teacher) {
+                course.teacher = -1;
+            }
+        }
+
         await this.writeProject(project, proj);
         close();
         return true;
@@ -652,6 +669,11 @@ export default class JSONDatabase implements Database {
         }
 
         proj.mentorLessons = proj.mentorLessons.filter(i => i.id != mentorLesson);
+        for (const student of proj.students) {
+            if (student.mentorLessonId == mentorLesson) {
+                student.mentorLessonId = -1;
+            }
+        }
         await this.writeProject(project, proj);
         close();
         return true;
