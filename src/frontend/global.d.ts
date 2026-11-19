@@ -39,6 +39,7 @@ declare global {
             editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string) => Promise<Course | undefined>,
 
             allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]) => Promise<boolean>,
+            automaticallyAllocateStudents: (projectID: ProjectID) => Promise<Student[] | undefined>,
             getFilePathFromUser: (title?: string) => Promise<string | undefined>,
 
             deleteStudent: (projectID: ProjectID, studentID: StudentID) => Promise<boolean>,

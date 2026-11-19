@@ -740,7 +740,7 @@ export default class JSONDatabase implements Database {
 
         await this.writeProject(project, proj);
         close();
-        return false;
+        return true;
     }
 
     async setMentorLessons(project: ProjectID, mentorLessons: MentorLesson[]): Promise<boolean> {

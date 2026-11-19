@@ -9,7 +9,7 @@ import {
   getProjectsHandler
 } from "./backend/handlers/projects";
 import {
-  allocateStudentsHandler,
+  allocateStudentsHandler, automaticallyAllocateStudentsHandler,
   createStudentHandler, deleteStudentHandler,
   editStudentHandler,
   getProjectStudentsHandler
@@ -84,6 +84,7 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:editTeacher", editTeacherHandler);
 
   ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
+  ipcMain.handle("dialog:automaticallyAllocateStudents", automaticallyAllocateStudentsHandler)
   ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
 
   ipcMain.handle("dialog:deleteProject", getProjectHandler);

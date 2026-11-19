@@ -16,6 +16,7 @@ import JSONDatabase from "../infrastructure/database/json";
 import Database from "../infrastructure/database/interface";
 import {v4 as getUUID} from 'uuid';
 import {importFromUntisFiles} from "../infrastructure/import/untis";
+import {getAutomaticAllocations} from "./allocation";
 
 const db: Database = new JSONDatabase();
 
@@ -49,7 +50,7 @@ export const createProject = async (name: string): Promise<ProjectID | undefined
     }
     const prID = getUUID();
     const result = await db.createProject(prID, name)
-    return result == null ? prID : undefined;
+    return result ? prID : undefined;
 }
 
 export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => {
@@ -153,8 +154,9 @@ export const createProjectWithUntisImport = async (name: string, pathGPU001: str
         db.setCourses(prID, data.courses),
         db.setMentorLessons(prID, data.mentorLessons),
     ]);
-    if (results.findIndex(e => e != null) != -1) {
+    if (results.findIndex(e => !e) != -1) {
         console.log("Failed to set data for Untis import!");
+        console.log(results)
         await db.deleteProject(prID);
         return undefined;
     }
@@ -197,4 +199,33 @@ export const deleteMentorLesson = async (prID: ProjectID, id: MentorLessonID): P
     return db.deleteMentorLesson(prID, id);
 }
 
+export const automaticallyAllocateStudents = async (prID: ProjectID): Promise<Student[] | undefined> => {
+    if (prID.length == 0) {
+        return undefined;
+    }
+    const proj = await db.getProject(prID);
+    if (!proj) {
+        return undefined;
+    }
+
+    const recommendations = getAutomaticAllocations(proj);
+    if (recommendations.length == 0) {
+        return proj.students;
+    }
+
+    for (const r of recommendations) {
+        const student = proj.students.find(s => s.id == r.student);
+        if (!student) {
+            continue;
+        }
+        student.mentorLessonId = r.allocation;
+    }
+
+    const ok = await db.setStudents(prID, proj.students);
+    if (!ok) {
+        return undefined;
+    }
+
+    return proj.students;
+}
 
