@@ -1,4 +1,4 @@
-import {expect, describe, it, test} from "vitest";
+import {expect, describe, it} from "vitest";
 import {Course, MentorLesson, Project, Student, Teacher, TeacherID} from "../../shared/types";
 import {getAutomaticAllocations} from "./allocation";
 
