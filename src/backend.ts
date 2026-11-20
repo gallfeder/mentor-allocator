@@ -2,7 +2,6 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import {
-  createProjectFromUntisHandler,
   createProjectHandler,
   editProjectNameHandler,
   getProjectHandler,
@@ -71,7 +70,6 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:getMentorLessons", getProjectMentorLessonsHandler);
 
   ipcMain.handle("dialog:createProject", createProjectHandler);
-  ipcMain.handle("dialog:createProjectFromUntis", createProjectFromUntisHandler);
   ipcMain.handle("dialog:createCourse", createCourseHandler);
   ipcMain.handle("dialog:createMentorLesson", createMentorLessonHandler);
   ipcMain.handle("dialog:createStudent", createStudentHandler);

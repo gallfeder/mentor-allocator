@@ -12,6 +12,7 @@ import {
     Teacher,
     TeacherID
 } from "../shared/types";
+import {ImportSettings} from "../shared/import";
 
 
 declare global {
@@ -25,8 +26,7 @@ declare global {
             getCourses: (projectID: ProjectID) => Promise<Course[]>,
             getMentorLessons: (projectID: ProjectID) => Promise<MentorLesson[]>,
 
-            createProject: (name: string) => Promise<ProjectID | undefined>,
-            createProjectFromUntis: (name: string, pathToGPU001: string, pathToGPU015: string) => Promise<ProjectID | undefined>,
+            createProject: (name: string, importSettings?: ImportSettings) => Promise<ProjectID | undefined>,
             createCourse: (projectID: ProjectID, teacherID: TeacherID, grade: string, name: string) => Promise<CourseID | undefined>,
             createMentorLesson: (projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID, grade: string) => Promise<MentorLessonID | undefined>,
             createStudent: (projectID: ProjectID, name: string, surname: string, grade: string) => Promise<StudentID | undefined>,

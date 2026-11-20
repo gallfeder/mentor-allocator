@@ -1,4 +1,4 @@
-import {extractValuesFromCSVLine} from "../../../shared/csv_line_extractor";
+import {extractValuesFromCSVLine} from "./csv_line_extractor";
 import {ImportedData} from "../../internal_types";
 import {readFile} from "node:fs";
 import {Course, Day, MentorLesson, MentorLessonID, Student, StudentID, Teacher} from "../../../shared/types";

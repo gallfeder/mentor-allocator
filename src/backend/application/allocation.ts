@@ -148,7 +148,7 @@ const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLe
     for (let lessonIndex = 0; lessonIndex < orderedLessons.length; lessonIndex++) {
         const lesson = orderedLessons[lessonIndex];
 
-        if (size(lesson) > targetStudents) {
+        if (size(lesson) >= targetStudents) {
             continue;
         }
 
@@ -161,7 +161,7 @@ const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLe
             }
 
             for (const student of orderedLessons[i].studentIDs) {
-                if (size(lesson) > targetStudents) {
+                if (size(lesson) >= targetStudents) {
                     break;
                 }
 
