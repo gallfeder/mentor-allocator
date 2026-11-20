@@ -1,5 +1,5 @@
 import {DragDropProvider} from "@dnd-kit/react";
-import {matchPath} from "react-router-dom";
+import {matchPath, useLocation} from "react-router-dom";
 import {useMallocDispatch} from "../../Models/States/Hooks";
 import {MentorLessonId, ProjectId, StudentId} from "../../../shared/types";
 
@@ -9,6 +9,7 @@ interface Props {
 
 const DragDropProviderComp = (props: Props) => {
 
+    const location = useLocation();
     const match = matchPath({ path: "projects/:projectId/*" }, location.pathname);
     const projectId: ProjectId = match?.params.projectId as ProjectId;
 
@@ -23,15 +24,13 @@ const DragDropProviderComp = (props: Props) => {
             const mentorLessonId: MentorLessonId = target.id;
             const studentIds: StudentId[] = [source.id];
 
-            if (mallocDispatch) {
-                mallocDispatch({
-                    type: "ALLOC_STUDENTS", payload: {
-                        projectId: projectId,
-                        mentorLessonId: mentorLessonId,
-                        students: studentIds
-                    }
-                });
-            }
+            mallocDispatch!({
+                type: "ALLOC_STUDENTS", payload: {
+                    projectId: projectId,
+                    mentorLessonId: mentorLessonId,
+                    students: studentIds
+                }
+            });
 
             window.electronAPI.allocateStudents(projectId, mentorLessonId, studentIds).then();
         }

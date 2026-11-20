@@ -41,13 +41,16 @@ const ProjectViewComp = () => {
     useEffect(() => {
         
         window.electronAPI.getProject(projectId as ProjectId)
-            .then((project: Project) => {
-                if (mallocDispatch) {
-                    mallocDispatch({ type: "INIT_PROJECT", payload: { project } });
+            .then((project: Project | undefined) => {
+                if (!project) {
+                    navigate("/");
+                    return;
                 }
+
+                mallocDispatch!({ type: "INIT_PROJECT", payload: { project } });
             });
         
-    }, [mallocDispatch, projectId]);
+    }, [mallocDispatch, navigate, projectId]);
 
     return (
         <div className="project-view-comp">
