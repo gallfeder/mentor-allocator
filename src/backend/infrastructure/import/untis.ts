@@ -1,7 +1,8 @@
 import {extractValuesFromCSVLine} from "./csv_line_extractor";
 import {ImportedData} from "../../internal_types";
-import {readFile} from "node:fs";
 import {Course, Day, MentorLesson, MentorLessonID, Student, StudentID, Teacher} from "../../../shared/types";
+import {UntisImportParameters} from "../../../shared/import";
+import {getFile, isMentorLesson, isRelevantGrade} from "./shared";
 
 export interface GPU001Entry {
     grade: string;
@@ -43,35 +44,12 @@ export const interpretAsGPU015 = (file: string): GPU015Entry[] => file.split("\n
     }
 }).filter(e => e.courseName != "" && e.grade != "" && e.studentNumber != "");
 
-const getFile = async (path: string): Promise<string | undefined> => {
-    return new Promise<string | undefined>(resolve => {
-        readFile(path, (err, data) => {
-            if (err) {
-                if (err.code == "ENOENT") {
-                    console.log("Did not find the Untis file to import!");
-                    resolve(undefined);
-                    return;
-                }
-                console.error(`Error while reading Untis file to import: ${err}`);
-                resolve(undefined);
-                return;
-            }
-
-            resolve(data.toString());
-        })
-    });
-}
-
-const isMentorLesson = (courseName: string): boolean => {
-    return courseName == "MQ2" || courseName == "MQ1" || courseName == "MEF";
-}
-
-export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string): Promise<ImportedData  | undefined> => {
-    if (pathGPU1 == "" || pathGPU15 == "") {
+export const importFromUntisFiles = async ({pathToGPU001, pathToGPU015}: UntisImportParameters): Promise<ImportedData  | undefined> => {
+    if (pathToGPU001 == "" || pathToGPU015 == "") {
         return undefined;
     }
 
-    const [rawGPU1, rawGPU15] = await Promise.all([getFile(pathGPU1), getFile(pathGPU15)]);
+    const [rawGPU1, rawGPU15] = await Promise.all([getFile(pathToGPU001), getFile(pathToGPU015)]);
     if (!rawGPU1 || !rawGPU15) {
         return undefined;
     }
@@ -86,7 +64,7 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
     let teacherIDs = 1, courseIDs = 1, mentorLessonIDs= 1;
 
     for (const entry of gpu1) {
-        if (entry.grade != "EF" && entry.grade != "Q1" && entry.grade != "Q2" && entry.grade != ".Dalton") {
+        if (!isRelevantGrade(entry.grade)) {
             continue;
         }
         if (!teachers.has(entry.teacherShorthand)) {
@@ -103,7 +81,7 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
                 grade: entry.courseName.slice(1,3),
                 id: mentorLessonIDs++,
                 lesson: entry.lesson,
-                teacherId: teachers.get(entry.teacherShorthand)?.id ?? 0
+                teacherId: teachers.get(entry.teacherShorthand)?.id ?? -1
             });
             continue;
         }
@@ -115,7 +93,7 @@ export const importFromUntisFiles = async (pathGPU1: string, pathGPU15: string):
             id: courseIDs++,
             name: entry.courseName,
             students: [],
-            teacher: teachers.get(entry.teacherShorthand)?.id ?? 0
+            teacher: teachers.get(entry.teacherShorthand)?.id ?? -1
         });
     }
 

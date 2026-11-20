@@ -3,11 +3,11 @@ import {
     MentorLessonID,
     Project,
     Student,
-    StudentAllocation,
     StudentId,
     StudentID,
     TeacherID
 } from "../../shared/types";
+import {StudentAllocation} from "../internal_types";
 
 interface ProposedMentorLessonAllocation {
     mentorLessonID: MentorLessonID;

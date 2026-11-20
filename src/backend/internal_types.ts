@@ -1,4 +1,4 @@
-import {Course, MentorLesson, Student, Teacher} from "../shared/types";
+import {Course, MentorLesson, MentorLessonID, Student, StudentID, Teacher} from "../shared/types";
 
 export interface ImportedData {
     students: Student[];
@@ -6,3 +6,9 @@ export interface ImportedData {
     courses: Course[];
     mentorLessons: MentorLesson[];
 }
+
+export interface StudentAllocation {
+    student: StudentID
+    allocation: MentorLessonID
+}
+
