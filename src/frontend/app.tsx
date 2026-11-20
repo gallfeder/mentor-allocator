@@ -3,6 +3,7 @@ import ProjectHomepage from "./Pages/Home/ProjectHomepage";
 import MallocStateProvider from "./Models/States/MallocStateProvider";
 import "./app.css"
 import ProjectPage from "./Pages/Project/ProjectPage";
+import DragDropProviderComp from "./Contexts/Dnd/DragDropProviderComp";
 
 const AppContent = () => {
 
@@ -23,7 +24,9 @@ const App = () => {
     return (
         <BrowserRouter>
             <MallocStateProvider>
-                <AppContent/>
+                <DragDropProviderComp>
+                    <AppContent/>
+                </DragDropProviderComp>
             </MallocStateProvider>
         </BrowserRouter>
     )

@@ -14,7 +14,16 @@ export type MentorLessonId = MentorLessonID;
 export type CourseID = number;
 export type CourseId = CourseID;
 
-export type Day = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 -> Monday, 6 -> Sunday
+export enum Day {
+    Unspecified = -1,
+    Monday = 0,
+    Tuesday = 1,
+    Wednesday = 2,
+    Thursday = 3,
+    Friday = 4,
+    Saturday = 5,
+    Sunday = 6
+}
 
 export type ProjectOverview = {
     id: ProjectID;

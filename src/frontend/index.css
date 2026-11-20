@@ -17,10 +17,13 @@
 
     --bg-popover: hsl(0, 0%, 100%);
 
+    --bg-hover-over: hsla(0, 0%, 5%, 0.15);
+
     --scrollbar-background: var(--bg-x-light);
     --scrollbar-foreground: var(--bg-xxx-light);
 
     --primary: hsl(211, 100%, 50%);
+    --primary-muted: hsl(211, 100%, 85%);
     --primary-hover: hsl(211, 100%, 42%);
     --warning: hsl(0, 84%, 55%);
 
@@ -45,12 +48,14 @@
 
     --bg-popover: hsl(220, 14%, 15%);
 
+    --bg-hover-over: hsla(0, 0%, 85%, 0.15);
+
     --scrollbar-background: var(--bg);
     --scrollbar-foreground: var(--bg-xx-light);
 
     --primary: hsl(210, 90%, 64%);
+    --primary-muted: hsl(211, 100%, 85%);
     --primary-hover: hsl(210, 95%, 72%);
-
     --warning: hsl(0, 75%, 60%);
 
     --text-color: hsl(220, 15%, 92%);

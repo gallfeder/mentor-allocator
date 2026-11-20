@@ -1,5 +1,27 @@
 .button {
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.15s, transform 0.15s;
+}
+
+.button.normal {
+    background-color: var(--bg-xx-light);
+    color: var(--text-color);
+    padding: 12px;
+    border: 1px solid var(--bg-x-light);
+    border-radius: 12px;
+    font-size: large;
+}
+
+.button.primary {
+    background-color: var(--primary);
+    color: var(--text-color);
+    padding: 12px;
+    border: 1px solid var(--primary-muted);
+    border-radius: 12px;
+    font-size: large;
+}
+
+.button.primary:hover {
+    background-color: var(--primary-hover);
 }
 
 .button:hover {

@@ -31,6 +31,7 @@
 }
 
 .project {
+    overflow-x: auto;
 }
 
 .project-unallocated-sidebar {
@@ -52,4 +53,8 @@
     padding: 8px;
     border-radius: 12px;
     border: 1px solid var(--bg-light);
+}
+
+.user-card:hover {
+    cursor: grab;
 }
