@@ -1,14 +1,19 @@
-import {Course, MentorLessonID, Project, StudentId, StudentID, TeacherID} from "../../shared/types";
-
-interface StudentAllocation {
-    student: StudentID
-    allocation: MentorLessonID
-}
+import {
+    Course,
+    MentorLessonID,
+    Project,
+    Student,
+    StudentAllocation,
+    StudentId,
+    StudentID,
+    TeacherID
+} from "../../shared/types";
 
 interface ProposedMentorLessonAllocation {
     mentorLessonID: MentorLessonID;
     teacherID: TeacherID;
     studentIDs: StudentID[];
+    grade: string;
     untouchableAllocations: number;
 }
 
@@ -18,11 +23,34 @@ const size = (lesson: ProposedMentorLessonAllocation): number => {
 
 export const getAutomaticAllocations = (project: Project): StudentAllocation[] => {
     const {studentTeachers, teacherStudents, unallocatedStudents, targetStudentsPerLesson, mentorLessons} = formatData(project);
+    const students = new Map<StudentID, Student>(project.students.map(s => [s.id, s]));
+
+    const getAllocations = (): StudentAllocation[] => {
+        const allocations: StudentAllocation[] = [];
+        for (const [mlID,ml] of mentorLessons) {
+            ml.studentIDs.forEach(sID => allocations.push({
+                student: sID,
+                allocation: mlID
+            }));
+        }
+        return allocations;
+    }
+
+    const makeAllocatableStudents = (ml: ProposedMentorLessonAllocation): StudentID[] => (teacherStudents.get(ml.teacherID) ?? []).filter(s => {
+        if (!unallocatedStudents.has(s)) {
+            return false;
+        }
+        const student = students.get(s);
+        if (!student) {
+            return false;
+        }
+        return student.grade == ml.grade
+    });
 
     const getHighestPriorityMentorLesson = (): ProposedMentorLessonAllocation => {
         const priorities: {m: ProposedMentorLessonAllocation, priority: number}[] = [];
         for (const [,ml] of mentorLessons) {
-            const students = (teacherStudents.get(ml.teacherID) ?? []).filter(s => unallocatedStudents.has(s));
+            const students = makeAllocatableStudents(ml);
             priorities.push({
                 m: ml,
                 priority: getAllocationPriority(
@@ -48,7 +76,7 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
             }
 
             for (const [,ml] of mentorLessons) {
-                if (size(ml) < targetStudentsPerLesson && teachers.has(ml.teacherID)) {
+                if (ml.grade == students.get(sID)?.grade && size(ml) < targetStudentsPerLesson && teachers.has(ml.teacherID)) {
                     return true;
                 }
             }
@@ -57,21 +85,32 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
     }
 
     const allocateStudentToLesson = (studentID: StudentId, mentorLesson: ProposedMentorLessonAllocation) => {
+        const s = students.get(studentID);
+        if (!s || s.grade != mentorLesson.grade) {
+            return;
+        }
         mentorLesson.studentIDs.push(studentID);
         unallocatedStudents.delete(studentID);
     }
 
     while (canAllocateMoreStudents()) {
         const ml = getHighestPriorityMentorLesson();
-        const allocatableStudentIDs = (teacherStudents.get(ml.teacherID) ?? []).filter(s => unallocatedStudents.has(s));
+        const allocatableStudentIDs = makeAllocatableStudents(ml);
         const studentID = allocatableStudentIDs.shift();
         if (!studentID) {
             continue;
         }
         allocateStudentToLesson(studentID, ml);
     }
+    if (unallocatedStudents.size == 0) {
+        return getAllocations();
+    }
 
     optimiseAllocations(mentorLessons, studentTeachers, targetStudentsPerLesson);
+
+    if (unallocatedStudents.size == 0) {
+        return getAllocations();
+    }
 
     const toAllocate = unallocatedStudents.size;
     for (let i = 0; i < toAllocate; i++) {
@@ -99,14 +138,7 @@ export const getAutomaticAllocations = (project: Project): StudentAllocation[] =
         }
     }
 
-    const allocations: StudentAllocation[] = [];
-    for (const [mlID,ml] of mentorLessons) {
-        ml.studentIDs.forEach(sID => allocations.push({
-            student: sID,
-            allocation: mlID
-        }));
-    }
-    return allocations;
+    return getAllocations();
 }
 
 const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLessonAllocation>, studentTeachers: Map<StudentID, TeacherID[]>, targetStudents: number) => {
@@ -123,6 +155,9 @@ const optimiseAllocations = (mentorLessons: Map<MentorLessonID, ProposedMentorLe
         for (let i = lessonIndex; i < orderedLessons.length; i++) {
             if (size(lesson) > targetStudents) {
                 break;
+            }
+            if (orderedLessons[i].grade != lesson.grade) {
+                continue;
             }
 
             for (const student of orderedLessons[i].studentIDs) {
@@ -156,6 +191,7 @@ const formatData = (project: Project) => {
             mentorLessonID: m.id,
             teacherID: m.teacherId,
             studentIDs: [],
+            grade: m.grade,
             untouchableAllocations: 0,
         }
     ]));

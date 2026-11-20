@@ -78,3 +78,7 @@ export interface MentorLesson {
     grade: string;
 }
 
+export interface StudentAllocation {
+    student: StudentID
+    allocation: MentorLessonID
+}

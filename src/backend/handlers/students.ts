@@ -1,6 +1,6 @@
 import {MentorLessonID, ProjectID, Student, StudentID} from "../../shared/types";
 import {
-    allocateStudentsToLesson,
+    allocateStudentsToLesson, automaticallyAllocateStudents,
     createStudentInProject,
     deleteStudent,
     editStudentInProject,
@@ -29,4 +29,8 @@ export const allocateStudentsHandler = (_event: IpcMainInvokeEvent, project: Pro
 
 export const deleteStudentHandler = (_event: IpcMainInvokeEvent, project: ProjectID, id: StudentID): Promise<boolean> => {
     return deleteStudent(project, id);
+}
+
+export const automaticallyAllocateStudentsHandler = (_event: IpcMainInvokeEvent, project: ProjectID): Promise<Student[] | undefined> => {
+    return automaticallyAllocateStudents(project);
 }

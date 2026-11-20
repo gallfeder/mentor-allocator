@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     editCourse: (projectID: ProjectID, courseID: CourseID, teacher?: TeacherID, grade?: string, name?: string): Promise<Course | undefined> => ipcRenderer.invoke("dialog:editCourse", projectID, courseID, teacher, grade, name),
 
     allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]): Promise<boolean> => ipcRenderer.invoke("dialog:allocateStudents", projectID, lessonID, studentIDs),
+    automaticallyAllocateStudents: (projectID: ProjectID): Promise<Student[] | undefined> => ipcRenderer.invoke("dialog:automaticallyAllocateStudents", projectID),
     getFilePathFromUser: (title?: string): Promise<string | undefined> => ipcRenderer.invoke("dialog:getFilePathFromUser", title),
 
     deleteProject: (projectID: ProjectID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteProject", projectID),
