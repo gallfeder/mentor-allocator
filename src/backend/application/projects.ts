@@ -18,6 +18,8 @@ import {v4 as getUUID} from 'uuid';
 import {getAutomaticAllocations} from "./allocation";
 import {ImportSettings} from "../../shared/import";
 import {getDataFromImport} from "../infrastructure/import/import";
+import {ExportSettings} from "../../shared/export";
+import {exportData} from "../infrastructure/export/export";
 
 const db: Database = new JSONDatabase();
 
@@ -224,3 +226,14 @@ export const automaticallyAllocateStudents = async (prID: ProjectID): Promise<St
     return proj.students;
 }
 
+export const exportProject = async (prID: ProjectID, settings: ExportSettings): Promise<boolean> => {
+    if (prID.length == 0) {
+        return false;
+    }
+    const proj = await db.getProject(prID);
+    if (!proj) {
+        return false;
+    }
+
+    return exportData(proj, settings);
+}

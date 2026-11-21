@@ -2,12 +2,13 @@ import {Project, ProjectID, ProjectOverview} from "../../shared/types";
 import {
     createProject,
     deleteProject,
-    editProjectName,
+    editProjectName, exportProject,
     getAllProjects,
     getProject
 } from "../application/projects";
 import {IpcMainInvokeEvent} from "electron";
 import {ImportSettings} from "../../shared/import";
+import {ExportSettings} from "../../shared/export";
 
 export const getProjectsHandler = (): Promise<ProjectOverview[]> => {
     return getAllProjects();
@@ -30,4 +31,8 @@ export const editProjectNameHandler = async (_event: IpcMainInvokeEvent, project
 
 export const deleteProjectHandler = (_event: IpcMainInvokeEvent, project: ProjectID): Promise<boolean> => {
     return deleteProject(project);
+}
+
+export const exportProjectHandler = (_event: IpcMainInvokeEvent, project: ProjectID, settings: ExportSettings): Promise<boolean> => {
+    return exportProject(project, settings);
 }

@@ -13,6 +13,7 @@ import {
     TeacherID
 } from "../shared/types";
 import {ImportSettings} from "../shared/import";
+import {ExportSettings} from "../shared/export";
 
 
 declare global {
@@ -46,6 +47,8 @@ declare global {
             deleteTeacher: (projectID: ProjectID, teacherID: TeacherID) => Promise<boolean>,
             deleteCourse: (projectID: ProjectID, courseID: CourseID) => Promise<boolean>,
             deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<boolean>,
+
+            exportProject: (projectID: ProjectID, settings: ExportSettings) => Promise<boolean>,
         }
     }
 }

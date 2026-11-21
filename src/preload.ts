@@ -14,6 +14,7 @@ import {
     TeacherID
 } from "./shared/types";
 import {ImportSettings} from "./shared/import";
+import {ExportSettings} from "./shared/export";
 
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -46,4 +47,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     deleteTeacher: (projectID: ProjectID, teacherID: TeacherID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteTeacher", projectID, teacherID),
     deleteCourse: (projectID: ProjectID, courseID: CourseID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteCourse", projectID, courseID),
     deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteMentorLesson", projectID, mentorLessonID),
+
+    exportProject: (projectID: ProjectID, settings: ExportSettings): Promise<boolean> => ipcRenderer.invoke("dialog:exportProject", projectID, settings),
 });
