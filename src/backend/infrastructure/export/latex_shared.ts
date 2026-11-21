@@ -1,4 +1,4 @@
-import {Day, Student, Teacher} from "../../../shared/types";
+import {Day, MentorLessonID, Project, Student, Teacher, TeacherID} from "../../../shared/types";
 import {app} from "electron";
 import {compile} from "node-tectonic";
 import {v4 as getUUID} from 'uuid';
@@ -6,6 +6,45 @@ import {accessSync, mkdirSync, rename, rmdir} from "node:fs";
 import path from "node:path";
 import constants from "node:constants";
 
+
+export interface MentorLessonData {
+    teacher: Teacher;
+    grade: string;
+    students: Set<Student>;
+    day: Day;
+    lesson: number;
+}
+
+export const extractMentorLessonData = (project: Project, includeGrades?: Set<string>): MentorLessonData[] => {
+    const teachers = new Map<TeacherID, Teacher>(project.teachers.map(t => [t.id, t]));
+    const allocations = new Map<MentorLessonID, Set<Student>>(project.mentorLessons.map(ml => [ml.id, new Set<Student>()]));
+
+    for (const s of project.students) {
+        if (s.mentorLessonId == -1) {
+            continue;
+        }
+        allocations.get(s.mentorLessonId)?.add(s);
+    }
+
+    return project.mentorLessons.map(ml => {
+        if (includeGrades != undefined && !includeGrades.has(ml.grade)) {
+            return undefined;
+        }
+        const t = teachers.get(ml.teacherId);
+        if (!t) {
+            return undefined;
+        }
+        const students = allocations.get(ml.id);
+
+        return {
+            teacher: t,
+            grade: ml.grade,
+            students: students ?? new Set<Student>(),
+            day: ml.day,
+            lesson: ml.lesson,
+        }
+    }).filter(e => e != undefined);
+}
 
 export const getTeacherName = (t: Teacher): string => {
     if (t.surname.length != 0 && t.name.length != 0) {
@@ -61,12 +100,12 @@ export const getLessonDate = (day: Day, lesson: number): string => {
     }
 }
 
-export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T) => string, fallback: string): string => {
+export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T, i: number) => string, fallback: string): string => {
     if (values.length == 0) {
         return fallback;
     }
 
-    const str = values.map(val => converterFn(val)).reduce((previousValue, currentValue) => currentValue.length != 0 ? previousValue + "\n" + currentValue : previousValue);
+    const str = values.map((val, i) => converterFn(val, i)).reduce((previousValue, currentValue) => currentValue.length != 0 ? previousValue + "\n" + currentValue : previousValue);
     return str.length != 0 ? str : fallback;
 }
 

@@ -1,11 +1,11 @@
 import {PDFListExportParameters} from "../../../shared/export";
-import {Day, MentorLessonID, Project, Student, Teacher, TeacherID} from "../../../shared/types";
+import {Project, Student} from "../../../shared/types";
 import {
-    compileLaTeXToPath,
+    compileLaTeXToPath, extractMentorLessonData,
     getLessonDate,
     getStudentName,
     getTeacherName,
-    makeLaTeXStringFromValues
+    makeLaTeXStringFromValues, MentorLessonData
 } from "./latex_shared";
 
 
@@ -25,45 +25,6 @@ export const exportPDFList = async (project: Project, {destination, titleOverwri
     const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}${title}.pdf`
 
     return compileLaTeXToPath(dest, str);
-}
-
-interface MentorLessonData {
-    teacher: Teacher;
-    grade: string;
-    students: Set<Student>;
-    day: Day;
-    lesson: number;
-}
-
-const extractMentorLessonData = (project: Project, includeGrades?: Set<string>): MentorLessonData[] => {
-    const teachers = new Map<TeacherID, Teacher>(project.teachers.map(t => [t.id, t]));
-    const allocations = new Map<MentorLessonID, Set<Student>>(project.mentorLessons.map(ml => [ml.id, new Set<Student>()]));
-
-    for (const s of project.students) {
-        if (s.mentorLessonId == -1) {
-            continue;
-        }
-        allocations.get(s.mentorLessonId)?.add(s);
-    }
-
-    return project.mentorLessons.map(ml => {
-        if (includeGrades != undefined && !includeGrades.has(ml.grade)) {
-            return undefined;
-        }
-        const t = teachers.get(ml.teacherId);
-        if (!t) {
-            return undefined;
-        }
-        const students = allocations.get(ml.id);
-
-        return {
-            teacher: t,
-            grade: ml.grade,
-            students: students ?? new Set<Student>(),
-            day: ml.day,
-            lesson: ml.lesson,
-        }
-    }).filter(e => e != undefined);
 }
 
 const getLaTeXString = (title: string, titlePage: boolean, lessons: MentorLessonData[]): string => `
