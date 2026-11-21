@@ -15,8 +15,9 @@ import {
 import JSONDatabase from "../infrastructure/database/json";
 import Database from "../infrastructure/database/interface";
 import {v4 as getUUID} from 'uuid';
-import {importFromUntisFiles} from "../infrastructure/import/untis";
 import {getAutomaticAllocations} from "./allocation";
+import {ImportSettings} from "../../shared/import";
+import {getDataFromImport} from "../infrastructure/import/import";
 
 const db: Database = new JSONDatabase();
 
@@ -44,13 +45,39 @@ export const getMentorLessonsOfProject = (project: ProjectID): Promise<MentorLes
     return db.getMentorLessons(project);
 }
 
-export const createProject = async (name: string): Promise<ProjectID | undefined> => {
+export const createProject = async (name: string, importSettings?: ImportSettings): Promise<ProjectID | undefined> => {
     if (name == "") {
         return undefined;
     }
     const prID = getUUID();
     const result = await db.createProject(prID, name)
-    return result ? prID : undefined;
+    if (!result) {
+        return undefined;
+    }
+    if (!importSettings) {
+        return prID;
+    }
+
+    const data = await getDataFromImport(importSettings);
+    if (!data) {
+        console.log("Failed to get data from import. Aborting project creation!");
+        await db.deleteProject(prID);
+        return undefined;
+    }
+
+    const results = await Promise.all([
+        db.setStudents(prID, data.students),
+        db.setTeachers(prID, data.teacher),
+        db.setCourses(prID, data.courses),
+        db.setMentorLessons(prID, data.mentorLessons),
+    ]);
+    if (results.findIndex(e => !e) != -1) {
+        console.log(`Failed to set data for new project from import! Results of setting data are: ${results}`);
+        await db.deleteProject(prID);
+        return undefined;
+    }
+
+    return prID;
 }
 
 export const createStudentInProject = async (prID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => {
@@ -130,38 +157,6 @@ export const allocateStudentsToLesson = (project: ProjectID, lesson: MentorLesso
         return db.allocateStudents(project, lesson, students);
     }
     return db.allocateStudent(project, lesson, students);
-}
-
-
-export const createProjectWithUntisImport = async (name: string, pathGPU001: string, pathGPU015: string): Promise<ProjectID | undefined> => {
-    if (name == "" || pathGPU001 == "" || pathGPU015 == "") {
-        return undefined;
-    }
-
-    const data = await importFromUntisFiles(pathGPU001, pathGPU015);
-    if (!data) {
-        return undefined;
-    }
-    const prID = await createProject(name);
-    if (!prID) {
-        console.log("Failed to create project for Untis import!");
-        return prID;
-    }
-
-    const results = await Promise.all([
-        db.setStudents(prID, data.students),
-        db.setTeachers(prID, data.teacher),
-        db.setCourses(prID, data.courses),
-        db.setMentorLessons(prID, data.mentorLessons),
-    ]);
-    if (results.findIndex(e => !e) != -1) {
-        console.log("Failed to set data for Untis import!");
-        console.log(results)
-        await db.deleteProject(prID);
-        return undefined;
-    }
-
-    return prID;
 }
 
 export const deleteProject = async (prID: ProjectID): Promise<boolean> => {

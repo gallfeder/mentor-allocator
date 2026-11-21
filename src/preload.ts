@@ -13,6 +13,7 @@ import {
     Teacher,
     TeacherID
 } from "./shared/types";
+import {ImportSettings} from "./shared/import";
 
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -24,8 +25,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     getCourses: (projectID: ProjectID): Promise<Course[]> => ipcRenderer.invoke("dialog:getCourses", projectID),
     getMentorLessons: (projectID: ProjectID): Promise<MentorLesson[]> => ipcRenderer.invoke("dialog:getMentorLessons", projectID),
 
-    createProject: (name: string): Promise<ProjectID | undefined> => ipcRenderer.invoke("dialog:createProject", name),
-    createProjectFromUntis: (name: string, pathToGPU001: string, pathToGPU015: string): Promise<ProjectID | undefined> => ipcRenderer.invoke("dialog:createProjectFromUntis", name, pathToGPU001, pathToGPU015),
+    createProject: (name: string, importSettings?: ImportSettings): Promise<ProjectID | undefined> => ipcRenderer.invoke("dialog:createProject", name, importSettings),
     createCourse: (projectID: ProjectID, teacherID: TeacherID, grade: string, name: string): Promise<CourseID | undefined> => ipcRenderer.invoke("dialog:createCourse", projectID, teacherID, grade, name),
     createMentorLesson: (projectID: ProjectID, day: Day, lesson: number, teacherID: TeacherID, grade: string): Promise<MentorLessonID | undefined> => ipcRenderer.invoke("dialog:createMentorLesson", projectID, day, lesson, teacherID, grade),
     createStudent: (projectID: ProjectID, name: string, surname: string, grade: string): Promise<StudentID | undefined> => ipcRenderer.invoke("dialog:createStudent", projectID, name, surname, grade),

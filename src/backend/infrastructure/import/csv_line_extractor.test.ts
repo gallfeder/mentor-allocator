@@ -140,4 +140,12 @@ describe("Testing extracting values from line", () => {
         const v = extractValuesFromCSVLine(`"test","test2"`, ",", ",");
         expect(v.length).toBe(0);
     });
+
+    it('should interpret non-delimited strings as strings', () => {
+        const v = extractValuesFromCSVLine(`KursBez|Klasse|Jahr|Abschnitt|Jahrgang|Fach|Kursart|Wochenstd.|Wochenstd. KL|Kursleiter|Epochenunterricht|Schulnr|Schienen`, "|");
+        expect(v.length).toBe(13);
+        ["KursBez", "Klasse", "Jahr", "Abschnitt", "Jahrgang", "Fach", "Kursart", "Wochenstd.", "Wochenstd. KL", "Kursleiter", "Epochenunterricht", "Schulnr", "Schienen"].forEach((r, i) => {
+            expect(v[i]).toBe(r);
+        });
+    });
 });
