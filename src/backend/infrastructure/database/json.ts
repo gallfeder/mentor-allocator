@@ -22,7 +22,7 @@ export default class JSONDatabase implements Database {
     private mutex: Mutex;
 
     constructor() {
-        this.path = `${app.getPath("appData")}/mentor-allocator/db_json_data`;
+        this.path = `${app.getPath("userData")}/db_json_data`;
         this.mutex = new Mutex();
 
         if (!existsSync(this.path)) {

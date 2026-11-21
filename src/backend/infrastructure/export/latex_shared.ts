@@ -1,4 +1,11 @@
 import {Day, Student, Teacher} from "../../../shared/types";
+import {app} from "electron";
+import {compile} from "node-tectonic";
+import {v4 as getUUID} from 'uuid';
+import {accessSync, mkdirSync, rename, rmdir} from "node:fs";
+import path from "node:path";
+import constants from "node:constants";
+
 
 export const getTeacherName = (t: Teacher): string => {
     if (t.surname.length != 0 && t.name.length != 0) {
@@ -54,9 +61,67 @@ export const getLessonDate = (day: Day, lesson: number): string => {
     }
 }
 
-export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T) => string): string => {
+export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T) => string, fallback: string): string => {
     if (values.length == 0) {
-        return "";
+        return fallback;
     }
-    return values.map(val => converterFn(val)).reduce((previousValue, currentValue) => previousValue + "\n" + currentValue);
+
+    const str = values.map(val => converterFn(val)).reduce((previousValue, currentValue) => currentValue.length != 0 ? previousValue + "\n" + currentValue : previousValue);
+    return str.length != 0 ? str : fallback;
+}
+
+
+export const compileLaTeXToPath = async (pdfPath: string, latex: string): Promise<boolean> => {
+    if (pdfPath.length == 0) {
+        return false;
+    }
+
+    try {
+        accessSync(path.dirname(pdfPath), constants.W_OK)
+    } catch {
+        console.log("Could not access provided path. Missing write permission or parent directory doesn't exist!");
+        return false;
+    }
+
+    const compID = getUUID();
+    const buildDir = `${app.getPath("temp")}/${app.getName()}/latex/${compID}`;
+
+    mkdirSync(buildDir, {recursive: true});
+
+    console.log("LaTeX: Starting to compile...");
+    try {
+        const result = await compile({
+            tex: latex,
+            cwd: buildDir,
+        });
+
+        if (!result.success) {
+            console.error(`LaTeX: Compiling failed: ${result.failure?.message}`);
+            return false;
+        }
+
+        console.log("LaTeX: Compiling succeeded. Moving to path...");
+
+        return new Promise<boolean>(resolve => {
+            rename(result.pdfPath!, pdfPath, err => {
+                if (err) {
+                    console.error(`LaTeX: Moving file failed: ${err.message}`);
+                    resolve(false);
+                    return ;
+                }
+                console.log("LaTeX: Moving to path succeeded! Starting cleanup!");
+                rmdir(buildDir, err => {
+                    if (err != null) {
+                        console.error(`LaTeX: Error during cleanup: ${err}`);
+                    } else {
+                        console.log("LaTeX: Cleanup successful!");
+                    }
+                });
+                resolve(true);
+            });
+        });
+    } catch (e) {
+        console.error(`LaTeX: Compiling failed (error caught): ${e}`);
+        return false;
+    }
 }

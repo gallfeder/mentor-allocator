@@ -31,7 +31,6 @@ import {
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
 import {getFilePathFromUser} from "./backend/handlers/files";
-import {deleteProject} from "./backend/application/projects";
 
 if (started) {
   app.quit();

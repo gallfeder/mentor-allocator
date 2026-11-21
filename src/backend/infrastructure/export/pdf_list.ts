@@ -1,18 +1,30 @@
 import {PDFListExportParameters} from "../../../shared/export";
 import {Day, MentorLessonID, Project, Student, Teacher, TeacherID} from "../../../shared/types";
-import {getLessonDate, getStudentName, getTeacherName, makeLaTeXStringFromValues} from "./latex_shared";
+import {
+    compileLaTeXToPath,
+    getLessonDate,
+    getStudentName,
+    getTeacherName,
+    makeLaTeXStringFromValues
+} from "./latex_shared";
 
 
 export const exportPDFList = async (project: Project, {destination, titleOverwrite, includeTitlePage = true, grades}: PDFListExportParameters): Promise<boolean> => {
     const uppercaseGrades = grades && grades.size != 0 ? new Set<string>(Array.from(grades).map(g => g.toUpperCase())) : undefined;
 
-    const lessons = extractMentorLessonData(project, uppercaseGrades);
+    const lessons = extractMentorLessonData(project, uppercaseGrades).sort((a, b) => {
+        if (a.grade != b.grade) {
+            return a.grade.localeCompare(b.grade)
+        }
+        return getTeacherName(a.teacher).localeCompare(getTeacherName(b.teacher));
+    });
 
-    const str = getLaTeXString(titleOverwrite ?? project.name, includeTitlePage, lessons);
+    const title = titleOverwrite ?? project.name;
+    const str = getLaTeXString(title, includeTitlePage, lessons);
 
-    console.log(str);
+    const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}${title}.pdf`
 
-    return true;
+    return compileLaTeXToPath(dest, str);
 }
 
 interface MentorLessonData {
@@ -71,7 +83,7 @@ const getLaTeXString = (title: string, titlePage: boolean, lessons: MentorLesson
 \\begin{document}
 ${titlePage ? "\\maketitle" : ""}
 
-${makeLaTeXStringFromValues<MentorLessonData>(lessons ?? [], getMentorLessonLaTeXString)}
+${makeLaTeXStringFromValues<MentorLessonData>(lessons ?? [], getMentorLessonLaTeXString, "Es gibt keine relevanten Mentorenstunden!")}
 \\end{document}
 `
 
@@ -95,6 +107,6 @@ ${makeLaTeXStringFromValues<Student>(Array.from(ml.students), (s): string => {
         return "";
     }
     return `\\item{${name}}`;
-})}
+}, "\\item{/}")}
 \\end{enumerate}`
 }
