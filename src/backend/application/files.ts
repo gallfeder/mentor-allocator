@@ -15,6 +15,20 @@ export const queryUserForFilePath = async (title = "Please select a file!"): Pro
     return checkFilePermissions(path) ? path : undefined;
 }
 
+export const queryUserForDirectoryPath = async (title = "Please select a directory!"): Promise<string | undefined> => {
+    const result = await dialog.showOpenDialog({
+        title: title,
+        properties: ["openDirectory", "createDirectory"],
+    });
+    if (result.canceled) {
+        console.info("User canceled selecting a file.");
+        return undefined;
+    }
+
+    const path = result.filePaths[0];
+    return checkFilePermissions(path) ? path : undefined;
+}
+
 const checkFilePermissions = (path: string): boolean => {
     try {
         accessSync(path, constants.R_OK);

@@ -93,6 +93,7 @@ export const compileLaTeXToPath = async (pdfPath: string, latex: string): Promis
         const result = await compile({
             tex: latex,
             cwd: buildDir,
+            timeout: 120000,
         });
 
         if (!result.success) {

@@ -30,7 +30,7 @@ import {
   editMentorLessonHandler,
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
-import {getFilePathFromUser} from "./backend/handlers/files";
+import {getDirectoryPathFromUser, getFilePathFromUser} from "./backend/handlers/files";
 
 if (started) {
   app.quit();
@@ -84,6 +84,7 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
   ipcMain.handle("dialog:automaticallyAllocateStudents", automaticallyAllocateStudentsHandler)
   ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
+  ipcMain.handle("dialog:getDirectoryPathFromUser", getDirectoryPathFromUser);
 
   ipcMain.handle("dialog:deleteProject", deleteProjectHandler);
   ipcMain.handle("dialog:deleteStudent", deleteStudentHandler);
