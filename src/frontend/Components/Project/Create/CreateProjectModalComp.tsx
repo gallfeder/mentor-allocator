@@ -5,6 +5,7 @@ import "./CreateProjectModal.css"
 import CreateProjectFromSchildComp from "./CreateProjectFromSchildComp";
 import {ProjectId} from "../../../../shared/types";
 import {useNavigate} from "react-router-dom";
+import CreateProjectFromUntisComp from "./CreateProjectFromUntisComp";
 
 interface Props {
     onClosed: () => void;
@@ -20,31 +21,13 @@ const CreateProjectModalComp = (props: Props) => {
     const navigate = useNavigate();
     const activeImportRef = useRef<ImportProjectHandle | null>(null);
 
-    function undefinedImportType() {
-        return (
-            <div className="import-type-selectors">
-                <div onClick={() => setImportType("SchILD")} className="import-type-selector button">
-                    <p>SchILD</p>
-                </div>
-                <div onClick={() => setImportType("Untis")} className="import-type-selector button">
-                    <p>Untis</p>
-                </div>
-            </div>
-        )
-    }
-
     function onProjectCreated(projectId: ProjectId | undefined) {
         if (!projectId) {
             props.onClosed();
+            return;
         }
 
         navigate(`projects/${projectId}`);
-    }
-
-    function untisImportType() {
-        return (
-            <></>
-        )
     }
 
     function createProject() {
@@ -70,9 +53,16 @@ const CreateProjectModalComp = (props: Props) => {
                 { importType === "SchILD" ? (
                     <CreateProjectFromSchildComp onCreated={onProjectCreated} ref={activeImportRef}/>
                 ) : importType === "Untis" ? (
-                    untisImportType()
+                    <CreateProjectFromUntisComp onCreated={onProjectCreated} ref={activeImportRef}/>
                 ) : (
-                    undefinedImportType()
+                    <div className="import-type-selectors">
+                        <div onClick={() => setImportType("SchILD")} className="import-type-selector button">
+                            <p>SchILD</p>
+                        </div>
+                        <div onClick={() => setImportType("Untis")} className="import-type-selector button">
+                            <p>Untis</p>
+                        </div>
+                    </div>
                 )}
             </>
         </Modal>
