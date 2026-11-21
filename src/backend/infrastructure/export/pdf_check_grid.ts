@@ -79,7 +79,7 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 
 \\begin{longtable}{|l|c| ${repeatNTimes(numWeeks, "c|c|c|c!{\\vrule width 1.2pt}")}}
     \\hline
-    \\textbf{Name} & \\textbf{Pflstd.} & ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{c|}{\\textbf{LW ${phase[0] + i}}}`)} \\\\
+    \\textbf{Name} & \\textbf{Pflstd.} ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{l|}{\\textbf{LW ${phase[0] + 1 + i}}}`)} \\\\
 
     & ${repeatNTimes(numWeeks, "& FS & DS & V & ue ")} \\\\ \\hline
     \\endhead
@@ -90,6 +90,8 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
     
 \\end{longtable}
 \\endgroup
+
+\\newpage
 `
 }
 

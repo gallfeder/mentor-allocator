@@ -1,10 +1,11 @@
 import {Day, MentorLessonID, Project, Student, Teacher, TeacherID} from "../../../shared/types";
-import {app} from "electron";
+import {app, dialog, shell} from "electron";
 import {compile} from "node-tectonic";
 import {v4 as getUUID} from 'uuid';
-import {accessSync, mkdirSync, rename, rmdir} from "node:fs";
+import {accessSync, mkdirSync, rename, rmdir, writeFile, writeFileSync} from "node:fs";
 import path from "node:path";
 import constants from "node:constants";
+import log from "eslint-plugin-react/lib/util/log";
 
 
 export interface MentorLessonData {
@@ -110,7 +111,40 @@ export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T
 }
 
 
-export const compileLaTeXToPath = async (pdfPath: string, latex: string): Promise<boolean> => {
+interface CompileQueueElement {
+    path: string;
+    tex: string;
+    resolve: (ok: boolean) => void;
+}
+
+const compileQueue: CompileQueueElement[] = [];
+let activeWorkers = 0;
+const maxActiveWorkers = 1;
+
+export const compileLaTeXToPath = async (pdfPath: string, tex: string): Promise<boolean> => {
+    return new Promise<boolean>(resolve => {
+        if (activeWorkers < maxActiveWorkers) {
+            activeWorkers++;
+            runCompileLoop({path: pdfPath, tex: tex, resolve: resolve});
+            return;
+        }
+
+        compileQueue.push({path: pdfPath, tex: tex, resolve: resolve});
+    });
+}
+
+const runCompileLoop = async (elem: CompileQueueElement) => {
+    elem.resolve(await actuallyCompile(elem.path, elem.tex));
+    const first = compileQueue.shift();
+    if (!first) {
+        activeWorkers--;
+        return;
+    }
+
+    return runCompileLoop(first);
+}
+
+const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> => {
     if (pdfPath.length == 0) {
         return false;
     }
@@ -130,13 +164,22 @@ export const compileLaTeXToPath = async (pdfPath: string, latex: string): Promis
     console.log("LaTeX: Starting to compile...");
     try {
         const result = await compile({
-            tex: latex,
+            tex: tex,
             cwd: buildDir,
             timeout: 120000,
         });
 
         if (!result.success) {
             console.error(`LaTeX: Compiling failed: ${result.failure?.message}`);
+
+            // TODO: Remove / Move to only in "dev mode"
+            mkdirSync(path.join(app.getPath("logs"), "faulty-tex"), {recursive: true});
+            const logPath = path.join(app.getPath("logs"), "faulty-tex", `${compID}.tex`);
+            shell.showItemInFolder(logPath);
+
+            writeFileSync(logPath, tex);
+
+            console.log(tex);
             return false;
         }
 
