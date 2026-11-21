@@ -1,0 +1,54 @@
+.modal-body:has(.import-type-selectors) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.import-type-selectors {
+    display: flex;
+    gap: 1rem;
+
+    .import-type-selector {
+        background-color: var(--bg-x-light);
+        border: 1px solid var(--bg);
+        font-size: larger;
+        border-radius: 12px;
+        padding: 5rem;
+    }
+
+    .import-type-selector:hover {
+        background-color: var(--bg-xx-light);
+    }
+}
+
+.create-project-modal-footer {
+    display: flex;
+    gap: 1rem;
+}
+
+.schild-import-type {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .import-option {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .input {
+            flex: 1;
+        }
+    }
+
+    .path-import {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        p {
+            flex: 1;
+            color: var(--text-color-shaded);
+        }
+    }
+}

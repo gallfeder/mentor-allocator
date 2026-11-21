@@ -26,11 +26,12 @@
 }
 
 .project-card.create {
-    opacity: 0.7;
+    background-color: var(--primary);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
 }
 
 .project-card.create:hover {
-    background-color: var(--bg-xxx-light);
+    background-color: var(--primary-hover);
 }

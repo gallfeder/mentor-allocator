@@ -29,6 +29,13 @@
     transform: translateY(-2px);
 }
 
+.input {
+    background-color: var(--bg-xx-light);
+    border: 1px solid var(--bg);
+    border-radius: 12px;
+    padding: 12px;
+}
+
 .app {
     display: flex;
     flex-direction: column;
