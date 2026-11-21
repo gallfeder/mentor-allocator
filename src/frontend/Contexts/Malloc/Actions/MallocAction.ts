@@ -1,4 +1,13 @@
-import {Day, MentorLessonId, Project, ProjectId, ProjectOverview, StudentId, TeacherId} from "../../../../shared/types";
+import {
+    Day,
+    MentorLessonId,
+    Project,
+    ProjectId,
+    ProjectOverview,
+    Student,
+    StudentId,
+    TeacherId
+} from "../../../../shared/types";
 
 export interface InitProjectsPayload {
     projectOverview: ProjectOverview
@@ -29,6 +38,11 @@ export interface CreateMentorLessonSucceededPayload {
     newMentorLessonId: MentorLessonId,
 }
 
+export interface SetStudentsPayload {
+    projectId: ProjectId,
+    students: Student[]
+}
+
 export interface DeleteMentorLessonPayload {
     projectId: ProjectId,
     mentorLessonId: MentorLessonId
@@ -41,5 +55,7 @@ export type MallocAction =
     { type: "CREATE_MENTOR_LESSON_OPTIMISTIC", payload: CreateMentorLessonOptimisticPayload } |
     { type: "CREATE_MENTOR_LESSON_SUCCEEDED", payload: CreateMentorLessonSucceededPayload } |
     { type: "CREATE_MENTOR_LESSON_FAILED", payload: DeleteMentorLessonPayload } |
+
+    { type: "SET_STUDENTS", payload: SetStudentsPayload } |
 
     { type: "ALLOC_STUDENTS", payload: AllocStudentsPayload }

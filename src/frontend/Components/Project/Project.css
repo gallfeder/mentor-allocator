@@ -39,11 +39,17 @@
     flex-direction: column;
     gap: 8px;
     padding: 8px;
+    overflow-y: auto;
 
     .unallocated-students {
         display: flex;
+        overflow-y: auto;
         flex-direction: column;
         gap: 8px;
+    }
+
+    .auto-allocate {
+        margin-top: auto;
     }
 }
 

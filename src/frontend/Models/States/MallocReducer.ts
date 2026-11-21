@@ -7,6 +7,7 @@ import createMentorLessonOptimisticAction from "../../Contexts/Malloc/Actions/Me
 import createMentorLessonSucceededAction
     from "../../Contexts/Malloc/Actions/MentorLesson/CreateMentorLessonSucceededAction";
 import deleteMentorLessonAction from "../../Contexts/Malloc/Actions/MentorLesson/DeleteMentorLessonAction";
+import setStudentsAction from "../../Contexts/Malloc/Actions/Students/SetStudentsAction";
 
 function mallocReducer(state: MallocState, action: MallocAction): MallocState {
 
@@ -21,6 +22,8 @@ function mallocReducer(state: MallocState, action: MallocAction): MallocState {
             return createMentorLessonSucceededAction(state, action.payload);
         case "CREATE_MENTOR_LESSON_FAILED":
             return deleteMentorLessonAction(state, action.payload);
+        case "SET_STUDENTS":
+            return setStudentsAction(state, action.payload);
         case "ALLOC_STUDENTS":
             return allocStudentsAction(state, action.payload);
     }
