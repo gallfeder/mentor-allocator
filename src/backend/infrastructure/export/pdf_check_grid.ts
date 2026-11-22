@@ -9,7 +9,7 @@ import {
 } from "./tex_shared";
 
 
-export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds}: PDFCheckGridExportParameters): Promise<boolean> => {
+export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase"}: PDFCheckGridExportParameters): Promise<boolean> => {
     if (!phasesBounds) {
         return false;
     }
@@ -19,7 +19,7 @@ export const exportPDFCheckGrid = async (project: Project, {destination, grades,
     const lessons = extractMentorLessonData(project, uppercaseGrades);
 
     const exports = await Promise.all(lessons.map(lesson => {
-        const str = getTeXString(lesson, phasesBounds);
+        const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite);
         const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`
 
         return compileTeXToPath(dest, str);
@@ -45,16 +45,17 @@ const repeatNTimes = (n: number, str: string | ((i: number) => string)): string 
     return s;
 }
 
-const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string => {
+const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName: string): string => {
     return `
 \\documentclass[12pt, a4paper, landscape, ngerman]{scrreprt}
 \\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
 \\usepackage[ngerman]{babel}
+\\usepackage{fontenc}
 \\usepackage[margin=1cm]{geometry}
 \\usepackage{array}
 \\usepackage{booktabs}
 \\usepackage{longtable}
+\\usepackage{multirow}
 
 \\usepackage{lmodern}
 \\renewcommand{\\familydefault}{\\sfdefault}
@@ -63,34 +64,40 @@ const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string =
 \\date{\\today}
 
 \\begin{document}
-	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson), "Keine Daltonphasen definiert!")}
+	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName), "Keine Daltonphasen definiert!")}
 \\end{document}
 `
 }
 
-const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData): string => {
+const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData, phaseName: string): string => {
     const numWeeks = Math.abs(phase[1] - phase[0]);
-
+    const thickLine = "!{\\vrule width 1.2pt}"
     return `
 \\begingroup
 
-\\begin{center}
-\\huge{Übersicht Daltonstunden Phase ${currentPhaseIndex + 1}}
-\\end{center}
+\\huge{Übersicht Daltonstunden}
+\\null\\hfill ${currentPhaseIndex + 1}. ${phaseName}
+
+\\vspace{1cm}
 
 \\footnotesize
 \\setlength{\\tabcolsep}{3pt}
 
-\\begin{longtable}{|l|c| ${repeatNTimes(numWeeks, "c|c|c|c!{\\vrule width 1.2pt}")}}
+\\begin{longtable}{|p{2cm}|p{1cm}${thickLine} ${repeatNTimes(numWeeks, `p{0.35cm}|p{0.35cm}|p{0.35cm}|p{0.35cm}${thickLine}`)} p{0.35cm}|p{0.35cm}${thickLine}}
     \\hline
-    \\textbf{Name} & \\textbf{Pflstd.} ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{l|}{\\textbf{LW ${phase[0] + 1 + i}}}`)} \\\\
+    \\textbf{Name} & \\textbf{Pflstd.} ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{l${thickLine}}{\\textbf{LW ${phase[0] + 1 + i}}}`)} & \\multicolumn{2}{l${thickLine}}{\\textbf{ges.}} \\\\
 
-    & ${repeatNTimes(numWeeks, "& FS & DS & V & ue ")} \\\\ \\hline
+    & ${repeatNTimes(numWeeks, `& \\multicolumn{4}{l${thickLine}}{}`)} & \\multicolumn{2}{l${thickLine}}{\\textbf{}} \\\\
+    & ${repeatNTimes(numWeeks, "& FS & DS & V & ue ")} & V & ue \\\\ \\hline
     \\endhead
     
     \\hline
     
-    ${makeTeXStringFromValues<Student>(Array.from(lesson.students), s => studentEntry(s, numWeeks), studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks))}
+    ${makeTeXStringFromValues<Student>(
+        Array.from(lesson.students).sort((a,b) => getStudentName(a).localeCompare(getStudentName(b))),
+        s => studentEntry(s, numWeeks), 
+        studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks)
+    )}
     
 \\end{longtable}
 \\endgroup
@@ -102,7 +109,7 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 const studentEntry = (s: Student, weeks: number): string => {
 
     return `
-${getStudentName(s)} & ${repeatNTimes(weeks, "& & & & ")} \\\\ \\cline{3-${weeks * 4 + 2}}
- & ${repeatNTimes(weeks, "& & & & ")} \\\\ \\hline
+\\multirow{2}{2cm}{${getStudentName(s)}} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\cline{3-${weeks * 4 + 4}}
+ & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\hline
 `
 }

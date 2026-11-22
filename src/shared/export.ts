@@ -13,6 +13,7 @@ export type DaltonPhase = [number, number];
 export interface PDFCheckGridExportParameters extends PDFExport{
     grades?: Set<string>;
     phasesBounds: DaltonPhase[];
+    phasesNameOverwrite?: string;
 }
 
 export type ExportSettings =

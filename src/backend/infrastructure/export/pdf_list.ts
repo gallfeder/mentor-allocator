@@ -32,7 +32,7 @@ const getTeXString = (title: string, titlePage: boolean, lessons: MentorLessonDa
 
 \\usepackage[utf8]{inputenc}
 \\usepackage[ngerman]{babel}
-\\usepackage[T1]{fontenc}
+\\usepackage{fontenc}
 \\usepackage{lmodern}
 \\renewcommand{\\familydefault}{\\sfdefault}
 
