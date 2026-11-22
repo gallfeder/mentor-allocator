@@ -1,0 +1,65 @@
+.modal-body:has(.import-type-selectors) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.import-type-selectors {
+    display: flex;
+    gap: 1rem;
+
+    .import-type-selector {
+        background-color: var(--bg-x-light);
+        border: 1px solid var(--bg);
+        font-size: larger;
+        border-radius: 12px;
+        padding: 5rem;
+    }
+
+    .import-type-selector:hover {
+        background-color: var(--bg-xx-light);
+    }
+}
+
+.create-project-modal-footer {
+    display: flex;
+    gap: 1rem;
+
+    .button.create-project:disabled {
+        opacity: 0.5;
+    }
+}
+
+.schild-import-type, .untis-import-type, .custom-import-type {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .import-separators {
+        grid-template-columns: 160px 1fr 1fr;
+    }
+
+    .path-import {
+        grid-template-columns: 160px 160px 1fr;
+
+        p {
+            color: var(--text-color-shaded);
+        }
+    }
+
+    .required-field {
+        display: flex;
+        gap: 0.2rem;
+
+        p {
+            color: red !important;
+        }
+    }
+}
