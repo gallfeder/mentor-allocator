@@ -1,12 +1,12 @@
 import {Project, Student} from "../../../shared/types";
 import {DaltonPhase, PDFCheckGridExportParameters} from "../../../shared/export";
 import {
-    compileLaTeXToPath,
+    compileTeXToPath,
     extractMentorLessonData,
     getStudentName,
-    makeLaTeXStringFromValues,
+    makeTeXStringFromValues,
     MentorLessonData
-} from "./latex_shared";
+} from "./tex_shared";
 
 
 export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds}: PDFCheckGridExportParameters): Promise<boolean> => {
@@ -19,10 +19,10 @@ export const exportPDFCheckGrid = async (project: Project, {destination, grades,
     const lessons = extractMentorLessonData(project, uppercaseGrades);
 
     const exports = await Promise.all(lessons.map(lesson => {
-        const str = getLaTeXString(lesson, phasesBounds);
+        const str = getTeXString(lesson, phasesBounds);
         const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`
 
-        return compileLaTeXToPath(dest, str);
+        return compileTeXToPath(dest, str);
     }));
     const hadNoIssues = exports.findIndex(res => !res) == -1;
     if (!hadNoIssues) {
@@ -45,7 +45,7 @@ const repeatNTimes = (n: number, str: string | ((i: number) => string)): string 
     return s;
 }
 
-const getLaTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string => {
+const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string => {
     return `
 \\documentclass[10pt,a4paper,landscape,ngerman]{article}
 \\usepackage[utf8]{inputenc}
@@ -59,7 +59,7 @@ const getLaTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string
 \\date{\\today}
 
 \\begin{document}
-	${makeLaTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson), "Keine Daltonphasen definiert!")}
+	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson), "Keine Daltonphasen definiert!")}
 \\end{document}
 `
 }
@@ -86,7 +86,7 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
     
     \\hline
     
-    ${makeLaTeXStringFromValues<Student>(Array.from(lesson.students), s => studentEntry(s, numWeeks), studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks))}
+    ${makeTeXStringFromValues<Student>(Array.from(lesson.students), s => studentEntry(s, numWeeks), studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks))}
     
 \\end{longtable}
 \\endgroup

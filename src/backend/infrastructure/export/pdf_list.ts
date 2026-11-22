@@ -1,12 +1,12 @@
 import {PDFListExportParameters} from "../../../shared/export";
 import {Project, Student} from "../../../shared/types";
 import {
-    compileLaTeXToPath, extractMentorLessonData,
+    compileTeXToPath, extractMentorLessonData,
     getLessonDate,
     getStudentName,
     getTeacherName,
-    makeLaTeXStringFromValues, MentorLessonData
-} from "./latex_shared";
+    makeTeXStringFromValues, MentorLessonData
+} from "./tex_shared";
 
 
 export const exportPDFList = async (project: Project, {destination, titleOverwrite, includeTitlePage = true, grades}: PDFListExportParameters): Promise<boolean> => {
@@ -20,14 +20,14 @@ export const exportPDFList = async (project: Project, {destination, titleOverwri
     });
 
     const title = titleOverwrite ?? project.name;
-    const str = getLaTeXString(title, includeTitlePage, lessons);
+    const str = getTeXString(title, includeTitlePage, lessons);
 
     const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}${title}.pdf`
 
-    return compileLaTeXToPath(dest, str);
+    return compileTeXToPath(dest, str);
 }
 
-const getLaTeXString = (title: string, titlePage: boolean, lessons: MentorLessonData[]): string => `
+const getTeXString = (title: string, titlePage: boolean, lessons: MentorLessonData[]): string => `
 \\documentclass[12pt, a4paper, ngerman]{scrreprt}
 
 \\usepackage[utf8]{inputenc}
@@ -44,13 +44,13 @@ const getLaTeXString = (title: string, titlePage: boolean, lessons: MentorLesson
 \\begin{document}
 ${titlePage ? "\\maketitle" : ""}
 
-${makeLaTeXStringFromValues<MentorLessonData>(lessons ?? [], getMentorLessonLaTeXString, "Es gibt keine relevanten Mentorenstunden!")}
+${makeTeXStringFromValues<MentorLessonData>(lessons ?? [], getMentorLessonTeXString, "Es gibt keine relevanten Mentorenstunden!")}
 \\end{document}
 `
 
 
 
-const getMentorLessonLaTeXString = (ml: MentorLessonData): string => {
+const getMentorLessonTeXString = (ml: MentorLessonData): string => {
     if (ml.students.size == 0) {
         return "";
     }
@@ -62,7 +62,7 @@ const getMentorLessonLaTeXString = (ml: MentorLessonData): string => {
 
 \\textbf{Zugewiesene Schüler}
 \\begin{enumerate}
-${makeLaTeXStringFromValues<Student>(Array.from(ml.students), (s): string => {
+${makeTeXStringFromValues<Student>(Array.from(ml.students), (s): string => {
     const name = getStudentName(s);
     if (name.length == 0) {
         return "";

@@ -1,11 +1,11 @@
 import {Day, MentorLessonID, Project, Student, Teacher, TeacherID} from "../../../shared/types";
-import {app, dialog, shell} from "electron";
+import {app, shell} from "electron";
 import {compile} from "node-tectonic";
 import {v4 as getUUID} from 'uuid';
-import {accessSync, mkdirSync, rename, rmdir, writeFile, writeFileSync} from "node:fs";
+import {accessSync, mkdirSync, rmdir, writeFile, writeFileSync} from "node:fs";
 import path from "node:path";
 import constants from "node:constants";
-import log from "eslint-plugin-react/lib/util/log";
+import os from "node:os";
 
 
 export interface MentorLessonData {
@@ -101,7 +101,7 @@ export const getLessonDate = (day: Day, lesson: number): string => {
     }
 }
 
-export const makeLaTeXStringFromValues = <T>(values: T[], converterFn: (value: T, i: number) => string, fallback: string): string => {
+export const makeTeXStringFromValues = <T>(values: T[], converterFn: (value: T, i: number) => string, fallback: string): string => {
     if (values.length == 0) {
         return fallback;
     }
@@ -119,9 +119,13 @@ interface CompileQueueElement {
 
 const compileQueue: CompileQueueElement[] = [];
 let activeWorkers = 0;
-const maxActiveWorkers = 1;
+const maxActiveWorkers = Math.max(os.cpus().length - 2, 1);
+const useQueue = false;
 
-export const compileLaTeXToPath = async (pdfPath: string, tex: string): Promise<boolean> => {
+export const compileTeXToPath = async (pdfPath: string, tex: string): Promise<boolean> => {
+    if (!useQueue) {
+        return actuallyCompile(pdfPath, tex);
+    }
     return new Promise<boolean>(resolve => {
         if (activeWorkers < maxActiveWorkers) {
             activeWorkers++;
@@ -157,54 +161,56 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
     }
 
     const compID = getUUID();
-    const buildDir = `${app.getPath("temp")}/${app.getName()}/latex/${compID}`;
+    const buildDir = `${app.getPath("temp")}/${app.getName()}/TeX/${compID}`;
 
     mkdirSync(buildDir, {recursive: true});
 
-    console.log("LaTeX: Starting to compile...");
+    console.log("TeX: Starting to compile...");
     try {
         const result = await compile({
             tex: tex,
             cwd: buildDir,
             timeout: 120000,
+            returnBuffer: true,
         });
 
         if (!result.success) {
-            console.error(`LaTeX: Compiling failed: ${result.failure?.message}`);
+            console.error(`TeX: Compiling failed: ${result.failure?.message}`);
 
-            // TODO: Remove / Move to only in "dev mode"
-            mkdirSync(path.join(app.getPath("logs"), "faulty-tex"), {recursive: true});
-            const logPath = path.join(app.getPath("logs"), "faulty-tex", `${compID}.tex`);
-            shell.showItemInFolder(logPath);
+            if (!app.isPackaged) {
+                mkdirSync(path.join(app.getPath("logs"), "faulty-tex"), {recursive: true});
+                const logPath = path.join(app.getPath("logs"), "faulty-tex", `${compID}.tex`);
+                shell.showItemInFolder(logPath);
 
-            writeFileSync(logPath, tex);
+                writeFileSync(logPath, tex);
+            }
 
-            console.log(tex);
             return false;
         }
+        const pdf = result.pdfBuffer!;
 
-        console.log("LaTeX: Compiling succeeded. Moving to path...");
+        console.log("TeX: Compiling succeeded. Creating .pdf at path...");
 
         return new Promise<boolean>(resolve => {
-            rename(result.pdfPath!, pdfPath, err => {
+            writeFile(pdfPath, pdf, err => {
                 if (err) {
-                    console.error(`LaTeX: Moving file failed: ${err.message}`);
+                    console.error(`TeX: Creating .pdf file failed: ${err.message}`);
                     resolve(false);
                     return ;
                 }
-                console.log("LaTeX: Moving to path succeeded! Starting cleanup!");
+                console.log("TeX: Creating .pdf file succeeded! Starting cleanup!");
                 rmdir(buildDir, err => {
                     if (err != null) {
-                        console.error(`LaTeX: Error during cleanup: ${err}`);
+                        console.error(`TeX: Error during cleanup: ${err}`);
                     } else {
-                        console.log("LaTeX: Cleanup successful!");
+                        console.log("TeX: Cleanup successful!");
                     }
                 });
                 resolve(true);
             });
         });
     } catch (e) {
-        console.error(`LaTeX: Compiling failed (error caught): ${e}`);
+        console.error(`TeX: Compiling failed (error caught): ${e}`);
         return false;
     }
 }
