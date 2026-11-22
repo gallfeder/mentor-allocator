@@ -42,21 +42,14 @@
             flex-direction: column;
             gap: 0.5rem;
         }
+    }
 
-        .mentor-lesson-drop-target {
-            position: absolute;
-            inset: 0;
-            z-index: 10;
-            background-color: var(--bg-hover-over);
-            color: var(--text-color);
-            font-size: larger;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            align-items: center;
-            justify-content: center;
-        }
+    .mentor-lesson.valid-drop-target-active {
+        background-color: var(--bg-xx-light);
+    }
+
+    .mentor-lesson.invalid-drop-target {
+        opacity: 0.5;
     }
 
     .mentor-lesson-create {

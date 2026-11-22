@@ -40,7 +40,8 @@ const DragDropProviderComp = (props: Props) => {
         <DragDropProvider
             onDragEnd={(event) => {
                 updateDragEndState(event);
-            }}>
+            }}
+        >
             {props.children}
         </DragDropProvider>
     )
