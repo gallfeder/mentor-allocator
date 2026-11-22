@@ -24,31 +24,42 @@
 .create-project-modal-footer {
     display: flex;
     gap: 1rem;
+
+    .button.create-project:disabled {
+        opacity: 0.5;
+    }
 }
 
-.schild-import-type {
+.schild-import-type, .untis-import-type, .custom-import-type {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 
-    .import-option {
-        display: flex;
+    .form-row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
         align-items: center;
         gap: 1rem;
+    }
 
-        .input {
-            flex: 1;
-        }
+    .import-separators {
+        grid-template-columns: 160px 1fr 1fr;
     }
 
     .path-import {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        grid-template-columns: 160px 160px 1fr;
 
         p {
-            flex: 1;
             color: var(--text-color-shaded);
+        }
+    }
+
+    .required-field {
+        display: flex;
+        gap: 0.2rem;
+
+        p {
+            color: red !important;
         }
     }
 }

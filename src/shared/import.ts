@@ -12,7 +12,8 @@ export interface SchILDImportParameters {
     studentCoursesSeparatorOverwrite?: string;
 }
 
-export type ImportType = SchILDImportType | UntisImportType;
+export type ImportType = CustomImportType | SchILDImportType | UntisImportType;
+export type CustomImportType = "Custom";
 export type SchILDImportType = "SchILD";
 export type UntisImportType = "Untis";
 

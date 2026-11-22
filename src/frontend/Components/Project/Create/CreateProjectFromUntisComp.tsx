@@ -1,15 +1,8 @@
-import {Ref, useImperativeHandle, useState} from "react";
-import {ImportProjectHandle} from "./CreateProjectModalComp";
+import {useEffect, useImperativeHandle, useState} from "react";
+import {CreateProjectCompProps} from "./CreateProjectModalComp";
 import {ProjectId} from "../../../../shared/types";
 
-interface Props {
-    ref: Ref<ImportProjectHandle>
-    onCreated: (projectId: ProjectId | undefined) => void;
-}
-
-const CreateProjectFromUntisComp = (props: Props) => {
-
-    const [projectName, setProjectName] = useState<string>("");
+const CreateProjectFromUntisComp = ({ setCanCreateProject, projectName, setProjectName, onCreated, ref }: CreateProjectCompProps) => {
 
     const [gpu001Path, setGpu001Path] = useState<string>("");
     const [gpu015Path, setGpu015Path] = useState<string>("");
@@ -21,12 +14,15 @@ const CreateProjectFromUntisComp = (props: Props) => {
                 pathToGPU015: gpu015Path
             }
         }).then((projectId: ProjectId | undefined) => {
-            props.onCreated(projectId);
+            onCreated(projectId);
         });
     }
 
-    // eslint-disable-next-line react-hooks/refs
-    useImperativeHandle(props.ref, () => ({
+    useEffect(() => {
+        setCanCreateProject(projectName.trim().length > 0 && gpu001Path.trim().length > 0 && gpu015Path.trim().length > 0);
+    }, [setCanCreateProject, projectName, gpu001Path, gpu015Path]);
+
+    useImperativeHandle(ref, () => ({
         createProject
     }));
 
@@ -49,23 +45,30 @@ const CreateProjectFromUntisComp = (props: Props) => {
     }
 
     return (
-        <div className="schild-import-type">
-            <div className="import-option">
-                <h3>Project name</h3>
+        <div className="untis-import-type">
+            <div className="form-row import-option">
+                <div className="required-field">
+                    <h3>Project name</h3>
+                    <p>*</p>
+                </div>
                 <input value={projectName} onChange={(e) => setProjectName(e.currentTarget.value)}
-                       className="input" type="text"/>
+                       className="input" type="text" placeholder="Project name"/>
             </div>
 
-            <br/>
-
-            <div className="path-import">
-                <h3>GPU001</h3>
+            <div className="form-row path-import">
+                <div className="required-field">
+                    <h3>GPU001</h3>
+                    <p>*</p>
+                </div>
                 <button onClick={getGpu001Path} className="button normal">Open file</button>
                 <p>{gpu001Path.length === 0 ? "" : `(${gpu001Path})`}</p>
             </div>
 
-            <div className="path-import">
-                <h3>GPU015</h3>
+            <div className="form-row path-import">
+                <div className="required-field">
+                    <h3>GPU015</h3>
+                    <p>*</p>
+                </div>
                 <button onClick={getGpu015Path} className="button normal">Open file</button>
                 <p>{gpu015Path.length === 0 ? "" : `(${gpu015Path})`}</p>
             </div>
