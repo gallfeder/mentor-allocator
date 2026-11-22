@@ -47,13 +47,17 @@ const repeatNTimes = (n: number, str: string | ((i: number) => string)): string 
 
 const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[]): string => {
     return `
-\\documentclass[10pt,a4paper,landscape,ngerman]{article}
+\\documentclass[12pt, a4paper, landscape, ngerman]{scrreprt}
 \\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
 \\usepackage[ngerman]{babel}
 \\usepackage[margin=1cm]{geometry}
 \\usepackage{array}
 \\usepackage{booktabs}
 \\usepackage{longtable}
+
+\\usepackage{lmodern}
+\\renewcommand{\\familydefault}{\\sfdefault}
 
 \\title{Übersicht Daltonstunden}
 \\date{\\today}

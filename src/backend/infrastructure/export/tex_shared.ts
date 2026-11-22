@@ -6,6 +6,7 @@ import {accessSync, mkdirSync, rmdir, writeFile, writeFileSync} from "node:fs";
 import path from "node:path";
 import constants from "node:constants";
 import os from "node:os";
+import {logTiming} from "./tex_timing_log";
 
 
 export interface MentorLessonData {
@@ -123,6 +124,11 @@ const maxActiveWorkers = Math.max(os.cpus().length - 2, 1);
 const useQueue = false;
 
 export const compileTeXToPath = async (pdfPath: string, tex: string): Promise<boolean> => {
+    if (!tectonicCacheInitialisation) {
+        initialiseTectonicCache();
+    }
+    await tectonicCacheInitialisation;
+
     if (!useQueue) {
         return actuallyCompile(pdfPath, tex);
     }
@@ -152,7 +158,8 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
     if (pdfPath.length == 0) {
         return false;
     }
-
+    const d1 = new Date();
+    
     try {
         accessSync(path.dirname(pdfPath), constants.W_OK)
     } catch {
@@ -166,12 +173,14 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
     mkdirSync(buildDir, {recursive: true});
 
     console.log("TeX: Starting to compile...");
+    const d2 = new Date();
     try {
         const result = await compile({
             tex: tex,
             cwd: buildDir,
             timeout: 120000,
             returnBuffer: true,
+            onlyCached: true,
         });
 
         if (!result.success) {
@@ -190,6 +199,7 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
         const pdf = result.pdfBuffer!;
 
         console.log("TeX: Compiling succeeded. Creating .pdf at path...");
+        const d3 = new Date();
 
         return new Promise<boolean>(resolve => {
             writeFile(pdfPath, pdf, err => {
@@ -199,12 +209,16 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
                     return ;
                 }
                 console.log("TeX: Creating .pdf file succeeded! Starting cleanup!");
+                const d4 = new Date();
+
                 rmdir(buildDir, err => {
                     if (err != null) {
                         console.error(`TeX: Error during cleanup: ${err}`);
                     } else {
                         console.log("TeX: Cleanup successful!");
                     }
+                    const d5 = new Date();
+                    logTiming(d1, d2, d3, d4, d5);
                 });
                 resolve(true);
             });
@@ -213,4 +227,29 @@ const actuallyCompile = async (pdfPath: string, tex: string): Promise<boolean> =
         console.error(`TeX: Compiling failed (error caught): ${e}`);
         return false;
     }
+}
+
+let tectonicCacheInitialisation: null | Promise<boolean> = null;
+
+export const initialiseTectonicCache = () => {
+    if (tectonicCacheInitialisation) {
+        return;
+    }
+
+    tectonicCacheInitialisation = new Promise<boolean>(resolve => {
+        console.log("Tectonic: Starting initialisation of cache!");
+        compile({
+            texFile: "./cache_initialisation.tex",
+            timeout: 120000,
+        }).then(r => {
+            if (r.success) {
+                console.log("Tectonic: Cache initialisation completed!");
+                resolve(true);
+                return;
+            }
+            console.error(`Tectonic: Failed to initialise cache (code: ${r.failure?.code}): ${r.failure?.message}`);
+            tectonicCacheInitialisation = null;
+            initialiseTectonicCache();
+        });
+    });
 }

@@ -31,6 +31,7 @@ import {
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
 import {getDirectoryPathFromUser, getFilePathFromUser} from "./backend/handlers/files";
+import {initialiseTectonicCache} from "./backend/infrastructure/export/tex_shared";
 
 if (started) {
   app.quit();
@@ -93,6 +94,8 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:deleteMentorLesson", deleteMentorLessonHandler);
 
   ipcMain.handle("dialog:exportProject", exportProjectHandler);
+
+  initialiseTectonicCache();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

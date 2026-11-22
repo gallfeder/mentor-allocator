@@ -145,3 +145,5 @@ vite.config.ts.timestamp-*
 # Electron-Forge
 out/
 data/
+
+cache_initialisation.pdf
