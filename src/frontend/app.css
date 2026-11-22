@@ -36,6 +36,53 @@
     padding: 12px;
 }
 
+select {
+    background-color: var(--bg-x-light);
+    border-radius: 6px;
+    border: 1px solid var(--bg-xx-light);
+    padding: 6px;
+    flex: 1;
+}
+
+@supports (appearance: base-select) {
+    select,
+    ::picker(select) {
+        appearance: base-select;
+    }
+
+    ::picker(select) {
+        background-color: var(--bg-x-light);
+        border: 1px solid var(--bg-xx-light);
+        border-radius: 8px;
+        padding: 4px
+    }
+
+    option {
+        border-radius: 8px;
+        padding: 2px;
+
+        option:hover,option:focus-visible {
+            background-color: var(--bg-xx-light);
+        }
+
+        option:checked {
+            background-color: var(--bg-xx-light);
+        }
+
+        option::checkmark {
+            color: var(--text-color);
+        }
+    }
+}
+
+input[type=number] {
+    background-color: var(--bg-x-light);
+    border: 1px solid var(--bg-xx-light);
+    border-radius: 8px;
+    width: 100%;
+    padding: 8px;
+}
+
 .app {
     display: flex;
     flex-direction: column;

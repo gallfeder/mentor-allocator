@@ -60,8 +60,12 @@ const MentorLessonHeaderComp = (props: Props) => {
         <div className="mentor-lesson-header">
             <h3>{getTeacherName()}</h3>
             <div className="header-tags">
-                <p className="mentor-header-tag">{toDayText(props.mentorLesson.day)}</p>
-                <p className="mentor-header-tag">{props.mentorLesson.lesson}.</p>
+                { (props.mentorLesson.day > 0 || props.mentorLesson.lesson > 0) && (
+                    <>
+                        <p className="mentor-header-tag">{props.mentorLesson.day != Day.Unspecified ? toDayText(props.mentorLesson.day) : "No day specified"}</p>
+                        { props.mentorLesson.lesson > 0 && <p className="mentor-header-tag">{props.mentorLesson.lesson}.</p> }
+                    </>
+                )}
             </div>
         </div>
     )
