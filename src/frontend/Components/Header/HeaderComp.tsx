@@ -1,5 +1,6 @@
 import "./Header.css"
 import {useNavigate} from "react-router-dom";
+import ThemeSwitcherComp from "../Theme/ThemeSwitcherComp";
 
 const HeaderComp = () => {
 
@@ -12,6 +13,7 @@ const HeaderComp = () => {
     return (
         <nav className="header panel">
             <h2 onClick={backToHomepage}>Mentor Allocator</h2>
+            <ThemeSwitcherComp/>
         </nav>
     )
 

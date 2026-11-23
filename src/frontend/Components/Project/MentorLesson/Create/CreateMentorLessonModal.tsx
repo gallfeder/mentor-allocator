@@ -17,6 +17,7 @@ const CreateMentorLessonModal = (props: Props) => {
     const { projectId, grade } = useParams();
     const teacherSelect: RefObject<HTMLSelectElement | null> = useRef<HTMLSelectElement>(null);
     const daySelect: RefObject<HTMLSelectElement | null> = useRef<HTMLSelectElement>(null);
+    const lessonSelect: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
 
     const stateProject: StateProject | undefined = mallocState.projects.get(projectId as ProjectId);
     if (!stateProject) {
@@ -31,10 +32,13 @@ const CreateMentorLessonModal = (props: Props) => {
 
         const teacherId: TeacherId = Number(teacherSelect.current.value) as TeacherId;
         const day: Day = daySelect.current.value as unknown as Day;
+        // eslint-disable-next-line no-constant-binary-expression
+        const lesson: number = Number(lessonSelect.current?.value) ?? 0;
 
         const createMentorLessonPayload: CreateMentorLessonPayload = {
             teacherId: teacherId,
-            day: day
+            day: day,
+            lesson
         }
         props.createMentorLesson(createMentorLessonPayload);
     }
@@ -52,7 +56,8 @@ const CreateMentorLessonModal = (props: Props) => {
             )
         );
 
-        return contextRelevantTeacherIds.map((teacherId: TeacherId) => stateProject.teachers.get(teacherId)!);
+        return contextRelevantTeacherIds.map((teacherId: TeacherId) => stateProject.teachers.get(teacherId))
+            .filter((teacher: Teacher | undefined) => teacher !== undefined).sort(((a: Teacher, b: Teacher) => a.shorthand.localeCompare(b.shorthand)));
     }
 
     return (
@@ -92,7 +97,7 @@ const CreateMentorLessonModal = (props: Props) => {
                         <hr className="line"/>
                     </div>
 
-                    <div className="day-selector">
+                    <div className="section-field day-selector">
                         <p>Day</p>
                         <select ref={daySelect}>
                             <option value={-1}>Unspecified</option>
@@ -104,6 +109,11 @@ const CreateMentorLessonModal = (props: Props) => {
                             <option value={5}>Saturday</option>
                             <option value={6}>Sunday</option>
                         </select>
+                    </div>
+
+                    <div className="section-field lesson-selector">
+                        <p>Lesson</p>
+                        <input ref={lessonSelect} type="number" placeholder="Unspecified" min={0} max={13}/>
                     </div>
                 </div>
             </div>

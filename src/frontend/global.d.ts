@@ -50,6 +50,10 @@ declare global {
             deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<boolean>,
 
             exportProject: (projectID: ProjectID, settings: ExportSettings) => Promise<boolean>,
+        },
+
+        theme: {
+            toggleTheme: () => Promise<boolean>
         }
     }
 }

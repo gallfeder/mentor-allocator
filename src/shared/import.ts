@@ -12,6 +12,11 @@ export interface SchILDImportParameters {
     studentCoursesSeparatorOverwrite?: string;
 }
 
+export type ImportType = CustomImportType | SchILDImportType | UntisImportType;
+export type CustomImportType = "Custom";
+export type SchILDImportType = "SchILD";
+export type UntisImportType = "Untis";
+
 export type ImportSettings =
-    { type: "Untis", parameters: UntisImportParameters } |
-    { type: "SchILD", parameters: SchILDImportParameters };
+    { type: UntisImportType, parameters: UntisImportParameters } |
+    { type: SchILDImportType, parameters: SchILDImportParameters };

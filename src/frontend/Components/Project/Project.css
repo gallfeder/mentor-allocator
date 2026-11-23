@@ -6,6 +6,8 @@
 }
 
 .project-view-sidebar {
+    color: var(--text-color);
+
     .project-view-grades {
         display: flex;
         flex-direction: column;
@@ -13,19 +15,19 @@
         padding: 8px;
 
         .grade {
-            background-color: var(--bg-xx-light);
+            background-color: var(--bg-x-light);
             padding: 8px;
             text-align: center;
             border-radius: 12px;
-            border: 1px solid var(--bg-light);
+            border: 1px solid var(--border-color);
         }
 
         .grade.active {
-            background-color: var(--bg-xxxx-light);
+            background-color: var(--bg-xx-light);
         }
 
         .grade:hover {
-            background-color: var(--bg-xxx-light);
+            background-color: var(--bg-xx-light);
         }
     }
 }
@@ -39,12 +41,23 @@
     flex-direction: column;
     gap: 8px;
     padding: 8px;
+    overflow-y: auto;
+    transition: background-color var(--transition-speed);
 
     .unallocated-students {
         display: flex;
+        overflow-y: auto;
         flex-direction: column;
         gap: 8px;
     }
+
+    .auto-allocate {
+        margin-top: auto;
+    }
+}
+
+.project-unallocated-sidebar.valid-drop-target {
+    background-color: var(--bg-xx-light);
 }
 
 .user-card {
@@ -52,7 +65,7 @@
     color: var(--text-color);
     padding: 8px;
     border-radius: 12px;
-    border: 1px solid var(--bg-light);
+    border: 1px solid var(--border-color);
 }
 
 .user-card:hover {

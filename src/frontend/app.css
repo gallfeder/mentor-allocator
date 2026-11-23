@@ -1,12 +1,12 @@
 .button {
-    transition: background-color 0.15s, transform 0.15s;
+    transition: background-color 0.15s, transform 0.15s, opacity 0.15s;
 }
 
 .button.normal {
     background-color: var(--bg-xx-light);
     color: var(--text-color);
     padding: 12px;
-    border: 1px solid var(--bg-x-light);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     font-size: large;
 }
@@ -20,13 +20,73 @@
     font-size: large;
 }
 
-.button.primary:hover {
+.button:hover:not(:disabled) {
+    cursor: pointer;
+    transform: translateY(-2px);
+}
+
+.button.primary:hover:not(:disabled) {
     background-color: var(--primary-hover);
 }
 
-.button:hover {
-    cursor: pointer;
-    transform: translateY(-2px);
+.button:disabled {
+    cursor: not-allowed;
+}
+
+.input {
+    background-color: var(--bg-xx-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+select {
+    background-color: var(--bg-x-light);
+    color: var(--text-color);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    flex: 1;
+}
+
+@supports (appearance: base-select) {
+    select,
+    ::picker(select) {
+        appearance: base-select;
+    }
+
+    ::picker(select) {
+        background-color: var(--bg-x-light);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 4px
+    }
+
+    option {
+        color: var(--text-color);
+        border-radius: 8px;
+        padding: 2px;
+
+        option:hover,option:focus-visible {
+            background-color: var(--bg-xx-light);
+        }
+
+        option:checked {
+            background-color: var(--bg-xx-light);
+        }
+
+        option::checkmark {
+            color: var(--text-color);
+        }
+    }
+}
+
+input[type=number] {
+    background-color: var(--bg-x-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 100%;
+    padding: 8px;
 }
 
 .app {
@@ -38,7 +98,9 @@
 }
 
 .panel {
-    background-color: var(--bg-x-light);
-    border: 1px solid var(--bg-light);
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed), border var(--transition-speed);
 }

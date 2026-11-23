@@ -9,7 +9,8 @@ import {MallocState, StateProject} from "../../../../Models/States/MallocState";
 
 export interface CreateMentorLessonPayload {
     teacherId: TeacherId,
-    day: Day
+    day: Day,
+    lesson: number
 }
 
 const MentorLessonCreateComp = () => {
@@ -37,13 +38,13 @@ const MentorLessonCreateComp = () => {
                 predictedMentorLessonId: predictedMentorLessonId,
                 teacherId: payload.teacherId,
                 day: payload.day,
-                lesson: 0,
+                lesson: payload.lesson,
                 grade: grade!
             }
         });
 
         const mentorLessonId: MentorLessonId | undefined = await window.electronAPI.createMentorLesson(
-            projectId as ProjectId, Number(payload.day), 0, payload.teacherId, grade
+            projectId as ProjectId, Number(payload.day), payload.lesson, payload.teacherId, grade
         );
         if (mentorLessonId) {
             mallocDispatch!({ type: "CREATE_MENTOR_LESSON_SUCCEEDED", payload: {
@@ -62,7 +63,7 @@ const MentorLessonCreateComp = () => {
     }
 
     return (
-        <div onClick={() => setIsCreating(true)} className="mentor-lesson-create mentor-lesson button">
+        <div onClick={() => setIsCreating(true)} className="mentor-lesson-create panel mentor-lesson button">
             <p>+</p>
             {
                 isCreating && (

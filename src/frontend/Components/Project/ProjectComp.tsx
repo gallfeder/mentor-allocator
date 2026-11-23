@@ -27,7 +27,7 @@ const ProjectComp = () => {
     })
 
     return (
-        <div className="project panel scroller">
+        <div className="project scroller">
             <div className="mentor-lessons">
                 {mentorLessons.map((mentorLesson: MentorLesson) => {
                     return <MentorLessonComp key={mentorLesson.id} mentorLesson={mentorLesson}/>

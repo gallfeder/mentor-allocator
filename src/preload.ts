@@ -51,3 +51,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     exportProject: (projectID: ProjectID, settings: ExportSettings): Promise<boolean> => ipcRenderer.invoke("dialog:exportProject", projectID, settings),
 });
+
+contextBridge.exposeInMainWorld("theme", {
+    toggleTheme: (): Promise<boolean> => ipcRenderer.invoke("theme:toggleTheme")
+});
