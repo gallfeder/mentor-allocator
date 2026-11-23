@@ -46,6 +46,10 @@ declare global {
             deleteTeacher: (projectID: ProjectID, teacherID: TeacherID) => Promise<boolean>,
             deleteCourse: (projectID: ProjectID, courseID: CourseID) => Promise<boolean>,
             deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID) => Promise<boolean>,
+        },
+
+        theme: {
+            toggleTheme: () => Promise<boolean>
         }
     }
 }

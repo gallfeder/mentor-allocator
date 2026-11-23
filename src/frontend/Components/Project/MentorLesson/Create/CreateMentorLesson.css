@@ -20,24 +20,12 @@
         flex-direction: column;
         gap: 0.5rem;
 
-        .day-selector {
+        .section-field {
             display: flex;
             gap: 0.5rem;
             align-items: center;
         }
     }
-
-    select {
-        background-color: var(--bg-x-light);
-        border-radius: 6px;
-        border: 1px solid var(--bg-xx-light);
-        padding: 6px;
-        flex: 1;
-    }
-}
-
-.create-mentor-modal-header {
-
 }
 
 .create-mentor-modal-footer {

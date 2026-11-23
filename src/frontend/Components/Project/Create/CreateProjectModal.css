@@ -10,7 +10,7 @@
 
     .import-type-selector {
         background-color: var(--bg-x-light);
-        border: 1px solid var(--bg);
+        border: 1px solid var(--border-color);
         font-size: larger;
         border-radius: 12px;
         padding: 5rem;

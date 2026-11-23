@@ -47,3 +47,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     deleteCourse: (projectID: ProjectID, courseID: CourseID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteCourse", projectID, courseID),
     deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteMentorLesson", projectID, mentorLessonID),
 });
+
+contextBridge.exposeInMainWorld("theme", {
+    toggleTheme: (): Promise<boolean> => ipcRenderer.invoke("theme:toggleTheme")
+})

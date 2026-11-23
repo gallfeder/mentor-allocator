@@ -52,7 +52,7 @@
     width: 45px;
     margin-left: auto;
     padding: 10px;
-    font-size: medium;
+    font-size: x-large;
     border: none;
     border-radius: 15px;
     transition: background-color 0.3s, transform 0.3s;
@@ -67,6 +67,7 @@
     margin-top: 15px;
     height: 100%;
     overflow: auto;
+    color: var(--text-color);
 }
 
 .modal-footer {
