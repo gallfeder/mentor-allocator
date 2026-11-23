@@ -7,47 +7,51 @@
 }
 
 :root {
-    --bg-dark: hsl(0 0% 95%);
-    --bg: hsl(0, 0%, 94%);
-    --bg-light: hsl(220, 10%, 94%);
-    --bg-x-light: hsl(220, 5%, 96%);
-    --bg-xx-light: hsl(0 0% 98%);
-
-    --border-color: hsl(0 0% 90%);
-
-    --scrollbar-background: var(--bg-x-light);
-    --scrollbar-foreground: var(--bg-xx-light);
-
-    --primary: hsl(211, 100%, 50%);
-    --primary-muted: hsl(211, 100%, 85%);
-    --primary-hover: hsl(211, 100%, 42%);
-
-    --text-color: hsl(220, 25%, 12%);
-    --text-color-shaded: hsl(220, 10%, 42%);
-
     --transition-speed: 0.3s;
 }
 
-:root[data-theme="dark"] {
-    --bg-dark: hsl(220, 18%, 4%);
-    --bg: hsl(220, 16%, 7%);
-    --bg-light: hsl(220, 14%, 13%);
-    --bg-x-light: hsl(220, 12%, 19%);
-    --bg-xx-light: hsl(220, 11%, 27%);
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-dark: hsl(0 0% 95%);
+        --bg: hsl(0, 0%, 94%);
+        --bg-light: hsl(220, 10%, 94%);
+        --bg-x-light: hsl(220, 5%, 96%);
+        --bg-xx-light: hsl(0 0% 98%);
 
-    --border-color: hsl(220, 25%, 18%);
+        --border-color: hsl(0 0% 90%);
 
-    --scrollbar-background: var(--bg);
-    --scrollbar-foreground: var(--bg-xx-light);
+        --scrollbar-background: var(--bg-x-light);
+        --scrollbar-foreground: var(--bg-xx-light);
 
-    --primary: hsl(210, 90%, 64%);
-    --primary-muted: hsl(211, 100%, 85%);
-    --primary-hover: hsl(210, 95%, 72%);
+        --primary: hsl(211, 100%, 50%);
+        --primary-muted: hsl(211, 100%, 85%);
+        --primary-hover: hsl(211, 100%, 42%);
 
-    --text-color: hsl(220, 15%, 92%);
-    --text-color-shaded: hsl(220, 12%, 62%);
+        --text-color: hsl(220, 25%, 12%);
+        --text-color-shaded: hsl(220, 10%, 42%);
+    }
+}
 
-    --transition-speed: 0.3s;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-dark: hsl(220, 18%, 4%);
+        --bg: hsl(220, 16%, 7%);
+        --bg-light: hsl(220, 14%, 13%);
+        --bg-x-light: hsl(220, 12%, 19%);
+        --bg-xx-light: hsl(220, 11%, 27%);
+
+        --border-color: hsl(220, 25%, 18%);
+
+        --scrollbar-background: var(--bg);
+        --scrollbar-foreground: var(--bg-xx-light);
+
+        --primary: hsl(210, 90%, 64%);
+        --primary-muted: hsl(211, 100%, 85%);
+        --primary-hover: hsl(210, 95%, 72%);
+
+        --text-color: hsl(220, 15%, 92%);
+        --text-color-shaded: hsl(220, 12%, 62%);
+    }
 }
 
 body {

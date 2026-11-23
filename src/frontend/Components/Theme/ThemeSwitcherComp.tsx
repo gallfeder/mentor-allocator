@@ -1,20 +1,15 @@
-import {useTheme} from "../../Contexts/Theme/ThemeHooks";
 import "./ThemeSwitcher.css";
 
 const ThemeSwitcherComp = () => {
 
-    const { theme, toggleTheme } = useTheme();
-
     function onClicked() {
-        toggleTheme();
+        window.theme.toggleTheme().then();
     }
 
     const lightModeSwitcherIcon = "/src/frontend/public/lightmode-switcher.svg"
-    const darkModeSwitcherIcon = "/src/frontend/public/darkmode-switcher.svg"
 
     return (
-        <img className="theme-switcher" height="40px" src={theme === "light" ? lightModeSwitcherIcon : darkModeSwitcherIcon}
-             alt={theme === "light" ? "light mode" : "dark mode"} onClick={onClicked}/>
+        <img className="theme-switcher" height="40px" src={lightModeSwitcherIcon} alt={"theme switcher"} onClick={onClicked}/>
     )
 
 }
