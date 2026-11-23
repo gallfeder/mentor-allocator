@@ -105,8 +105,9 @@ app.whenReady().then(() => {
     ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
     ipcMain.handle("dialog:automaticallyAllocateStudents", automaticallyAllocateStudentsHandler)
     ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
+    ipcMain.handle("dialog:getDirectoryPathFromUser", getDirectoryPathFromUser);
 
-    ipcMain.handle("dialog:deleteProject", getProjectHandler);
+    ipcMain.handle("dialog:deleteProject", deleteProjectHandler);
     ipcMain.handle("dialog:deleteStudent", deleteStudentHandler);
     ipcMain.handle("dialog:deleteTeacher", deleteTeacherHandler);
     ipcMain.handle("dialog:deleteCourse", deleteCourseHandler);
@@ -122,6 +123,8 @@ app.whenReady().then(() => {
         }
         return nativeTheme.shouldUseDarkColors;
     })
+
+    initialiseTectonicCache();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
