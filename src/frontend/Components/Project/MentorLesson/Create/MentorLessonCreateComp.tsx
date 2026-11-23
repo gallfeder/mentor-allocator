@@ -63,7 +63,7 @@ const MentorLessonCreateComp = () => {
     }
 
     return (
-        <div onClick={() => setIsCreating(true)} className="mentor-lesson-create mentor-lesson button">
+        <div onClick={() => setIsCreating(true)} className="mentor-lesson-create panel mentor-lesson button">
             <p>+</p>
             {
                 isCreating && (

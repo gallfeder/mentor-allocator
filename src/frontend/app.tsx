@@ -4,6 +4,7 @@ import MallocStateProvider from "./Models/States/MallocStateProvider";
 import "./app.css"
 import ProjectPage from "./Pages/Project/ProjectPage";
 import DragDropProviderComp from "./Contexts/Dnd/DragDropProviderComp";
+import ThemeProvider from "./Contexts/Theme/ThemeProvider";
 
 const AppContent = () => {
 
@@ -23,11 +24,13 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <MallocStateProvider>
-                <DragDropProviderComp>
-                    <AppContent/>
-                </DragDropProviderComp>
-            </MallocStateProvider>
+            <ThemeProvider>
+                <MallocStateProvider>
+                    <DragDropProviderComp>
+                        <AppContent/>
+                    </DragDropProviderComp>
+                </MallocStateProvider>
+            </ThemeProvider>
         </BrowserRouter>
     )
 

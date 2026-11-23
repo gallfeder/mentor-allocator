@@ -7,34 +7,25 @@
 }
 
 :root {
-    --bg-dark: hsl(220, 20%, 94%);
-    --bg: hsl(0, 0%, 100%);
-    --bg-light: hsl(220, 20%, 97%);
-    --bg-x-light: hsl(220, 15%, 92%);
-    --bg-xx-light: hsl(220, 12%, 86%);
-    --bg-xxx-light: hsl(220, 10%, 78%);
-    --bg-xxxx-light: hsl(220, 8%, 68%);
+    --bg-dark: hsl(0 0% 95%);
+    --bg: hsl(0, 0%, 94%);
+    --bg-light: hsl(220, 10%, 94%);
+    --bg-x-light: hsl(220, 5%, 96%);
+    --bg-xx-light: hsl(0 0% 98%);
 
-    --bg-popover: hsl(0, 0%, 100%);
-
-    --bg-hover-over: hsla(0, 0%, 5%, 0.15);
+    --border-color: hsl(0 0% 90%);
 
     --scrollbar-background: var(--bg-x-light);
-    --scrollbar-foreground: var(--bg-xxx-light);
+    --scrollbar-foreground: var(--bg-xx-light);
 
     --primary: hsl(211, 100%, 50%);
     --primary-muted: hsl(211, 100%, 85%);
     --primary-hover: hsl(211, 100%, 42%);
-    --warning: hsl(0, 84%, 55%);
 
     --text-color: hsl(220, 25%, 12%);
     --text-color-shaded: hsl(220, 10%, 42%);
 
-    --highlight-selection: hsl(212, 100%, 90%);
-    --icon-brightness-filter: brightness(0.75);
-
-    --shadow-m: 0 1px 3px rgba(0, 0, 0, 0.05),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+    --transition-speed: 0.3s;
 }
 
 :root[data-theme="dark"] {
@@ -43,12 +34,8 @@
     --bg-light: hsl(220, 14%, 13%);
     --bg-x-light: hsl(220, 12%, 19%);
     --bg-xx-light: hsl(220, 11%, 27%);
-    --bg-xxx-light: hsl(220, 10%, 35%);
-    --bg-xxxx-light: hsl(220, 9%, 45%);
 
-    --bg-popover: hsl(220, 14%, 15%);
-
-    --bg-hover-over: hsla(0, 0%, 85%, 0.15);
+    --border-color: hsl(220, 25%, 18%);
 
     --scrollbar-background: var(--bg);
     --scrollbar-foreground: var(--bg-xx-light);
@@ -56,17 +43,11 @@
     --primary: hsl(210, 90%, 64%);
     --primary-muted: hsl(211, 100%, 85%);
     --primary-hover: hsl(210, 95%, 72%);
-    --warning: hsl(0, 75%, 60%);
 
     --text-color: hsl(220, 15%, 92%);
     --text-color-shaded: hsl(220, 12%, 62%);
 
-    --highlight-selection: hsl(212, 60%, 28%);
-    --icon-brightness-filter: brightness(1.2);
-
-    --shadow-m: inset 0 1px 2px hsla(0, 0%, 100%, 0.06),
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 6px 16px rgba(0, 0, 0, 0.4);
+    --transition-speed: 0.3s;
 }
 
 body {

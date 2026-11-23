@@ -56,7 +56,7 @@ const MentorLessonComp = (props: Props) => {
     }
 
     return (
-        <div ref={droppableRef} className={`mentor-lesson ${getDropCssClasses()}`}>
+        <div ref={droppableRef} className={`mentor-lesson panel ${getDropCssClasses()}`}>
             <MentorLessonHeaderComp mentorLesson={props.mentorLesson}/>
             <MentorLessonStudentsComp mentorLesson={props.mentorLesson}/>
         </div>

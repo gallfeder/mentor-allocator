@@ -1,0 +1,9 @@
+.theme-switcher {
+    filter: invert(0.6);
+    transition: filter 0.1s;
+}
+
+.theme-switcher:hover {
+    filter: invert(0.6) brightness(0.75);
+    cursor: pointer;
+}

@@ -1,12 +1,9 @@
 .mentor-lessons {
     display: flex;
     gap: 1rem;
-    padding: 8px;
     height: 100%;
 
     .mentor-lesson {
-        background-color: var(--bg-x-light);
-        border: 1px solid var(--bg-light);
         position: relative;
         border-radius: 12px;
         padding: 8px;
@@ -16,7 +13,7 @@
         flex-direction: column;
         gap: 0.75rem;
         overflow-y: auto;
-        transition: background-color 0.05s, opacity 0.2s;
+        transition: background-color var(--transition-speed), opacity 0.2s, color 0.2s;
 
         .mentor-lesson-header {
             display: flex;
