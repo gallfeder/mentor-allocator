@@ -9,17 +9,22 @@ import {
 } from "./tex_shared";
 
 
-export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase"}: PDFCheckGridExportParameters): Promise<boolean> => {
+export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase", titleOverwrite, extraRowsPerStudent, teachersFilter, mentorLessonsFilter}: PDFCheckGridExportParameters): Promise<boolean> => {
     if (!phasesBounds) {
         return false;
+    }
+    const title = titleOverwrite ?? project.name;
+    if (!extraRowsPerStudent || extraRowsPerStudent < 1) {
+        extraRowsPerStudent = 1;
     }
 
     const uppercaseGrades = grades && grades.size != 0 ? new Set<string>(Array.from(grades).map(g => g.toUpperCase())) : undefined;
 
-    const lessons = extractMentorLessonData(project, uppercaseGrades);
+    const lessons = extractMentorLessonData(project, uppercaseGrades)
+        .filter(ml => (!teachersFilter || teachersFilter.has(ml.teacher.id)) && (!mentorLessonsFilter || mentorLessonsFilter.has(ml.id)));
 
     const exports = await Promise.all(lessons.map(lesson => {
-        const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite);
+        const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite, title, extraRowsPerStudent);
         const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`
 
         return compileTeXToPath(dest, str);
@@ -45,17 +50,26 @@ const repeatNTimes = (n: number, str: string | ((i: number) => string)): string 
     return s;
 }
 
-const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName: string): string => {
+const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName: string, projectTitle: string, extraRows: number): string => {
     return `
 \\documentclass[12pt, a4paper, landscape, ngerman]{scrreprt}
 \\usepackage[utf8]{inputenc}
 \\usepackage[ngerman]{babel}
 \\usepackage{fontenc}
-\\usepackage[margin=1cm]{geometry}
+\\usepackage[left=1cm,right=1cm]{geometry}
 \\usepackage{array}
 \\usepackage{booktabs}
 \\usepackage{longtable}
 \\usepackage{multirow}
+\\usepackage{fancyhdr}
+
+\\pagestyle{fancy}
+
+\\lfoot{${projectTitle}}
+\\cfoot{${lesson.teacher.shorthand} - ${lesson.grade}}
+\\rfoot{\\thepage}
+
+\\renewcommand{\\headrulewidth}{0pt}
 
 \\usepackage{lmodern}
 \\renewcommand{\\familydefault}{\\sfdefault}
@@ -64,12 +78,12 @@ const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName
 \\date{\\today}
 
 \\begin{document}
-	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName), "Keine Daltonphasen definiert!")}
+	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName, extraRows), "Keine Daltonphasen definiert!")}
 \\end{document}
 `
 }
 
-const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData, phaseName: string): string => {
+const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData, phaseName: string, extraRows: number): string => {
     const numWeeks = Math.abs(phase[1] - phase[0]);
     const thickLine = "!{\\vrule width 1.2pt}"
     return `
@@ -95,8 +109,8 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
     
     ${makeTeXStringFromValues<Student>(
         Array.from(lesson.students).sort((a,b) => getStudentName(a).localeCompare(getStudentName(b))),
-        s => studentEntry(s, numWeeks), 
-        studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks)
+        s => studentEntry(s, numWeeks, extraRows), 
+        studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks, extraRows)
     )}
     
 \\end{longtable}
@@ -106,10 +120,12 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 `
 }
 
-const studentEntry = (s: Student, weeks: number): string => {
+const studentEntry = (s: Student, weeks: number, extraRows: number): string => {
 
     return `
-\\multirow{2}{2cm}{${getStudentName(s)}} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\cline{3-${weeks * 4 + 4}}
- & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\hline
+\\multirow{${extraRows + 1}}{2cm}{${getStudentName(s)}} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ 
+${repeatNTimes(extraRows, `\\cline{3-${weeks * 4 + 4}} 
+ & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ `)}
+\\hline
 `
 }

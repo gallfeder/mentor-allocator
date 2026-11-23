@@ -10,6 +10,7 @@ import {logTiming} from "./tex_timing_log";
 
 
 export interface MentorLessonData {
+    id: MentorLessonID;
     teacher: Teacher;
     grade: string;
     students: Set<Student>;
@@ -39,6 +40,7 @@ export const extractMentorLessonData = (project: Project, includeGrades?: Set<st
         const students = allocations.get(ml.id);
 
         return {
+            id: ml.id,
             teacher: t,
             grade: ml.grade,
             students: students ?? new Set<Student>(),
