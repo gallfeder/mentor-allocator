@@ -18,6 +18,13 @@ const MentorLessonComp = (props: Props) => {
     const mallocState: MallocState = useMallocState();
     const operation = useDragOperation();
 
+    const { ref: droppableRef, isDropTarget } = useDroppable({
+        id: props.mentorLesson.id,
+        type: "mentor-lesson",
+        disabled: false,
+        collisionPriority: CollisionPriority.High
+    });
+
     function isValidDropTarget(): boolean {
         if (operation.source?.type === "student-card") {
             const stateProject: StateProject | undefined = mallocState.projects.get(projectId as ProjectId);
@@ -47,13 +54,6 @@ const MentorLessonComp = (props: Props) => {
         }
         return "invalid-drop-target";
     }
-
-    const { ref: droppableRef, isDropTarget } = useDroppable({
-        id: props.mentorLesson.id,
-        type: "mentor-lesson",
-        disabled: false,
-        collisionPriority: CollisionPriority.Highest
-    });
 
     return (
         <div ref={droppableRef} className={`mentor-lesson ${getDropCssClasses()}`}>

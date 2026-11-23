@@ -30,7 +30,7 @@ const MentorLessonHeaderComp = (props: Props) => {
         let namePart: string = "";
 
         if (hasName && hasSurname) {
-            namePart = `${teacher.name}, ${teacher.surname}`;
+            namePart = `${teacher.surname}, ${teacher.name}`;
         } else if (hasName) {
             namePart = teacher.name;
         } else if (hasSurname) {
