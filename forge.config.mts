@@ -6,19 +6,35 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import PublisherGithub from "@electron-forge/publisher-github";
+import AutoUnpackNativesPlugin from "@electron-forge/plugin-auto-unpack-natives";
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: true,
+    asar: {
+      unpack: "**/node_modules/node-tectonic*/**",
+    },
+    ignore: [/node_modules\/(?!(node-tectonic-(linux|windows|darwin)-x64|node-tectonic-(linux|darwin)-arm64|node-tectonic|bindings|file-uri-to-path)\/)/],
+    icon: "./assets/icon",
+    executableName: "mentor-allocator"
   },
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({}),
-    new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerZIP({}, [
+      "darwin",
+      "linux",
+      "win32"
+    ]),
+    new MakerRpm({
+      options: {icon: "./assets/icon.png"}
+    }),
+    new MakerDeb({
+      options: {icon: "./assets/icon.png"}
+    }),
   ],
   plugins: [
+    new AutoUnpackNativesPlugin({}),
     new VitePlugin({
       build: [
         {
@@ -49,6 +65,15 @@ const config: ForgeConfig = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    new PublisherGithub({
+      repository: {
+        owner: "Finnick4",
+        name: "mentor-allocator"
+      },
+      draft: true,
+    })
+  ]
 };
 
 export default config;

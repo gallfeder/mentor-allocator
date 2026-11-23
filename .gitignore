@@ -146,4 +146,4 @@ vite.config.ts.timestamp-*
 out/
 data/
 
-cache_initialisation.pdf
+*.pdf

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <rect
+       style="fill:#dee5ed;fill-opacity:1;stroke-width:0.782226;stroke-linecap:round;stroke-linejoin:round"
+       id="rect1"
+       width="445"
+       height="445"
+       x="33.5"
+       y="33.500004"
+       ry="33.500004" />
+    <rect
+       style="fill:#007bff;fill-opacity:1;stroke-width:0.73936;stroke-linecap:round;stroke-linejoin:round"
+       id="rect2"
+       width="85"
+       height="307.33301"
+       x="81.5"
+       y="81.5"
+       rx="16.75"
+       ry="16.75" />
+    <rect
+       style="fill:#007bff;fill-opacity:1;stroke-width:0.624602;stroke-linecap:round;stroke-linejoin:round"
+       id="rect2-2"
+       width="85"
+       height="219.33299"
+       x="213.5"
+       y="81.5"
+       rx="16.75"
+       ry="16.75" />
+    <rect
+       style="fill:#007bff;fill-opacity:1;stroke-width:0.760704;stroke-linecap:round;stroke-linejoin:round"
+       id="rect2-2-5"
+       width="85"
+       height="325.33301"
+       x="345.5"
+       y="81.5"
+       rx="16.75"
+       ry="16.75" />
+  </g>
+</svg>

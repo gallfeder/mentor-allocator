@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import ProjectHomepage from "./Pages/Home/ProjectHomepage";
 import MallocStateProvider from "./Models/States/MallocStateProvider";
 import "./app.css"
@@ -22,13 +22,13 @@ const AppContent = () => {
 const App = () => {
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <MallocStateProvider>
                 <DragDropProviderComp>
                     <AppContent/>
                 </DragDropProviderComp>
             </MallocStateProvider>
-        </BrowserRouter>
+        </HashRouter>
     )
 
 }
