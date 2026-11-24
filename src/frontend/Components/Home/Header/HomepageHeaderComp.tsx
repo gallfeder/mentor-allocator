@@ -1,8 +1,8 @@
-import "./Header.css"
+import "../../Header/Header.css"
 import {useNavigate} from "react-router-dom";
-import ThemeSwitcherComp from "../Theme/ThemeSwitcherComp";
+import ThemeSwitcherComp from "../../Theme/ThemeSwitcherComp";
 
-const HeaderComp = () => {
+const HomepageHeaderComp = () => {
 
     const navigate = useNavigate();
 
@@ -19,4 +19,4 @@ const HeaderComp = () => {
 
 }
 
-export default HeaderComp;
+export default HomepageHeaderComp;

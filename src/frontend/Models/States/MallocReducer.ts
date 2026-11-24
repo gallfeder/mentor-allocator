@@ -8,6 +8,7 @@ import createMentorLessonSucceededAction
     from "../../Contexts/Malloc/Actions/MentorLesson/CreateMentorLessonSucceededAction";
 import deleteMentorLessonAction from "../../Contexts/Malloc/Actions/MentorLesson/DeleteMentorLessonAction";
 import setStudentsAction from "../../Contexts/Malloc/Actions/Students/SetStudentsAction";
+import renameProjectAction from "../../Contexts/Malloc/Actions/Projects/RenameProjectAction";
 
 function mallocReducer(state: MallocState, action: MallocAction): MallocState {
 
@@ -16,6 +17,8 @@ function mallocReducer(state: MallocState, action: MallocAction): MallocState {
             return initProjectsAction(state, action.payload);
         case "INIT_PROJECT":
             return initProjectAction(state, action.payload);
+        case "RENAME_PROJECT":
+            return renameProjectAction(state, action.payload);
         case "CREATE_MENTOR_LESSON_OPTIMISTIC":
             return createMentorLessonOptimisticAction(state, action.payload);
         case "CREATE_MENTOR_LESSON_SUCCEEDED":

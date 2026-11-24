@@ -17,6 +17,11 @@ export interface InitProjectPayload {
     project: Project;
 }
 
+export interface RenameProjectPayload {
+    projectId: ProjectId;
+    name: string;
+}
+
 export interface AllocStudentsPayload {
     projectId: ProjectId,
     mentorLessonId: MentorLessonId,
@@ -51,6 +56,7 @@ export interface DeleteMentorLessonPayload {
 export type MallocAction =
     { type: "INIT_PROJECTS", payload: InitProjectsPayload[] } |
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
+    { type: "RENAME_PROJECT", payload: RenameProjectPayload } |
 
     { type: "CREATE_MENTOR_LESSON_OPTIMISTIC", payload: CreateMentorLessonOptimisticPayload } |
     { type: "CREATE_MENTOR_LESSON_SUCCEEDED", payload: CreateMentorLessonSucceededPayload } |

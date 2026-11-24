@@ -24,10 +24,6 @@
 .create-project-modal-footer {
     display: flex;
     gap: 1rem;
-
-    .button.create-project:disabled {
-        opacity: 0.5;
-    }
 }
 
 .schild-import-type, .untis-import-type, .custom-import-type {
@@ -40,6 +36,11 @@
         grid-template-columns: 160px 1fr;
         align-items: center;
         gap: 1rem;
+
+        .required-field {
+            color: red !important;
+            margin-left: 0.2rem;
+        }
     }
 
     .import-separators {
@@ -51,15 +52,6 @@
 
         p {
             color: var(--text-color-shaded);
-        }
-    }
-
-    .required-field {
-        display: flex;
-        gap: 0.2rem;
-
-        p {
-            color: red !important;
         }
     }
 }

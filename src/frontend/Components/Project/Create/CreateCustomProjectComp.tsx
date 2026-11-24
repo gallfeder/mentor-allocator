@@ -21,10 +21,7 @@ const CreateCustomProjectComp = ({ setCanCreateProject, projectName, setProjectN
     return (
         <div className="custom-import-type">
             <div className="form-row import-option">
-                <div className="required-field">
-                    <h3>Project name</h3>
-                    <p>*</p>
-                </div>
+                <h3>Project name<span className="required-field">*</span></h3>
                 <input value={projectName} onChange={(e) => setProjectName(e.currentTarget.value)}
                        className="input" type="text" placeholder="Project name"/>
             </div>

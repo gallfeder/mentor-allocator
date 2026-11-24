@@ -34,6 +34,7 @@
 
 .project {
     overflow-x: auto;
+    border-radius: 12px;
 }
 
 .project-unallocated-sidebar {

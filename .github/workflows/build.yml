@@ -28,7 +28,7 @@ jobs:
           cache: 'npm'
 
       - name: Setup dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build and publish artifacts
         run: npm run publish
