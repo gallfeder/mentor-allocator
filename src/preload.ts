@@ -14,6 +14,7 @@ import {
     TeacherID
 } from "./shared/types";
 import {ImportSettings} from "./shared/import";
+import {ExportSettings} from "./shared/export";
 
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -40,14 +41,17 @@ contextBridge.exposeInMainWorld("electronAPI", {
     allocateStudents: (projectID: ProjectID, lessonID: MentorLessonID, studentIDs: StudentID | StudentID[]): Promise<boolean> => ipcRenderer.invoke("dialog:allocateStudents", projectID, lessonID, studentIDs),
     automaticallyAllocateStudents: (projectID: ProjectID): Promise<Student[] | undefined> => ipcRenderer.invoke("dialog:automaticallyAllocateStudents", projectID),
     getFilePathFromUser: (title?: string): Promise<string | undefined> => ipcRenderer.invoke("dialog:getFilePathFromUser", title),
+    getDirectoryPathFromUser: (title?: string): Promise<string | undefined> => ipcRenderer.invoke("dialog:getDirectoryPathFromUser", title),
 
     deleteProject: (projectID: ProjectID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteProject", projectID),
     deleteStudent: (projectID: ProjectID, studentID: StudentID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteStudent", projectID, studentID),
     deleteTeacher: (projectID: ProjectID, teacherID: TeacherID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteTeacher", projectID, teacherID),
     deleteCourse: (projectID: ProjectID, courseID: CourseID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteCourse", projectID, courseID),
     deleteMentorLesson: (projectID: ProjectID, mentorLessonID: MentorLessonID): Promise<boolean> => ipcRenderer.invoke("dialog:deleteMentorLesson", projectID, mentorLessonID),
+
+    exportProject: (projectID: ProjectID, settings: ExportSettings): Promise<boolean> => ipcRenderer.invoke("dialog:exportProject", projectID, settings),
 });
 
 contextBridge.exposeInMainWorld("theme", {
     toggleTheme: (): Promise<boolean> => ipcRenderer.invoke("theme:toggleTheme")
-})
+});

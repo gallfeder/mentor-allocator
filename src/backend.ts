@@ -2,8 +2,8 @@ import {app, BrowserWindow, ipcMain, Menu, nativeTheme} from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import {
-  createProjectHandler,
-  editProjectNameHandler,
+  createProjectHandler, deleteProjectHandler,
+  editProjectNameHandler, exportProjectHandler,
   getProjectHandler,
   getProjectsHandler
 } from "./backend/handlers/projects";
@@ -30,7 +30,8 @@ import {
   editMentorLessonHandler,
   getProjectMentorLessonsHandler
 } from "./backend/handlers/mentor_lessons";
-import {getFilePathFromUser} from "./backend/handlers/files";
+import {getDirectoryPathFromUser, getFilePathFromUser} from "./backend/handlers/files";
+import {initialiseTectonicCache} from "./backend/infrastructure/export/tex_shared";
 
 if (started) {
     app.quit();
@@ -104,12 +105,15 @@ app.whenReady().then(() => {
     ipcMain.handle("dialog:allocateStudents", allocateStudentsHandler);
     ipcMain.handle("dialog:automaticallyAllocateStudents", automaticallyAllocateStudentsHandler)
     ipcMain.handle("dialog:getFilePathFromUser", getFilePathFromUser);
+    ipcMain.handle("dialog:getDirectoryPathFromUser", getDirectoryPathFromUser);
 
-    ipcMain.handle("dialog:deleteProject", getProjectHandler);
+    ipcMain.handle("dialog:deleteProject", deleteProjectHandler);
     ipcMain.handle("dialog:deleteStudent", deleteStudentHandler);
     ipcMain.handle("dialog:deleteTeacher", deleteTeacherHandler);
     ipcMain.handle("dialog:deleteCourse", deleteCourseHandler);
     ipcMain.handle("dialog:deleteMentorLesson", deleteMentorLessonHandler);
+  
+    ipcMain.handle("dialog:exportProject", exportProjectHandler);
 
     ipcMain.handle("theme:toggleTheme", (): boolean => {
         if (nativeTheme.shouldUseDarkColors) {
@@ -119,6 +123,8 @@ app.whenReady().then(() => {
         }
         return nativeTheme.shouldUseDarkColors;
     })
+
+    initialiseTectonicCache();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
