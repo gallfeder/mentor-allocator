@@ -7,6 +7,8 @@ import {
     makeTeXStringFromValues,
     MentorLessonData
 } from "./tex_shared";
+import path from "node:path";
+import {shell} from "electron";
 
 
 export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase", titleOverwrite, extraRowsPerStudent, teachersFilter, mentorLessonsFilter}: PDFCheckGridExportParameters): Promise<boolean> => {
@@ -25,13 +27,15 @@ export const exportPDFCheckGrid = async (project: Project, {destination, grades,
 
     const exports = await Promise.all(lessons.map(lesson => {
         const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite, title, extraRowsPerStudent);
-        const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`
+        const dest = path.join(destination, `Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`);
 
         return compileTeXToPath(dest, str);
     }));
     const hadNoIssues = exports.findIndex(res => !res) == -1;
     if (!hadNoIssues) {
         console.log(exports);
+    } else {
+        shell.showItemInFolder(destination);
     }
 
     return hadNoIssues;

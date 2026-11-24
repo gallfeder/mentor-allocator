@@ -7,6 +7,8 @@ import {
     getTeacherName,
     makeTeXStringFromValues, MentorLessonData
 } from "./tex_shared";
+import path from "node:path";
+import {shell} from "electron";
 
 
 export const exportPDFList = async (project: Project, {destination, titleOverwrite, includeTitlePage = true, grades}: PDFListExportParameters): Promise<boolean> => {
@@ -22,9 +24,14 @@ export const exportPDFList = async (project: Project, {destination, titleOverwri
     const title = titleOverwrite ?? project.name;
     const str = getTeXString(title, includeTitlePage, lessons);
 
-    const dest = `${destination}${destination.charAt(destination.length) != "/" ? "/" : ""}${title}.pdf`
+    const dest = path.join(destination, `${title}.pdf`);
 
-    return compileTeXToPath(dest, str);
+
+    const ok = await compileTeXToPath(dest, str);
+    if (ok) {
+        shell.showItemInFolder(dest);
+    }
+    return ok;
 }
 
 const getTeXString = (title: string, titlePage: boolean, lessons: MentorLessonData[]): string => `

@@ -32,6 +32,7 @@ import {
 } from "./backend/handlers/mentor_lessons";
 import {getDirectoryPathFromUser, getFilePathFromUser} from "./backend/handlers/files";
 import {initialiseTectonicCache} from "./backend/infrastructure/export/tex_shared";
+import {setMainWindow} from "./backend/application/files";
 
 if (started) {
     app.quit();
@@ -76,6 +77,8 @@ const createWindow = () => {
     registerInputEvents(window);
 
     window.maximize();
+
+    setMainWindow(window);
 };
 
 
