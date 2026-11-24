@@ -1,7 +1,7 @@
 {
   "name": "mentor-allocator",
   "productName": "Mentor Allocator",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Application to make planning mentor lessons easier. Import data from other management software and allocate students to their new mentors automatically.",
   "keywords": [],
