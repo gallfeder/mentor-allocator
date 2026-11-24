@@ -3,17 +3,16 @@ import {MentorLessonID, TeacherID} from "./types";
 interface PDFExport {
     destination: string;
     titleOverwrite?: string;
+    grades?: Set<string>;
 }
 
 export interface PDFListExportParameters extends PDFExport {
-    grades?: Set<string>;
     includeTitlePage?: boolean;
 }
 
 export type DaltonPhase = [number, number];
 
 export interface PDFCheckGridExportParameters extends PDFExport{
-    grades?: Set<string>;
     phasesBounds: DaltonPhase[];
     phasesNameOverwrite?: string;
     extraRowsPerStudent?: number;

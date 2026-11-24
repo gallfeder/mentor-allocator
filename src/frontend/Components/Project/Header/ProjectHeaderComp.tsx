@@ -22,7 +22,7 @@ const ProjectHeaderComp = () => {
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
     const projectNameRef = useRef<HTMLInputElement | null>(null);
 
-    const [isExportingProject, setIsExportingProject] = useState<boolean>(true);
+    const [isExportingProject, setIsExportingProject] = useState<boolean>(false);
 
     const stateProject: StateProject | undefined = mallocState.projects.get(projectId as ProjectId);
 

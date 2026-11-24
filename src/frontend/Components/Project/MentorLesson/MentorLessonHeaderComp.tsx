@@ -2,6 +2,7 @@ import {Day, MentorLesson, ProjectId, Teacher} from "../../../../shared/types";
 import {MallocState, StateProject} from "../../../Models/States/MallocState";
 import {useMallocState} from "../../../Models/States/Hooks";
 import {useParams} from "react-router-dom";
+import {getTeacherName} from "../../../Helpers/teacherHelpers";
 
 interface Props {
     mentorLesson: MentorLesson;
@@ -18,32 +19,6 @@ const MentorLessonHeaderComp = (props: Props) => {
     }
     const teacher: Teacher | undefined = stateProject.teachers.get(props.mentorLesson.teacherId);
 
-    function getTeacherName(): string {
-        if (!teacher) {
-            return "No teacher assigned...";
-        }
-
-        const hasName: boolean = Boolean(teacher.name);
-        const hasSurname: boolean = Boolean(teacher.surname);
-        const hasShorthand: boolean = Boolean(teacher.shorthand);
-
-        let namePart: string = "";
-
-        if (hasName && hasSurname) {
-            namePart = `${teacher.surname}, ${teacher.name}`;
-        } else if (hasName) {
-            namePart = teacher.name;
-        } else if (hasSurname) {
-            namePart = teacher.surname;
-        }
-
-        if (!namePart) {
-            return hasShorthand ? `(${teacher.shorthand})` : "No teacher assigned...";
-        }
-
-        return hasShorthand ? `${namePart} (${teacher.shorthand})` : namePart;
-    }
-
     function toDayText(day: Day): string {
         let value: string = "";
         if (day == Day.Monday) value = "MO";
@@ -58,7 +33,7 @@ const MentorLessonHeaderComp = (props: Props) => {
 
     return (
         <div className="mentor-lesson-header">
-            <h3>{getTeacherName()}</h3>
+            <h3>{teacher ? getTeacherName(teacher) : "No teacher assigned..."}</h3>
             <div className="header-tags">
                 { (props.mentorLesson.day > 0 || props.mentorLesson.lesson > 0) && (
                     <>

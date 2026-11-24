@@ -15,7 +15,7 @@
     .export-option {
         display: grid;
         align-items: center;
-        grid-template-columns: 160px 1fr auto;
+        grid-template-columns: 180px 1fr auto;
 
         .button {
             font-size: medium;
@@ -25,6 +25,10 @@
             margin-left: 0.2rem;
             color: red !important;
         }
+    }
+
+    .start-beginning {
+        align-items: start;
     }
 
     .export-option-nested {
@@ -44,5 +48,34 @@
 
     .hint {
         color: var(--text-color-shaded);
+    }
+}
+
+.phases-bounds {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-x-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 4px;
+
+    .phase-bound {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+        padding: 0.25rem;
+
+        p {
+            color: var(--text-color-shaded);
+            font-size: smaller;
+        }
+    }
+
+    .phase-bound-add {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--bg-xx-light);
+        padding: 8px;
     }
 }
