@@ -47,28 +47,19 @@ const CreateProjectFromUntisComp = ({ setCanCreateProject, projectName, setProje
     return (
         <div className="untis-import-type">
             <div className="form-row import-option">
-                <div className="required-field">
-                    <h3>Project name</h3>
-                    <p>*</p>
-                </div>
+                <h3>Project name<span className="required-field">*</span></h3>
                 <input value={projectName} onChange={(e) => setProjectName(e.currentTarget.value)}
                        className="input" type="text" placeholder="Project name"/>
             </div>
 
             <div className="form-row path-import">
-                <div className="required-field">
-                    <h3>GPU001</h3>
-                    <p>*</p>
-                </div>
+                <h3>GPU001<span className="required-field">*</span></h3>
                 <button onClick={getGpu001Path} className="button normal">Open file</button>
                 <p>{gpu001Path.length === 0 ? "" : `(${gpu001Path})`}</p>
             </div>
 
             <div className="form-row path-import">
-                <div className="required-field">
-                    <h3>GPU015</h3>
-                    <p>*</p>
-                </div>
+                <h3>GPU015<span className="required-field">*</span></h3>
                 <button onClick={getGpu015Path} className="button normal">Open file</button>
                 <p>{gpu015Path.length === 0 ? "" : `(${gpu015Path})`}</p>
             </div>

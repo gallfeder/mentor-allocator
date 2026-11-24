@@ -55,19 +55,13 @@ const CreateProjectFromSchildComp = ({ setCanCreateProject, projectName, setProj
     return (
         <div className="schild-import-type">
             <div className="form-row import-option">
-                <div className="required-field">
-                    <h3>Project name</h3>
-                    <p>*</p>
-                </div>
+                <h3>Project name<span className="required-field">*</span></h3>
                 <input value={projectName} onChange={(e) => setProjectName(e.currentTarget.value)}
                        className="input" type="text" placeholder="Project name"/>
             </div>
 
             <div className="form-row import-option">
-                <div className="required-field">
-                    <h3>Students grade</h3>
-                    <p>*</p>
-                </div>
+                <h3>Students grade<span className="required-field">*</span></h3>
                 <input value={grade} onChange={(e) => setGrade(e.currentTarget.value)}
                        className="input" type="text" placeholder="Students grade"/>
             </div>
@@ -83,19 +77,13 @@ const CreateProjectFromSchildComp = ({ setCanCreateProject, projectName, setProj
             <br/>
 
             <div className="form-row path-import">
-                <div className="required-field">
-                    <h3>Courses</h3>
-                    <p>*</p>
-                </div>
+                <h3>Courses<span className="required-field">*</span></h3>
                 <button onClick={getSchILDCoursesPath} className="button normal">Open file</button>
                 <p>{schildCoursesPath.length === 0 ? "" : `(${schildCoursesPath})`}</p>
             </div>
 
             <div className="form-row path-import">
-                <div className="required-field">
-                    <h3>Student courses</h3>
-                    <p>*</p>
-                </div>
+                <h3>Student courses<span className="required-field">*</span></h3>
                 <button onClick={getSchILDStudentCoursesPath} className="button normal">Open file</button>
                 <p>{schildStudentCoursesPath.length === 0 ? "" : `(${schildStudentCoursesPath})`}</p>
             </div>

@@ -46,7 +46,7 @@
     }
 
     .mentor-lesson.invalid-drop-target {
-        opacity: 0.5;
+        opacity: 0.25;
     }
 
     .mentor-lesson-create {

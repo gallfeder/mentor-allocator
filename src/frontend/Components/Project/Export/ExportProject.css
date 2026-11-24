@@ -1,0 +1,48 @@
+.export-project-footer-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.export-project-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    select {
+        width: 100%;
+    }
+
+    .export-option {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 160px 1fr auto;
+
+        .button {
+            font-size: medium;
+        }
+
+        .required-field {
+            margin-left: 0.2rem;
+            color: red !important;
+        }
+    }
+
+    .export-option-nested {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+
+        p {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .hint {
+        color: var(--text-color-shaded);
+    }
+}

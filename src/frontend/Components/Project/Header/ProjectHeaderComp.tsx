@@ -6,7 +6,11 @@ import {ProjectId} from "../../../../shared/types";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import arrowBackIcon from "../../../public/arrow-back.svg"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import exportIcon from "../../../public/export-icon.svg"
 import {useEffect, useRef, useState} from "react";
+import ExportProjectModal from "../Export/ExportProjectModal";
 
 const ProjectHeaderComp = () => {
 
@@ -17,6 +21,8 @@ const ProjectHeaderComp = () => {
 
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
     const projectNameRef = useRef<HTMLInputElement | null>(null);
+
+    const [isExportingProject, setIsExportingProject] = useState<boolean>(true);
 
     const stateProject: StateProject | undefined = mallocState.projects.get(projectId as ProjectId);
 
@@ -64,8 +70,11 @@ const ProjectHeaderComp = () => {
                 ) : (
                     <h2 onClick={editProjectName}>{stateProject?.name ?? "Loading project..."}</h2>
                 )}
+                <img onClick={() => setIsExportingProject(true)} className="icon clickable" height="32px" src={exportIcon} alt=""/>
             </div>
             <ThemeSwitcherComp/>
+
+            { isExportingProject && stateProject && <ExportProjectModal project={stateProject} onClosed={() => setIsExportingProject(false)}/> }
         </nav>
     )
 

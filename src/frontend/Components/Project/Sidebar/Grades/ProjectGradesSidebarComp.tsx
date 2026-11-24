@@ -1,7 +1,7 @@
 import {useMallocState} from "../../../../Models/States/Hooks";
 import {MallocState, StateProject} from "../../../../Models/States/MallocState";
 import {useParams} from "react-router-dom";
-import {ProjectId} from "../../../../../shared/types";
+import {Course, ProjectId} from "../../../../../shared/types";
 import GradeComp from "./GradeComp";
 
 const ProjectGradesSidebarComp = () => {
@@ -14,12 +14,7 @@ const ProjectGradesSidebarComp = () => {
         return null;
     }
 
-    const grades: string[] = [];
-    for (const student of Array.from(stateProject.students.values())) {
-        if (!grades.includes(student.grade)) {
-            grades.push(student.grade);
-        }
-    }
+    const grades: string[] = Array.from(new Set<string>(Array.from(stateProject.courses.values()).map((course: Course) => course.grade)));
 
     return (
         <div className="project-view-sidebar panel">

@@ -43,11 +43,4 @@
         margin: 0;
         white-space: nowrap;
     }
-
-    .line {
-        flex: 1;
-        border: none;
-        border-top: 3px solid #e0e0e0;
-        margin: 0;
-    }
 }

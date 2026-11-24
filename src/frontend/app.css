@@ -30,6 +30,10 @@
 }
 
 .button:disabled {
+    opacity: 0.5;
+}
+
+.button:hover:disabled {
     cursor: not-allowed;
 }
 
@@ -41,8 +45,44 @@ input[type="text"] {
     padding: 12px;
 }
 
-input:focus {
+input[type="text"]:focus {
     outline: 3px solid var(--border-color);
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    display: inline-grid;
+    place-content: center;
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-xx-light);
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border: 1px solid var(--border-color);
+}
+
+input[type="checkbox"]:checked::after {
+    content: "";
+    inline-size: 0.35rem;
+    block-size: 0.7rem;
+    border: solid var(--text-color);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-1px) rotate(45deg);
+}
+
+select {
+    background-color: var(--bg-x-light);
+    color: var(--text-color);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    flex: 1;
 }
 
 .icon {
@@ -53,13 +93,11 @@ input:focus {
     cursor: pointer;
 }
 
-select {
-    background-color: var(--bg-x-light);
-    color: var(--text-color);
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    padding: 6px;
+hr.line {
     flex: 1;
+    border: none;
+    border-top: 3px solid var(--border-color);
+    margin: 0;
 }
 
 @supports (appearance: base-select) {
