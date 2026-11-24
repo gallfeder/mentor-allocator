@@ -4,7 +4,13 @@ import {expect, describe, it} from "vitest";
 
 describe("Testing extracting values from line", () => {
     it('should deal with empty string correctly', () => {
-        const v = extractValuesFromCSVLine("");
+        const v = extractValuesFromCSVLine("\n");
+
+        expect(v.length).toBe(0);
+    });
+
+    it('should deal with string containing only a space correctly', () => {
+        const v = extractValuesFromCSVLine(" ");
 
         expect(v.length).toBe(0);
     });
@@ -148,4 +154,15 @@ describe("Testing extracting values from line", () => {
             expect(v[i]).toBe(r);
         });
     });
+
+    it('should handle German special characters correctly', () => {
+        const v = extractValuesFromCSVLine(`"test"|"test2"|"Straße"|"abcdefß"|"äöpß-"`, "|");
+        expect(v.length).toBe(5);
+        expect(v[0]).toBe("test");
+        expect(v[1]).toBe("test2");
+        expect(v[2]).toBe("Straße");
+        expect(v[3]).toBe("abcdefß");
+        expect(v[4]).toBe("äöpß-");
+    });
+
 });

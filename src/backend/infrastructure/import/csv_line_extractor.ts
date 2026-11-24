@@ -1,6 +1,6 @@
 
 export const extractValuesFromCSVLine = (line: string, separator = ",", stringDeliminator = '"'): (string | number | undefined)[] => {
-    if (line.length == 0 || separator == stringDeliminator) {
+    if (line.length == 0 || separator == stringDeliminator || /^\s+$/.test(line)) {
         return [];
     }
     const vals: (string | number | undefined)[] = [];

@@ -67,12 +67,23 @@ export const interpretSchILDStudentCourses = (data: string, separator = ";"): Sc
     const courses: SchILDStudentCourses[] = [];
 
     for (let i = 1; i < lines.length; i++) {
+        if (lines[i].length == 0) {
+            continue;
+        }
         const vals = extractValuesFromCSVLine(lines[i], separator)
-        courses.push({
+        if (vals.length == 0) {
+            continue;
+        }
+        const student: SchILDStudentCourses = {
             name: (vals[nameIndex] ?? "").toString(),
             surname: (vals[surnameIndex] ?? "").toString(),
             courses: new Set<string>(vals.map((v, i) => coursesIndices.has(i) && v?.toString().length != 0 ? v?.toString() : undefined).filter(v => v != undefined))
-        });
+        }
+        if (student.name.length == 0 && student.surname.length == 0) {
+            continue;
+        }
+
+        courses.push(student);
     }
 
     return courses;
