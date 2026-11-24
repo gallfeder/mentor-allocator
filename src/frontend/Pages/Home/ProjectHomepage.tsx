@@ -1,12 +1,12 @@
 import ProjectsViewComp from "../../Components/Home/ProjectsViewComp";
-import HeaderComp from "../../Components/Header/HeaderComp";
+import HomepageHeaderComp from "../../Components/Home/Header/HomepageHeaderComp";
 import "../Pages.css"
 
 const ProjectHomepage = () => {
 
     return (
         <>
-            <HeaderComp/>
+            <HomepageHeaderComp/>
             <ProjectsViewComp/>
         </>
     )

@@ -5,7 +5,13 @@
     padding: 1rem;
     color: var(--text-color);
 
-    h2:hover {
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-back-button:hover {
         cursor: pointer;
     }
 }

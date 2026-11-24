@@ -1,11 +1,11 @@
-import HeaderComp from "../../Components/Header/HeaderComp";
 import ProjectViewComp from "../../Components/Project/ProjectViewComp";
+import ProjectHeaderComp from "../../Components/Project/Header/ProjectHeaderComp";
 
 const ProjectPage = () => {
 
     return (
         <>
-            <HeaderComp/>
+            <ProjectHeaderComp/>
             <ProjectViewComp/>
         </>
     )
