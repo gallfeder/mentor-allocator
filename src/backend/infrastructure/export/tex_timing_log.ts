@@ -67,7 +67,7 @@ const getTimingLogMax = (): TimingLogEntry => {
     return max;
 }
 
-const skipLogging = false;
+const skipLogging = true;
 
 export const logTiming = (fnStart: Date, compStart: Date, compDone: Date, writeDone: Date, cleanupDone: Date): void => {
     if (app.isPackaged || skipLogging) {
