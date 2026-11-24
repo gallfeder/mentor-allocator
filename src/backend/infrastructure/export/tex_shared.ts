@@ -245,12 +245,24 @@ export const initialiseTectonicCache = () => {
 
     tectonicCacheInitialisation = new Promise<boolean>(resolve => {
         console.log("Tectonic: Starting initialisation of cache!");
+
+        const buildDir = `${app.getPath("temp")}/${app.getName()}/TeX/initialisation`;
+
+        mkdirSync(buildDir, {recursive: true});
         compile({
             tex: cacheInitialisationTeX,
             timeout: 120000,
+            cwd: buildDir
         }).then(r => {
             if (r.success) {
-                console.log("Tectonic: Cache initialisation completed!");
+                console.log("Tectonic: Cache initialisation completed! Starting cleanup...");
+                rmdir(buildDir, err => {
+                    if (err != null) {
+                        console.error(`Tectonic: Error during cleanup: ${err}`);
+                    } else {
+                        console.log("Tectonic: Cleanup successful!");
+                    }
+                });
                 resolve(true);
                 return;
             }
