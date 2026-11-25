@@ -20,8 +20,8 @@
 
         --border-color: hsl(0 0% 90%);
 
-        --scrollbar-background: var(--bg-x-light);
-        --scrollbar-foreground: var(--bg-xx-light);
+        --scrollbar-background: var(--bg-dark);
+        --scrollbar-foreground: var(--bg);
 
         --primary: hsl(211, 100%, 50%);
         --primary-muted: hsl(211, 100%, 85%);
@@ -66,7 +66,7 @@ body {
 
 @supports (scrollbar-width: auto) {
     .scroller {
-        scrollbar-color: var(--scrollbar-foreground) var(--scrollbar-background);
+        scrollbar-color: var(--text-color-shaded) var(--scrollbar-background);
     }
 }
 
