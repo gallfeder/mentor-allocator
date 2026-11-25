@@ -1,6 +1,5 @@
 name: build.yml
 on:
-  workflow_dispatch:
   push:
     tags: [ v* ]
 
@@ -26,6 +25,12 @@ jobs:
         with:
           node-version: '24.15.x'
           cache: 'npm'
+
+      - name: Set authoritative version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Building release version: $VERSION"
+          npm version "$VERSION" --no-git-tag-version --ignore-scripts
 
       - name: Setup dependencies
         run: npm install

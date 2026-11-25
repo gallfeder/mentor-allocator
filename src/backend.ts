@@ -33,10 +33,12 @@ import {
 import {getDirectoryPathFromUser, getFilePathFromUser} from "./backend/handlers/files";
 import {initialiseTectonicCache} from "./backend/infrastructure/export/tex_shared";
 import {setMainWindow} from "./backend/application/files";
+import {updateElectronApp} from "update-electron-app";
 
 if (started) {
     app.quit();
 }
+updateElectronApp();
 
 function registerInputEvents(window: BrowserWindow): void {
     window.webContents.on('before-input-event', (event, input) => {
