@@ -18,6 +18,7 @@ export interface PDFCheckGridExportParameters extends PDFExport{
     extraRowsPerStudent?: number;
     teachersFilter?: Set<TeacherID>;
     mentorLessonsFilter?: Set<MentorLessonID>;
+    mergeExtraRows?: boolean;
 }
 
 export type ExportSettings =
