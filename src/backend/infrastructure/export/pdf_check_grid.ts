@@ -16,8 +16,11 @@ export const exportPDFCheckGrid = async (project: Project, {destination, grades,
         return false;
     }
     const title = titleOverwrite ?? project.name;
-    if (!extraRowsPerStudent || extraRowsPerStudent < 1) {
-        extraRowsPerStudent = 1;
+    if (!extraRowsPerStudent || extraRowsPerStudent < 0) {
+        extraRowsPerStudent = 0;
+    }
+    if (extraRowsPerStudent > 25) {
+        extraRowsPerStudent = 25;
     }
 
     const uppercaseGrades = grades && grades.size != 0 ? new Set<string>(Array.from(grades).map(g => g.toUpperCase())) : undefined;
@@ -81,6 +84,12 @@ const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName
 \\title{Übersicht Daltonstunden}
 \\date{\\today}
 
+\\newcolumntype{M}[1]{>{\\centering\\arraybackslash}m{#1}}
+\\newcolumntype{L}[1]{>{\\raggedright\\arraybackslash}m{#1}}
+
+\\newlength{\\colw}
+\\setlength{\\colw}{0.35cm}
+
 \\begin{document}
 	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName, extraRows), "Keine Daltonphasen definiert!")}
 \\end{document}
@@ -101,7 +110,7 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 \\footnotesize
 \\setlength{\\tabcolsep}{3pt}
 
-\\begin{longtable}{|p{2cm}|p{1cm}${thickLine} ${repeatNTimes(numWeeks, `p{0.35cm}|p{0.35cm}|p{0.35cm}|p{0.35cm}${thickLine}`)} p{0.35cm}|p{0.35cm}${thickLine}}
+\\begin{longtable}{|p{2cm}|p{1cm}${thickLine} ${repeatNTimes(numWeeks, `p{\\colw}|p{\\colw}|p{\\colw}|p{\\colw}${thickLine}`)} p{\\colw}|p{\\colw}${thickLine}}
     \\hline
     \\textbf{Name} & \\textbf{Pflstd.} ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{l${thickLine}}{\\textbf{LW ${phase[0] + 1 + i}}}`)} & \\multicolumn{2}{l${thickLine}}{\\textbf{ges.}} \\\\
 
@@ -115,7 +124,7 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
         Array.from(lesson.students).sort((a,b) => getStudentName(a).localeCompare(getStudentName(b))),
         s => studentEntry(s, numWeeks, extraRows), 
         studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks, extraRows)
-    )}
+    )}    
     
 \\end{longtable}
 \\endgroup
@@ -125,11 +134,20 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 }
 
 const studentEntry = (s: Student, weeks: number, extraRows: number): string => {
+    if (extraRows == 0) {
+        return `${getStudentName(s)} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\hline`
+    }
+
+    const cols = weeks * 4 + 2;
+    const singleRow = `${repeatNTimes(weeks, "& & & & ")} & \\\\`;
+    const innerRows = Array(extraRows + 1).fill(singleRow).join("\n\\hline\n");
 
     return `
-\\multirow{${extraRows + 1}}{2cm}{${getStudentName(s)}} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ 
-${repeatNTimes(extraRows, `\\cline{3-${weeks * 4 + 4}} 
- & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ `)}
-\\hline
-`
-}
+${getStudentName(s)} & & \\multicolumn{${cols}}{@{}l@{}}{%
+    {\\renewcommand{\\arraystretch}{1.25}%
+    \\begin{tabular}[t]{*{${weeks}}{M{\\colw}|M{\\colw}|M{\\colw}|M{\\colw}!{\\vrule width 1.2pt}}M{\\colw}|M{\\colw}!{\\vrule width 1.2pt}}
+        ${innerRows}
+    \\end{tabular}}%
+} \\\\ \\hline
+`;
+};
