@@ -11,7 +11,7 @@ import path from "node:path";
 import {shell} from "electron";
 
 
-export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase", titleOverwrite, extraRowsPerStudent, teachersFilter, mentorLessonsFilter}: PDFCheckGridExportParameters): Promise<boolean> => {
+export const exportPDFCheckGrid = async (project: Project, {destination, grades, phasesBounds, phasesNameOverwrite = "Phase", titleOverwrite, extraRowsPerStudent, teachersFilter, mentorLessonsFilter, mergeExtraRows = false}: PDFCheckGridExportParameters): Promise<boolean> => {
     if (!phasesBounds) {
         return false;
     }
@@ -29,7 +29,7 @@ export const exportPDFCheckGrid = async (project: Project, {destination, grades,
         .filter(ml => (!teachersFilter || teachersFilter.has(ml.teacher.id)) && (!mentorLessonsFilter || mentorLessonsFilter.has(ml.id)));
 
     const exports = await Promise.all(lessons.map(lesson => {
-        const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite, title, extraRowsPerStudent);
+        const str = getTeXString(lesson, phasesBounds, phasesNameOverwrite, title, extraRowsPerStudent, mergeExtraRows);
         const dest = path.join(destination, `Mentorenraster ${lesson.teacher.shorthand} ${lesson.grade}.pdf`);
 
         return compileTeXToPath(dest, str);
@@ -57,7 +57,7 @@ const repeatNTimes = (n: number, str: string | ((i: number) => string)): string 
     return s;
 }
 
-const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName: string, projectTitle: string, extraRows: number): string => {
+const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName: string, projectTitle: string, extraRows: number, mergeExtraRows: boolean): string => {
     return `
 \\documentclass[12pt, a4paper, landscape, ngerman]{scrreprt}
 \\usepackage[utf8]{inputenc}
@@ -91,12 +91,12 @@ const getTeXString = (lesson: MentorLessonData, phases: DaltonPhase[], phaseName
 \\setlength{\\colw}{0.35cm}
 
 \\begin{document}
-	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName, extraRows), "Keine Daltonphasen definiert!")}
+	${makeTeXStringFromValues<DaltonPhase>(phases, (p, i) => getGridPage(p, i, lesson, phaseName, extraRows, mergeExtraRows), "Keine Daltonphasen definiert!")}
 \\end{document}
 `
 }
 
-const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData, phaseName: string, extraRows: number): string => {
+const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: MentorLessonData, phaseName: string, extraRows: number, mergeExtraRows: boolean): string => {
     const numWeeks = Math.abs(phase[1] - phase[0]);
     const thickLine = "!{\\vrule width 1.2pt}"
     return `
@@ -115,15 +115,15 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
     \\textbf{Name} & \\textbf{Pflstd.} ${repeatNTimes(numWeeks, i => `& \\multicolumn{4}{l${thickLine}}{\\textbf{LW ${phase[0] + 1 + i}}}`)} & \\multicolumn{2}{l${thickLine}}{\\textbf{ges.}} \\\\
 
     & ${repeatNTimes(numWeeks, `& \\multicolumn{4}{l${thickLine}}{}`)} & \\multicolumn{2}{l${thickLine}}{\\textbf{}} \\\\
-    & ${repeatNTimes(numWeeks, "& FS & DS & V & ue ")} & V & ue \\\\ \\hline
+    & ${repeatNTimes(numWeeks, "& FS & DS & V & ue ")} & V & ue \\\\
     \\endhead
     
     \\hline
     
     ${makeTeXStringFromValues<Student>(
         Array.from(lesson.students).sort((a,b) => getStudentName(a).localeCompare(getStudentName(b))),
-        s => studentEntry(s, numWeeks, extraRows), 
-        studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks, extraRows)
+        s => studentEntry(s, numWeeks, extraRows, mergeExtraRows), 
+        studentEntry({grade: "", id: 0, mentorLessonId: 0, name: "Zugewiesen", surname: "Niemand"}, numWeeks, extraRows, mergeExtraRows)
     )}    
     
 \\end{longtable}
@@ -133,14 +133,24 @@ const getGridPage = (phase: DaltonPhase, currentPhaseIndex: number, lesson: Ment
 `
 }
 
-const studentEntry = (s: Student, weeks: number, extraRows: number): string => {
+const studentEntry = (s: Student, weeks: number, extraRows: number, mergeExtraRows: boolean): string => {
     if (extraRows == 0) {
         return `${getStudentName(s)} & ${repeatNTimes(weeks, "& & & & ")} & & \\\\ \\hline`
     }
 
     const cols = weeks * 4 + 2;
     const singleRow = `${repeatNTimes(weeks, "& & & & ")} & \\\\`;
-    const innerRows = Array(extraRows + 1).fill(singleRow).join("\n\\hline\n");
+    let innerRows: string;
+
+    if (mergeExtraRows) {
+        const mergedHeight = `${(extraRows * 1.25).toFixed(2)}\\normalbaselineskip`;
+        const mergedWeekCells = repeatNTimes(weeks, "\\multicolumn{4}{c!{\\vrule width 1.2pt}}{} & ");
+        const mergedTotalCell = `\\multicolumn{2}{c!{\\vrule width 1.2pt}}{\\rule{0pt}{${mergedHeight}}}`;
+
+        innerRows = `${singleRow}\n\\hline\n${mergedWeekCells}${mergedTotalCell} \\\\`;
+    } else {
+        innerRows = Array(extraRows + 1).fill(singleRow).join("\n\\hline\n");
+    }
 
     return `
 ${getStudentName(s)} & & \\multicolumn{${cols}}{@{}l@{}}{%
